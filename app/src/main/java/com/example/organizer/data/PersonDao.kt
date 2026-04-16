@@ -3,6 +3,7 @@ package com.example.organizer.data
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PersonDao {
@@ -10,5 +11,5 @@ interface PersonDao {
     fun insert(vararg people: Person)
 
     @Query("SELECT * FROM Person")
-    fun getPeople(): List<Person>
+    fun getPeople(): Flow<List<Person>>
 }
