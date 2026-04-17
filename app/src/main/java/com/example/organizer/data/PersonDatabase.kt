@@ -25,7 +25,6 @@ abstract class PersonDatabase : RoomDatabase() {
                     PersonDatabase::class.java,
                     "person_db"
                 )
-                    .allowMainThreadQueries() // ⚠️ only for learning / prototypes
                     .build()
 
                 INSTANCE = instance

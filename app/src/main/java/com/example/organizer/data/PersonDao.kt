@@ -1,6 +1,7 @@
 package com.example.organizer.data
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
@@ -12,4 +13,7 @@ interface PersonDao {
 
     @Query("SELECT * FROM Person")
     fun getAll(): Flow<List<Person>>
+
+    @Delete
+    suspend fun delete(person: Person)
 }

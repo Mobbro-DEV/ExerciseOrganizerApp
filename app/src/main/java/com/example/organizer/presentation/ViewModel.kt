@@ -24,4 +24,10 @@ class ViewModel(application: Application) : AndroidViewModel(application) {
             repository.insert(person)
         }
     }
+
+    fun delete(person: Person) {
+        viewModelScope.launch {
+            repository.delete(person)
+        }
+    }
 }

@@ -10,4 +10,8 @@ class PersonRepository(private val dao: PersonDao) {
     fun getAll(): Flow<List<Person>> {
         return dao.getAll()
     }
+
+    suspend fun delete(person: Person){
+        dao.delete(person)
+    }
 }
