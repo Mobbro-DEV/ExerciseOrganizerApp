@@ -5,9 +5,11 @@ import androidx.room.PrimaryKey
 import java.util.UUID
 
 @Entity
-data class Exercise(
-    @PrimaryKey var eId: String = UUID.randomUUID().toString(),
+data class ExerciseEntity(
+    @PrimaryKey
+    var eId: String = UUID.randomUUID().toString(),
     var name: String,
-    var imageRes: Int,
+    var imageUrl: String,
     var category: String,
+    val updatedAt: Long = System.currentTimeMillis()
 )

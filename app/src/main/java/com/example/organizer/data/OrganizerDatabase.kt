@@ -5,12 +5,12 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.organizer.data.dao.ExerciseDao
-import com.example.organizer.data.entity.Exercise
+import com.example.organizer.data.entity.ExerciseEntity
 
 @Database(
     version = 1,
     entities = [
-        Exercise::class
+        ExerciseEntity::class
     ],
     exportSchema = false
 )

@@ -1,19 +1,19 @@
 package com.example.organizer.data.repo
 
 import com.example.organizer.data.dao.ExerciseDao
-import com.example.organizer.data.entity.Exercise
+import com.example.organizer.data.entity.ExerciseEntity
 import kotlinx.coroutines.flow.Flow
 
 class ExerciseRepository(private val dao: ExerciseDao) {
-    suspend fun insert(exercise: Exercise) {
+    suspend fun insert(exercise: ExerciseEntity) {
         dao.insert(exercise)
     }
 
-    fun getAll(): Flow<List<Exercise>> {
+    fun getAll(): Flow<List<ExerciseEntity>> {
         return dao.getAll()
     }
 
-    suspend fun delete(exercise: Exercise){
+    suspend fun delete(exercise: ExerciseEntity){
         dao.delete(exercise)
     }
 }

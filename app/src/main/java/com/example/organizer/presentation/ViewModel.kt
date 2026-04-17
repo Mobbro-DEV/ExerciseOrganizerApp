@@ -3,7 +3,7 @@ package com.example.organizer.presentation
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.organizer.data.entity.Exercise
+import com.example.organizer.data.entity.ExerciseEntity
 import com.example.organizer.data.OrganizerDatabase
 import com.example.organizer.data.repo.ExerciseRepository
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class ViewModel(application: Application) : AndroidViewModel(application) {
     private val repo: ExerciseRepository
-    val readAll: Flow<List<Exercise>>
+    val readAll: Flow<List<ExerciseEntity>>
 
     init {
         val db = OrganizerDatabase.get(application).dao
@@ -19,13 +19,19 @@ class ViewModel(application: Application) : AndroidViewModel(application) {
         readAll = repo.getAll()
     }
 
-    fun addNew(exercise: Exercise) {
+    fun addNew(name: String, imageUrl: String, category: String) {
         viewModelScope.launch() {
-            repo.insert(exercise)
+            repo.insert(
+                ExerciseEntity(
+                    name = name,
+                    imageUrl = imageUrl,
+                    category = category
+                )
+            )
         }
     }
 
-    fun delete(exercise: Exercise) {
+    fun delete(exercise: ExerciseEntity) {
         viewModelScope.launch {
             repo.delete(exercise)
         }
