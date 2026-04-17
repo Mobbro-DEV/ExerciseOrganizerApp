@@ -3,31 +3,31 @@ package com.example.organizer.presentation
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.organizer.data.Person
-import com.example.organizer.data.PersonDatabase
-import com.example.organizer.data.PersonRepository
+import com.example.organizer.data.entity.Exercise
+import com.example.organizer.data.OrganizerDatabase
+import com.example.organizer.data.repo.ExerciseRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class ViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: PersonRepository
-    val readAll: Flow<List<Person>>
+    private val repo: ExerciseRepository
+    val readAll: Flow<List<Exercise>>
 
     init {
-        val db = PersonDatabase.get(application).dao
-        repository = PersonRepository(db)
-        readAll = repository.getAll()
+        val db = OrganizerDatabase.get(application).dao
+        repo = ExerciseRepository(db)
+        readAll = repo.getAll()
     }
 
-    fun addNew(person: Person) {
+    fun addNew(exercise: Exercise) {
         viewModelScope.launch() {
-            repository.insert(person)
+            repo.insert(exercise)
         }
     }
 
-    fun delete(person: Person) {
+    fun delete(exercise: Exercise) {
         viewModelScope.launch {
-            repository.delete(person)
+            repo.delete(exercise)
         }
     }
 }

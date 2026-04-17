@@ -4,26 +4,28 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.organizer.data.dao.ExerciseDao
+import com.example.organizer.data.entity.Exercise
 
 @Database(
     version = 1,
     entities = [
-        Person::class
+        Exercise::class
     ],
     exportSchema = false
 )
-abstract class PersonDatabase : RoomDatabase() {
-    abstract val dao: PersonDao
+abstract class OrganizerDatabase : RoomDatabase() {
+    abstract val dao: ExerciseDao
 
     companion object {
-        @Volatile private var INSTANCE: PersonDatabase? = null
+        @Volatile private var INSTANCE: OrganizerDatabase? = null
 
-        fun get(context: Context): PersonDatabase {
+        fun get(context: Context): OrganizerDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    PersonDatabase::class.java,
-                    "person_db"
+                    OrganizerDatabase::class.java,
+                    "organizer_db"
                 )
                     .build()
 
