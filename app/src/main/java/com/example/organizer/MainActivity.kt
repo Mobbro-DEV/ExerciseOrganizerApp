@@ -6,11 +6,14 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -29,30 +32,40 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ExerciseCard(viewModel: ViewModel) {
-    val exercises by viewModel.readAll.collectAsState(initial = emptyList())
 
-    Column(modifier = Modifier.padding(32.dp)) {
-        Button(onClick = {
-            viewModel.addNew(
-                name = "Push Ups",
-                imageUrl = "https://images.squarespace-cdn.com/content/v1/57efdb4cd482e918dc2a900f/1f2f8b49-4ddc-4be3-bbea-c5d5046696b9/pushup.jpg?format=1000w",
-                category = "Chest"
-            )
-        }) {
-            Text("Add Exercise")
-        }
-        exercises.forEach {
-            Column {
-                Text("Exercise name: ${it.name}, Category: ${it.category}")
+    LaunchedEffect(Unit) {
+        viewModel.fetchApiData()
+    }
 
-                AsyncImage(
-                    model = it.imageUrl,
-                    contentDescription = it.name
+    val apiData = viewModel.apiData
+
+    LazyColumn(
+        modifier = Modifier.padding(16.dp)
+    ) {
+        items(apiData) { item ->
+
+            Column(
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+            ) {
+
+                Text(
+                    text = item.name,
+                    style = MaterialTheme.typography.titleMedium
                 )
 
-                Button(onClick = { viewModel.delete(it) }) {
-                    Text(text = "delete")
-                }
+                Text(
+                    text = "Category: ${item.category}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                AsyncImage(
+                    model = item.imageUrl,
+                    contentDescription = item.name,
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .size(200.dp)
+                )
             }
         }
     }

@@ -56,10 +56,8 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-    //Room
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
-
     implementation(libs.coil.compose)
+    implementation(libs.okhttp)
 }
