@@ -1,0 +1,1 @@
+ExerciseOrganizerApp is an Android application built with Android Studio that integrates with the [ExerciseOrganizerAPI](https://github.com/radomirklimov/ExerciseApi). It enables users to manage predefined exercises and create custom ones to organize and structure personal workouts.
