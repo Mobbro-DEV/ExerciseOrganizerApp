@@ -27,14 +27,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Api()
+            ApiStatus()
+            ApiExerciseById()
 //            ExerciseCard(viewModel)
         }
     }
 }
 
 @Composable
-fun Api() {
+fun ApiStatus() {
     var statusCode by remember { mutableStateOf<String?>("") }
 
     LaunchedEffect(Unit) {
@@ -52,6 +53,26 @@ fun Api() {
             "" -> "Loading..."
             else -> "Status code: $statusCode"
         }
+    )
+}
+
+@Composable
+fun ApiExerciseById() {
+
+    var name by remember { mutableStateOf("Loading...") }
+
+    LaunchedEffect(Unit) {
+        try {
+            val api = ApiRequest()
+            name = api.getExerciseName()
+        } catch (e: Exception) {
+            name = "Error: ${e.message}"
+        }
+    }
+
+    Text(
+        text = "Exercise name: $name",
+        modifier = Modifier.padding(32.dp)
     )
 }
 
