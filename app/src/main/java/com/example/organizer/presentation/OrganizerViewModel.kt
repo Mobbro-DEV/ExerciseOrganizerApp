@@ -1,25 +1,28 @@
 package com.example.organizer.presentation
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.organizer.network.Api
-import com.example.organizer.network.models.Category
+import com.example.organizer.local.entity.CategoryEntity
+import com.example.organizer.local.repo.CategoryRepository
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class OrganizerViewModel: ViewModel() {
-    var categoriesUiState: List<Category> by mutableStateOf(listOf())
-        private set
+class OrganizerViewModel(
+    repository: CategoryRepository
+): ViewModel() {
+    val categoriesUiState: StateFlow<List<CategoryEntity>> =
+        repository.getAll()
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                emptyList()
+            )
 
     init {
-        getCategories()
-    }
-
-    fun getCategories() {
         viewModelScope.launch {
-            categoriesUiState = Api.retrofitService.getCategories()
+            repository.syncCategories()
         }
     }
 }

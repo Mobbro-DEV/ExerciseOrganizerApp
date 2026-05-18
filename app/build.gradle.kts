@@ -67,4 +67,5 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.serialization.json)
     implementation(libs.coil)
+    implementation(libs.work.runtime)
 }
