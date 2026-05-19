@@ -6,8 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -21,7 +23,7 @@ import kotlin.collections.forEach
 
 class MainActivity : ComponentActivity() {
 
-    private val database by lazy { AppDatabase.Companion.get(this) }
+    private val database by lazy { AppDatabase.get(this) }
 
     private val repository by lazy {
         CategoryRepository(
@@ -45,12 +47,24 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun GetAllCategories(viewModel: OrganizerViewModel) {
+// runs once when the composable enters the screen
+    LaunchedEffect(Unit) {
+        viewModel.syncDb()
+    }
+
     val categories by viewModel.categoriesUiState.collectAsState()
 
     Column(modifier = Modifier.padding(32.dp)) {
         Text("Size: ${categories.size}")
         categories.forEach {
             Text(it.name)
+        }
+
+        Button(
+            onClick = { viewModel.syncDb() },
+            modifier = Modifier.padding(16.dp)) {
+
+            Text("Refresh")
         }
     }
 }

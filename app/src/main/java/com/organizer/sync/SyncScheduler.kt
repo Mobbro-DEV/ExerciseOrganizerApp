@@ -11,7 +11,7 @@ class SyncScheduler(private val context: Context) {
 
     fun scheduleCategorySync() {
         val request = PeriodicWorkRequestBuilder<CategorySyncWorker>(
-            2, TimeUnit.MINUTES
+            15, TimeUnit.MINUTES
         ).build()
 
         WorkManager.getInstance(context)

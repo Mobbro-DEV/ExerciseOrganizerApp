@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class OrganizerViewModel(
-    repository: CategoryRepository
+    private var repository: CategoryRepository
 ): ViewModel() {
     val categoriesUiState: StateFlow<List<CategoryEntity>> =
         repository.getAll()
@@ -20,7 +20,7 @@ class OrganizerViewModel(
                 emptyList()
             )
 
-    init {
+    fun syncDb() {
         viewModelScope.launch {
             repository.syncCategories()
         }
