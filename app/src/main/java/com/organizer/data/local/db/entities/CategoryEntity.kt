@@ -1,4 +1,4 @@
-package com.example.organizer.local.entity
+package com.organizer.data.local.db.entities
 
 import androidx.room.Entity
 import androidx.room.ForeignKey

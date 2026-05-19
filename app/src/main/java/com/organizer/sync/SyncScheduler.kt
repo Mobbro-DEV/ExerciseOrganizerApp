@@ -1,10 +1,10 @@
-package com.example.organizer.schedule
+package com.organizer.sync
 
 import android.content.Context
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.example.organizer.network.worker.CategorySyncWorker
+import com.organizer.sync.worker.CategorySyncWorker
 import java.util.concurrent.TimeUnit
 
 class SyncScheduler(private val context: Context) {

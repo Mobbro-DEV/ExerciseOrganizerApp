@@ -1,9 +1,9 @@
-package com.example.organizer.presentation
+package com.organizer.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.organizer.local.entity.CategoryEntity
-import com.example.organizer.local.repo.CategoryRepository
+import com.organizer.data.local.db.entities.CategoryEntity
+import com.organizer.data.repo.CategoryRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn

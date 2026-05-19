@@ -1,9 +1,9 @@
-package com.example.organizer.local.repo
+package com.organizer.data.repo
 
-import com.example.organizer.local.dao.CategoryDao
-import com.example.organizer.local.entity.CategoryEntity
-import com.example.organizer.network.ApiService
-import com.example.organizer.network.models.asEntity
+import com.organizer.data.local.dao.CategoryDao
+import com.organizer.data.local.db.entities.CategoryEntity
+import com.organizer.data.mapper.asEntity
+import com.organizer.data.remote.ApiService
 import kotlinx.coroutines.flow.Flow
 
 class CategoryRepository(

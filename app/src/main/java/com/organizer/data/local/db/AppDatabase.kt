@@ -1,11 +1,11 @@
-package com.example.organizer.local
+package com.organizer.data.local.db
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.organizer.local.dao.CategoryDao
-import com.example.organizer.local.entity.CategoryEntity
+import com.organizer.data.local.dao.CategoryDao
+import com.organizer.data.local.db.entities.CategoryEntity
 
 @Database(
     version = 1,
@@ -14,18 +14,18 @@ import com.example.organizer.local.entity.CategoryEntity
     ],
     exportSchema = false
 )
-abstract class OrganizerDatabase : RoomDatabase() {
+abstract class AppDatabase : RoomDatabase() {
     abstract val dao: CategoryDao
 
     companion object {
-        @Volatile private var INSTANCE: OrganizerDatabase? = null
+        @Volatile private var INSTANCE: AppDatabase? = null
 
-        fun get(context: Context): OrganizerDatabase {
+        fun get(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    OrganizerDatabase::class.java,
-                    "organizer_db"
+                    AppDatabase::class.java,
+                    "app_db"
                 )
                     .build()
 

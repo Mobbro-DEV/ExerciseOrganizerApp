@@ -1,6 +1,6 @@
-package com.example.organizer.network
+package com.organizer.data.remote
 
-import com.example.organizer.network.models.Category
+import com.organizer.data.remote.model.Category
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType

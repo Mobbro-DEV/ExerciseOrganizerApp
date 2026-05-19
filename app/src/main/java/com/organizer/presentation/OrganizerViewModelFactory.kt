@@ -1,8 +1,8 @@
-package com.example.organizer.presentation
+package com.organizer.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.organizer.local.repo.CategoryRepository
+import com.organizer.data.repo.CategoryRepository
 
 class OrganizerViewModelFactory(
     private val repository: CategoryRepository

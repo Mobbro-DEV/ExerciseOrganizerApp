@@ -1,4 +1,4 @@
-package com.example.organizer
+package com.organizer
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -12,15 +12,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.organizer.local.OrganizerDatabase
-import com.example.organizer.local.repo.CategoryRepository
-import com.example.organizer.network.Api
-import com.example.organizer.presentation.OrganizerViewModel
-import com.example.organizer.presentation.OrganizerViewModelFactory
+import com.organizer.data.local.db.AppDatabase
+import com.organizer.data.repo.CategoryRepository
+import com.organizer.data.remote.Api
+import com.organizer.presentation.OrganizerViewModel
+import com.organizer.presentation.OrganizerViewModelFactory
+import kotlin.collections.forEach
 
 class MainActivity : ComponentActivity() {
 
-    private val database by lazy { OrganizerDatabase.get(this) }
+    private val database by lazy { AppDatabase.Companion.get(this) }
 
     private val repository by lazy {
         CategoryRepository(

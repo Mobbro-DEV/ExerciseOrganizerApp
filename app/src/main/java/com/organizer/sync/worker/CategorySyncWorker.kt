@@ -1,9 +1,9 @@
-package com.example.organizer.network.worker
+package com.organizer.sync.worker
 
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.example.organizer.local.repo.CategoryRepository
+import com.organizer.data.repo.CategoryRepository
 
 class CategorySyncWorker(
     context: Context,
