@@ -3,10 +3,11 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.devtools.ksp)
     alias(libs.plugins.serialization)
+    alias(libs.plugins.hilt)
 }
 
 android {
-    namespace = "com.example.organizer"
+    namespace = "com.organizer"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -14,7 +15,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.organizer"
+        applicationId = "com.organizer"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -63,4 +64,6 @@ dependencies {
     implementation(libs.serialization.json)
     implementation(libs.coil)
     implementation(libs.work.runtime)
+    implementation(libs.hilt)
+    ksp(libs.hilt.compiler)
 }

@@ -2,9 +2,10 @@ package com.organizer.data.local.repo
 
 import com.organizer.data.local.dao.CategoryDao
 import com.organizer.data.local.db.entities.CategoryEntity
+import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
-class CategoryLocalDataSource(
+class CategoryLocalDataSource @Inject constructor(
     private val dao: CategoryDao
 ) {
     suspend fun insert(categories: List<CategoryEntity>) {

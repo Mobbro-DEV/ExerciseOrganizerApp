@@ -4,7 +4,7 @@ coreKtx = "1.18.0"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.13.0"
 kotlin = "2.3.21"
-composeBom = "2026.05.00"
+composeBom = "2026.05.01"
 room_version = "2.8.4"
 ksp = "2.3.4"
 retrofit = "3.0.0"
@@ -15,6 +15,7 @@ serialization-json = "1.11.0"
 coil = "2.7.0"
 serialization = "2.3.21"
 work-runtime = "2.11.2"
+hilt = "2.59.2"
 
 [libraries]
 # Core Android
@@ -49,6 +50,9 @@ serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-jso
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 # WorkManager - runs background tasks that survive app restarts (e.g. syncing Room DB with remote API)
 work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "work-runtime" }
+# Dependency injection
+hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 
 [plugins]
 # KSP (Kotlin Symbol Processing)
@@ -59,3 +63,5 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 # Kotlin serialization
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serialization" }
+# Dependency injection
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }

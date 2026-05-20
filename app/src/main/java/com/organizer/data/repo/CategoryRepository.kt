@@ -4,8 +4,9 @@ import com.organizer.data.local.db.entities.CategoryEntity
 import com.organizer.data.local.repo.CategoryLocalDataSource
 import com.organizer.data.remote.repo.CategoryRemoteDataSource
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class CategoryRepository(
+class CategoryRepository @Inject constructor(
     private val localDataSource: CategoryLocalDataSource,
     private val remoteDataSource: CategoryRemoteDataSource,
 ) {
