@@ -15,8 +15,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.organizer.data.local.db.AppDatabase
+import com.organizer.data.local.repo.CategoryLocalDataSource
 import com.organizer.data.repo.CategoryRepository
 import com.organizer.data.remote.Api
+import com.organizer.data.remote.repo.CategoryRemoteDataSource
 import com.organizer.presentation.OrganizerViewModel
 import com.organizer.presentation.OrganizerViewModelFactory
 import kotlin.collections.forEach
@@ -24,11 +26,16 @@ import kotlin.collections.forEach
 class MainActivity : ComponentActivity() {
 
     private val database by lazy { AppDatabase.get(this) }
-
+    private val localDataSource by lazy {
+        CategoryLocalDataSource(database.dao)
+    }
+    private val remoteDataSource by lazy {
+        CategoryRemoteDataSource(Api.retrofitService)
+    }
     private val repository by lazy {
         CategoryRepository(
-            database.dao,
-            Api.retrofitService
+            localDataSource,
+            remoteDataSource,
         )
     }
 

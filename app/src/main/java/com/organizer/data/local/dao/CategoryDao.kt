@@ -16,6 +16,9 @@ interface CategoryDao {
     @Query("SELECT * FROM category")
     fun getAll(): Flow<List<CategoryEntity>>
 
+    @Query("SELECT * FROM category")
+    suspend fun getAllOnce(): List<CategoryEntity>
+
     @Query("SELECT * FROM category WHERE categoryId = :id")
     suspend fun getById(id: Long): CategoryEntity?
 

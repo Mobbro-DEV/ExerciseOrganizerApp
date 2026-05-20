@@ -1,34 +1,32 @@
 package com.organizer.data.repo
 
-import com.organizer.data.local.dao.CategoryDao
 import com.organizer.data.local.db.entities.CategoryEntity
-import com.organizer.data.mapper.asEntity
-import com.organizer.data.remote.ApiService
+import com.organizer.data.local.repo.CategoryLocalDataSource
+import com.organizer.data.remote.repo.CategoryRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 
 class CategoryRepository(
-    private val dao: CategoryDao,
-    private val api: ApiService,
+    private val localDataSource: CategoryLocalDataSource,
+    private val remoteDataSource: CategoryRemoteDataSource,
 ) {
-    private suspend fun insert(categories: List<CategoryEntity>) {
-        dao.insert(categories)
+    fun observeCategories(): Flow<List<CategoryEntity>> {
+        return localDataSource.getAll()
     }
 
-    fun getAll(): Flow<List<CategoryEntity>> {
-        return dao.getAll()
+    suspend fun refreshCategories() {
+        val remoteCategories = remoteDataSource.getAll()
+        val localCategories = localDataSource.getAllOnce()
+
+        for (category in localCategories) {
+            if (!remoteCategories.contains(category)) {
+                localDataSource.delete(category)
+            }
+        }
+
+        localDataSource.insert(remoteCategories)
     }
 
-    suspend fun getById(id: Long): CategoryEntity? {
-        return dao.getById(id)
-    }
-
-    private suspend fun delete(category: CategoryEntity) {
-        dao.delete(category)
-    }
-
-    suspend fun syncCategories() {
-        val remote = api.getCategories()
-        val entities = remote.map { it.asEntity() }
-        dao.insert(entities)
+    suspend fun getCategory(id: Long): CategoryEntity? {
+        return localDataSource.getById(id)
     }
 }

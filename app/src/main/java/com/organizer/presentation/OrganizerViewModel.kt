@@ -13,7 +13,7 @@ class OrganizerViewModel(
     private var repository: CategoryRepository
 ): ViewModel() {
     val categoriesUiState: StateFlow<List<CategoryEntity>> =
-        repository.getAll()
+        repository.observeCategories()
             .stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(5000),
@@ -22,7 +22,7 @@ class OrganizerViewModel(
 
     fun syncDb() {
         viewModelScope.launch {
-            repository.syncCategories()
+            repository.refreshCategories()
         }
     }
 }
