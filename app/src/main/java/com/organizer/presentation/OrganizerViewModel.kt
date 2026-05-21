@@ -1,5 +1,8 @@
 package com.organizer.presentation
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.organizer.data.local.db.entities.CategoryEntity
@@ -14,7 +17,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class OrganizerViewModel @Inject constructor(
     private var repository: CategoryRepository
-): ViewModel() {
+) : ViewModel() {
     val categoriesUiState: StateFlow<List<CategoryEntity>> =
         repository.observeCategories()
             .stateIn(
@@ -23,9 +26,22 @@ class OrganizerViewModel @Inject constructor(
                 emptyList()
             )
 
+    init {
+        viewModelScope.launch {
+            syncDb()
+        }
+    }
+
+    var errorMessage by mutableStateOf<String?>(null)
+        private set
+
     fun syncDb() {
         viewModelScope.launch {
-            repository.refreshCategories()
+            try {
+                repository.refreshCategories()
+            } catch (e: Exception) {
+                errorMessage = "Could not refresh: ${e.message}"
+            }
         }
     }
 }

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -34,14 +33,13 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun GetAllCategories(viewModel: OrganizerViewModel) {
-// runs once when the composable enters the screen
-    LaunchedEffect(Unit) {
-        viewModel.syncDb()
-    }
-
     val categories by viewModel.categoriesUiState.collectAsState()
 
     Column(modifier = Modifier.padding(32.dp)) {
+        viewModel.errorMessage?.let {
+            Text(it)
+        }
+
         Text("Size: ${categories.size}")
         categories.forEach {
             Text(it.name)
