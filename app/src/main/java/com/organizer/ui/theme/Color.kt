@@ -1,4 +1,4 @@
-package com.example.organizer.ui.theme
+package com.organizer.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
