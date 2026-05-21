@@ -6,17 +6,17 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.organizer.sync.worker.CategorySyncWorker
+import com.organizer.sync.worker.DataSyncWorker
 import java.util.concurrent.TimeUnit
 
 class SyncScheduler(private val context: Context) {
 
-    fun scheduleCategorySync() {
+    fun scheduleDataSync() {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
-        val request = PeriodicWorkRequestBuilder<CategorySyncWorker>(
+        val request = PeriodicWorkRequestBuilder<DataSyncWorker>(
             15, TimeUnit.MINUTES
         )
             .setConstraints(constraints)
@@ -24,7 +24,7 @@ class SyncScheduler(private val context: Context) {
 
         WorkManager.getInstance(context)
             .enqueueUniquePeriodicWork(
-                "category_sync",
+                "data_sync",
                 ExistingPeriodicWorkPolicy.KEEP,
                 request
             )

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.organizer.data.local.dao.CategoryDao
+import com.organizer.data.local.dao.ExerciseDao
 import com.organizer.data.local.db.AppDatabase
 import com.organizer.data.remote.ApiService
 import dagger.Module
@@ -60,6 +61,13 @@ object AppModule {
     fun provideCategoryDao(
         database: AppDatabase
     ): CategoryDao {
-        return database.dao
+        return database.categoryDao
+    }
+
+    @Provides
+    fun provideExerciseDao(
+        database: AppDatabase
+    ): ExerciseDao {
+        return database.exerciseDao
     }
 }

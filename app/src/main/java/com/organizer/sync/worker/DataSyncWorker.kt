@@ -5,7 +5,8 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.organizer.presentation.OrganizerViewModel
 
-class CategorySyncWorker(
+// TODO Worker does not work properly
+class DataSyncWorker(
     context: Context,
     params: WorkerParameters,
     private val viewModel: OrganizerViewModel
