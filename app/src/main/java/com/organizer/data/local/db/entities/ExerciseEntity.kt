@@ -19,7 +19,6 @@ import androidx.room.PrimaryKey
         Index("name"),
         Index("categoryId"),
         Index("isCustom"),
-        Index("createdAt"),
     ]
 )
 data class ExerciseEntity(
@@ -29,5 +28,4 @@ data class ExerciseEntity(
     val imageUrl: String,
     val categoryId: Long?,
     val isCustom: Boolean,
-    val createdAt: Long?
 )

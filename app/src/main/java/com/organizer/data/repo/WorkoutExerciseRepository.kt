@@ -16,7 +16,7 @@ class WorkoutExerciseRepository @Inject constructor(
         return dao.getAll()
     }
 
-    suspend fun deleteWorkout(workoutId: Long, exerciseId: Long) {
+    suspend fun deleteExerciseFromWorkout(workoutId: Long, exerciseId: Long) {
         dao.delete(WorkoutExerciseEntity(workoutId, exerciseId))
     }
 }
