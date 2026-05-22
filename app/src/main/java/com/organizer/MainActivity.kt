@@ -34,6 +34,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GetAllCategories(viewModel: OrganizerViewModel) {
     val categories by viewModel.categoriesUiState.collectAsState()
+    val exercises by viewModel.exercisesUiState.collectAsState()
 
     Column(modifier = Modifier.padding(32.dp)) {
         viewModel.errorMessage?.let {
@@ -42,6 +43,11 @@ fun GetAllCategories(viewModel: OrganizerViewModel) {
 
         Text("Size: ${categories.size}")
         categories.forEach {
+            Text(it.name)
+        }
+
+        Text("Size: ${exercises.size}")
+        exercises.forEach {
             Text(it.name)
         }
 
