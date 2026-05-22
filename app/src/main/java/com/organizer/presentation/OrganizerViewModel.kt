@@ -7,8 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.organizer.data.local.db.entities.CategoryEntity
 import com.organizer.data.local.db.entities.ExerciseEntity
+import com.organizer.data.local.db.entities.WorkoutEntity
+import com.organizer.data.local.db.entities.WorkoutExerciseEntity
 import com.organizer.data.repo.CategoryRepository
 import com.organizer.data.repo.ExerciseRepository
+import com.organizer.data.repo.WorkoutExerciseRepository
+import com.organizer.data.repo.WorkoutRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,11 +22,13 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class OrganizerViewModel @Inject constructor(
-    private var categoryRepository: CategoryRepository,
-    private var exerciseRepository: ExerciseRepository
+    private val categoryRepo: CategoryRepository,
+    private val exerciseRepo: ExerciseRepository,
+    private val workoutRepo: WorkoutRepository,
+    private val workoutExerciseRepo: WorkoutExerciseRepository,
 ) : ViewModel() {
     val categoriesUiState: StateFlow<List<CategoryEntity>> =
-        categoryRepository.observeCategories()
+        categoryRepo.observeCategories()
             .stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(5000),
@@ -30,12 +36,31 @@ class OrganizerViewModel @Inject constructor(
             )
 
     val exercisesUiState: StateFlow<List<ExerciseEntity>> =
-        exerciseRepository.observeExercises()
+        exerciseRepo.observeExercises()
             .stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(5000),
                 emptyList()
             )
+
+    val workoutsUiState: StateFlow<List<WorkoutEntity>> =
+        workoutRepo.observeWorkouts()
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                emptyList()
+            )
+
+    val workoutExercisesUiState: StateFlow<List<WorkoutExerciseEntity>> =
+        workoutExerciseRepo.observeWorkoutExercises()
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                emptyList()
+            )
+
+    var errorMessage by mutableStateOf<String?>(null)
+        private set
 
     init {
         viewModelScope.launch {
@@ -43,17 +68,38 @@ class OrganizerViewModel @Inject constructor(
         }
     }
 
-    var errorMessage by mutableStateOf<String?>(null)
-        private set
-
     fun syncDb() {
         viewModelScope.launch {
             try {
-                categoryRepository.refreshCategories()
-                exerciseRepository.refreshExercises()
+                categoryRepo.refreshCategories()
+                exerciseRepo.refreshExercises()
             } catch (e: Exception) {
                 errorMessage = "Could not refresh: ${e.message}"
             }
+        }
+    }
+
+    fun createWorkout(name: String) {
+        viewModelScope.launch {
+            workoutRepo.createWorkout(name)
+        }
+    }
+
+    fun deleteWorkout(id: Long) {
+        viewModelScope.launch {
+            workoutRepo.deleteWorkout(id)
+        }
+    }
+
+    fun addExerciseToWorkout(workoutId: Long, exerciseId: Long) {
+        viewModelScope.launch {
+            workoutExerciseRepo.addExerciseToWorkout(workoutId, exerciseId)
+        }
+    }
+
+    fun deleteExerciseFromWorkout(workoutId: Long, exerciseId: Long) {
+        viewModelScope.launch {
+            workoutExerciseRepo.deleteExerciseFromWorkout(workoutId, exerciseId)
         }
     }
 }

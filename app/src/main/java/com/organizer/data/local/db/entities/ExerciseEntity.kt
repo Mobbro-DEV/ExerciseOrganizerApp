@@ -2,6 +2,7 @@ package com.organizer.data.local.db.entities
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -13,6 +14,11 @@ import androidx.room.PrimaryKey
             childColumns = ["categoryId"],
             onDelete = ForeignKey.SET_NULL
         )
+    ],
+    indices = [
+        Index("name"),
+        Index("categoryId"),
+        Index("isCustom"),
     ]
 )
 data class ExerciseEntity(
@@ -21,4 +27,5 @@ data class ExerciseEntity(
     val name: String,
     val imageUrl: String,
     val categoryId: Long?,
+    val isCustom: Boolean,
 )
