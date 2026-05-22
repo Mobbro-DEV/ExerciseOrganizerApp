@@ -2,6 +2,7 @@ package com.organizer.data.local.db.entities
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -13,6 +14,10 @@ import androidx.room.PrimaryKey
             childColumns = ["parentCategoryId"],
             onDelete = ForeignKey.SET_NULL
         )
+    ],
+    indices = [
+        Index("name"),
+        Index("parentCategoryId"),
     ]
 )
 data class CategoryEntity(

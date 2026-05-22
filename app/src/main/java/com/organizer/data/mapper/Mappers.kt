@@ -15,5 +15,7 @@ fun Exercise.asEntity() = ExerciseEntity(
     exerciseId = exerciseId,
     name = name,
     imageUrl = imageUrl,
-    categoryId = category?.categoryId
+    categoryId = category?.categoryId,
+    isCustom = false,
+    createdAt = null
 )
