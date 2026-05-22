@@ -27,6 +27,15 @@ class ExerciseRepository @Inject constructor(
             localDataSource.insert(remoteExercises)
         }
 
+    suspend fun addCustomExercise(name: String, imageUrl: String,) {
+        localDataSource.insert(listOf(ExerciseEntity(
+            name = name,
+            imageUrl = imageUrl,
+            categoryId = null,
+            isCustom = true
+        )))
+    }
+
         suspend fun getExercise(id: Long): ExerciseEntity? {
             return localDataSource.getById(id)
         }

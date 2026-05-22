@@ -5,8 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -40,7 +43,11 @@ fun GetAllCategories(viewModel: OrganizerViewModel) {
     val workouts by viewModel.workoutsUiState.collectAsState()
     val workoutExercises by viewModel.workoutExercisesUiState.collectAsState()
 
-    Column(modifier = Modifier.padding(32.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(32.dp)) {
         viewModel.errorMessage?.let {
             Text(it)
         }
@@ -154,6 +161,24 @@ fun GetAllCategories(viewModel: OrganizerViewModel) {
             }
         ) {
             Text("Delete workout")
+        }
+
+        // add custom exercise
+        val exerciseName = rememberTextFieldState()
+        TextField(
+            state = exerciseName,
+            placeholder = { Text("Exercise name") }
+        )
+
+        Button(
+            onClick = {
+                viewModel.addCustomExercise(
+                    exerciseName.text.toString(),
+                    "test.png"
+                )
+            }
+        ) {
+            Text("Add custom exercise")
         }
     }
 }

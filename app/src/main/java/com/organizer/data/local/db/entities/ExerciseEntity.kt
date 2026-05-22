@@ -22,8 +22,8 @@ import androidx.room.PrimaryKey
     ]
 )
 data class ExerciseEntity(
-    @PrimaryKey
-    val exerciseId: Long,
+    @PrimaryKey(autoGenerate = true)
+    val exerciseId: Long = 0L,
     val name: String,
     val imageUrl: String,
     val categoryId: Long?,
