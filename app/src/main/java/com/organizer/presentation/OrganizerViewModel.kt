@@ -108,4 +108,10 @@ class OrganizerViewModel @Inject constructor(
             exerciseRepo.addCustomExercise(name, imageUrl)
         }
     }
+
+    fun deleteCustomExercise(id: Long) {
+        viewModelScope.launch {
+            exerciseRepo.deleteCustomExercise(id)
+        }
+    }
 }

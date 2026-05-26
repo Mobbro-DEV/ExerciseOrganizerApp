@@ -180,5 +180,22 @@ fun GetAllCategories(viewModel: OrganizerViewModel) {
         ) {
             Text("Add custom exercise")
         }
+
+        // add custom exercise
+        val exerciseId1 = rememberTextFieldState()
+        TextField(
+            state = exerciseId1,
+            placeholder = { Text("Exercise id") }
+        )
+
+        Button(
+            onClick = {
+                viewModel.deleteCustomExercise(
+                    exerciseId1.text.toString().toLong()
+                )
+            }
+        ) {
+            Text("Delete custom exercise")
+        }
     }
 }
