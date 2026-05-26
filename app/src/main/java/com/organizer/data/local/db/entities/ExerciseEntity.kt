@@ -16,14 +16,14 @@ import androidx.room.PrimaryKey
         )
     ],
     indices = [
-        Index("name"),
+        Index("name", unique = true),
         Index("categoryId"),
         Index("isCustom"),
     ]
 )
 data class ExerciseEntity(
-    @PrimaryKey
-    val exerciseId: Long,
+    @PrimaryKey(autoGenerate = true)
+    val exerciseId: Long = 0L,
     val name: String,
     val imageUrl: String,
     val categoryId: Long?,
