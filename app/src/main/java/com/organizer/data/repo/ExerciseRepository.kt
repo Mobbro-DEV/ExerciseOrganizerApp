@@ -19,7 +19,7 @@ class ExerciseRepository @Inject constructor(
             val localExercises = localDataSource.getAllOnce()
 
             for (exercise in localExercises) {
-                if (!remoteExercises.contains(exercise)) {
+                if (!remoteExercises.contains(exercise) && !exercise.isCustom) {
                     localDataSource.delete(exercise)
                 }
             }

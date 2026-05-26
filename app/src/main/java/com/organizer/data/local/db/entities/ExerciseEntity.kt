@@ -16,7 +16,7 @@ import androidx.room.PrimaryKey
         )
     ],
     indices = [
-        Index("name"),
+        Index("name", unique = true),
         Index("categoryId"),
         Index("isCustom"),
     ]
