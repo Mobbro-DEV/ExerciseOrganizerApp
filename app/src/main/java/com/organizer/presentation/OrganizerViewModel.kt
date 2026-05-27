@@ -35,6 +35,14 @@ class OrganizerViewModel @Inject constructor(
                 emptyList()
             )
 
+    val sportsUiState: StateFlow<List<CategoryEntity>> =
+        categoryRepo.observeSports()
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                emptyList()
+            )
+
     val exercisesUiState: StateFlow<List<ExerciseEntity>> =
         exerciseRepo.observeExercises()
             .stateIn(

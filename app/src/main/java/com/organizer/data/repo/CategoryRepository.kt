@@ -14,6 +14,10 @@ class CategoryRepository @Inject constructor(
         return localDataSource.getAll()
     }
 
+    fun observeSports(): Flow<List<CategoryEntity>> {
+        return localDataSource.getSports()
+    }
+
     suspend fun refreshCategories() {
         val remoteCategories = remoteDataSource.getAll()
         val localCategories = localDataSource.getAllOnce()
