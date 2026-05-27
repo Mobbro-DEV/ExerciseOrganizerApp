@@ -19,7 +19,7 @@ interface CategoryDao {
     @Query("SELECT * FROM category")
     suspend fun getAllOnce(): List<CategoryEntity>
 
-    @Query("SELECT * FROM category WHERE parentCategoryId = null")
+    @Query("SELECT * FROM category WHERE parentCategoryId IS NULL")
     fun getSports(): Flow<List<CategoryEntity>>
 
     @Query("SELECT * FROM category WHERE categoryId = :id")
