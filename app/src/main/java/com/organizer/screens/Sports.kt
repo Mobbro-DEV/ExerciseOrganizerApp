@@ -12,6 +12,8 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,14 +22,20 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.room.util.query
 import coil.compose.AsyncImage
 import com.organizer.data.local.db.entities.CategoryEntity
+import com.organizer.presentation.OrganizerViewModel
+import retrofit2.http.Query
 
 @Composable
 fun SportsScreen(
-    sports: List<CategoryEntity>,
+    viewModel: OrganizerViewModel,
     onSportClick: (CategoryEntity) -> Unit
 ) {
+    val sports by viewModel.sportsUiState.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
+
     Scaffold(
         bottomBar = {
             BottomNavigationBar()
@@ -60,7 +68,12 @@ fun SportsScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            SearchBar()
+            SearchBar(
+                query = searchQuery,
+                onQueryChange = {
+                    viewModel.onSearchQueryChange(it)
+                }
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -160,39 +173,29 @@ fun SportCard(
     }
 }
 
-
 @Composable
-fun SearchBar() {
-    Surface(
+fun SearchBar(
+    query: String,
+    onQueryChange: (String) -> Unit
+) {
+
+    OutlinedTextField(
+        value = query,
+        onValueChange = onQueryChange,
         modifier = Modifier.fillMaxWidth(),
+        placeholder = {
+            Text("Search")
+        },
         shape = RoundedCornerShape(18.dp),
-        color = Color(0xFFF1ECEC)
-    ) {
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 18.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
+        leadingIcon = {
             Icon(
                 imageVector = Icons.Outlined.Search,
-                contentDescription = "Search",
-                tint = Color.Gray
+                contentDescription = null
             )
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Text(
-                text = "Search",
-                color = Color.Gray,
-                fontSize = 18.sp
-            )
-        }
-    }
+        },
+        singleLine = true
+    )
 }
-
 
 @Composable
 fun BottomNavigationBar() {

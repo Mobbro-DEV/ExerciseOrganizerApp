@@ -15,8 +15,11 @@ import com.organizer.data.repo.WorkoutExerciseRepository
 import com.organizer.data.repo.WorkoutRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -35,13 +38,26 @@ class OrganizerViewModel @Inject constructor(
                 emptyList()
             )
 
+    val searchQuery = MutableStateFlow("")
+
     val sportsUiState: StateFlow<List<CategoryEntity>> =
-        categoryRepo.observeSports()
-            .stateIn(
+        combine(
+            categoryRepo.observeSports(),
+            searchQuery
+        ) { sports, query ->
+            if (query.isBlank()) {
+                sports
+            } else {
+                sports.filter {
+                    it.name.contains(query, ignoreCase = true)
+                }
+            }
+        }.stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(5000),
                 emptyList()
             )
+
 
     val exercisesUiState: StateFlow<List<ExerciseEntity>> =
         exerciseRepo.observeExercises()
@@ -85,6 +101,10 @@ class OrganizerViewModel @Inject constructor(
                 errorMessage = "Could not refresh: ${e.message}"
             }
         }
+    }
+
+    fun onSearchQueryChange(query: String) {
+        searchQuery.value = query
     }
 
     fun createWorkout(name: String) {

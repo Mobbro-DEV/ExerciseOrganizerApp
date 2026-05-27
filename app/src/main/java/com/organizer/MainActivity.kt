@@ -5,8 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -30,8 +28,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Main(viewModel: OrganizerViewModel){
-    val sports by viewModel.sportsUiState.collectAsState()
-
     val navController = rememberNavController()
     NavHost(
         navController = navController,
@@ -39,7 +35,7 @@ fun Main(viewModel: OrganizerViewModel){
     ) {
         composable(Routes.Sports.route) {
             SportsScreen(
-                sports = sports,
+                viewModel = viewModel,
                 onSportClick = {
                     navController.navigate(
                         Routes.Subcategory.route
