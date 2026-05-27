@@ -36,16 +36,15 @@ fun Main(viewModel: OrganizerViewModel){
         composable(Routes.Sports.route) {
             SportsScreen(
                 viewModel = viewModel,
-                onSportClick = {
-                    navController.navigate(
-                        Routes.Subcategory.route
-                    )
+                onSportClick = { category ->
+                    viewModel.selectedCategoryId.value = category.categoryId
+                    navController.navigate(Routes.Subcategory.route)
                 }
             )
         }
 
         composable(Routes.Subcategory.route) {
-            Subcategory()
+            Subcategory(viewModel = viewModel)
         }
     }
 }
