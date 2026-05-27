@@ -12,8 +12,6 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,12 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.organizer.data.local.db.entities.CategoryEntity
-import com.organizer.presentation.OrganizerViewModel
 
 @Composable
-fun SportsScreen(viewModel: OrganizerViewModel) {
-    val sports by viewModel.sportsUiState.collectAsState()
-
+fun SportsScreen(
+    sports: List<CategoryEntity>,
+    onSportClick: (CategoryEntity) -> Unit
+) {
     Scaffold(
         bottomBar = {
             BottomNavigationBar()
@@ -93,9 +91,9 @@ fun SportsScreen(viewModel: OrganizerViewModel) {
 
                         SportCard(
                             sport = sport,
-//                            onClick = {
-                            // TODO navigation
-//                            }
+                            onClick = {
+                                onSportClick(sport)
+                            }
                         )
                     }
                 }
@@ -105,12 +103,16 @@ fun SportsScreen(viewModel: OrganizerViewModel) {
 }
 
 @Composable
-fun SportCard(sport: CategoryEntity) {
+fun SportCard(
+    sport: CategoryEntity,
+    onClick: () -> Unit
+) {
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(110.dp),
+        onClick = onClick,
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.White
