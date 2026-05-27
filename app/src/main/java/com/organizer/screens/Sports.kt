@@ -65,30 +65,26 @@ fun SportsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             if (sports.isEmpty()) {
-
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "No sports found",
+                        text = "Loading.. Please wait:)",
                         color = Color.Gray,
                         fontSize = 18.sp
                     )
                 }
 
             } else {
-
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(20.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
-
                     items(
                         items = sports,
                         key = { it.categoryId }
                     ) { sport ->
-
                         SportCard(
                             sport = sport,
                             onClick = {
@@ -107,7 +103,6 @@ fun SportCard(
     sport: CategoryEntity,
     onClick: () -> Unit
 ) {
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -168,7 +163,6 @@ fun SportCard(
 
 @Composable
 fun SearchBar() {
-
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(18.dp),
@@ -202,7 +196,6 @@ fun SearchBar() {
 
 @Composable
 fun BottomNavigationBar() {
-
     NavigationBar(
         containerColor = Color.White,
         tonalElevation = 8.dp
@@ -214,7 +207,7 @@ fun BottomNavigationBar() {
             icon = {
                 Icon(
                     imageVector = Icons.Outlined.Home,
-                    contentDescription = "Home"
+                    contentDescription = "Categories"
                 )
             }
         )
@@ -225,7 +218,7 @@ fun BottomNavigationBar() {
             icon = {
                 Icon(
                     imageVector = Icons.Outlined.FitnessCenter,
-                    contentDescription = "Workout"
+                    contentDescription = "Workouts"
                 )
             }
         )
@@ -236,7 +229,7 @@ fun BottomNavigationBar() {
             icon = {
                 Icon(
                     imageVector = Icons.Outlined.Add,
-                    contentDescription = "Add"
+                    contentDescription = "Add Card"
                 )
             }
         )

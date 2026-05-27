@@ -30,21 +30,17 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Main(viewModel: OrganizerViewModel){
-    val navController = rememberNavController()
-
     val sports by viewModel.sportsUiState.collectAsState()
 
+    val navController = rememberNavController()
     NavHost(
         navController = navController,
         startDestination = Routes.Sports.route
     ) {
-
         composable(Routes.Sports.route) {
-
             SportsScreen(
                 sports = sports,
-                onSportClick = { sport ->
-
+                onSportClick = {
                     navController.navigate(
                         Routes.Subcategory.route
                     )
