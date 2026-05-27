@@ -66,4 +66,7 @@ dependencies {
     implementation(libs.work.runtime)
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
+    implementation(libs.navigation)
+    implementation(libs.font.awesome)
+    implementation(libs.icons.extended)
 }

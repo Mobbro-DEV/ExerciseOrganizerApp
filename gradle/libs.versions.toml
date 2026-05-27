@@ -16,6 +16,9 @@ coil = "2.7.0"
 serialization = "2.3.21"
 work-runtime = "2.11.2"
 hilt = "2.59.2"
+navigation = "2.9.8"
+font-awesome = "1.1.1"
+icons-extended = "1.7.8"
 
 [libraries]
 # Core Android
@@ -29,6 +32,9 @@ androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+# Icons
+font-awesome = { module = "br.com.devsrsouza.compose.icons:font-awesome", version.ref = "font-awesome" }
+icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "icons-extended" }
 # BOM - dependency management tool
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 # Debug
@@ -53,6 +59,8 @@ work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "work-
 # Dependency injection
 hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+# Navigation
+navigation = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
 
 [plugins]
 # KSP (Kotlin Symbol Processing)

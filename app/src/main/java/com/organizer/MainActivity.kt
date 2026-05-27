@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.organizer.presentation.OrganizerViewModel
+import com.organizer.screens.SportsScreen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.collections.forEach
 
@@ -31,10 +32,23 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            GetAllCategories(viewModel)
+            SportsScreen(viewModel)
         }
     }
 }
+
+//@Composable
+//fun ScreenMain(viewModel: OrganizerViewModel) {
+//    val navController = rememberNavController()
+//    NavHost(
+//        navController = navController,
+//        startDestination = Routes.Sports.route
+//    ) {
+//        composable(Routes.Sports.route) {
+//            Routes.Sports(viewModel)
+//        }
+//    }
+//}
 
 @Composable
 fun GetAllCategories(viewModel: OrganizerViewModel) {
