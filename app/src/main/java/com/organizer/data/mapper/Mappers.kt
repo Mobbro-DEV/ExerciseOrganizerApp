@@ -8,6 +8,7 @@ import com.organizer.entity.Exercise
 fun Category.asEntity() = CategoryEntity(
     categoryId = categoryId,
     name = name,
+    iconUrl = iconUrl,
     parentCategoryId = parentCategory?.categoryId
 )
 

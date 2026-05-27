@@ -4,198 +4,48 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.organizer.presentation.OrganizerViewModel
+import com.organizer.screens.SportsScreen
+import com.organizer.screens.Subcategory
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.collections.forEach
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val viewModel: OrganizerViewModel by viewModels()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            GetAllCategories(viewModel)
+            Main(viewModel)
         }
     }
 }
 
 @Composable
-fun GetAllCategories(viewModel: OrganizerViewModel) {
-    val categories by viewModel.categoriesUiState.collectAsState()
-    val exercises by viewModel.exercisesUiState.collectAsState()
-    val workouts by viewModel.workoutsUiState.collectAsState()
-    val workoutExercises by viewModel.workoutExercisesUiState.collectAsState()
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(32.dp)) {
-        viewModel.errorMessage?.let {
-            Text(it)
+fun Main(viewModel: OrganizerViewModel){
+    val navController = rememberNavController()
+    NavHost(
+        navController = navController,
+        startDestination = Routes.Sports.route
+    ) {
+        composable(Routes.Sports.route) {
+            SportsScreen(
+                viewModel = viewModel,
+                onSportClick = {
+                    navController.navigate(
+                        Routes.Subcategory.route
+                    )
+                }
+            )
         }
 
-        // get all categories
-        Text("Size: ${categories.size}")
-        categories.forEach {
-            Text(it.name)
-        }
-
-        // get all exercises
-        Text("Size: ${exercises.size}")
-        exercises.forEach {
-            Text(it.name)
-        }
-
-        // refresh local data with api
-        Button(
-            onClick = { viewModel.syncDb() },
-            modifier = Modifier.padding(16.dp)
-        ) {
-
-            Text("Refresh")
-        }
-
-        // create workout
-        val workoutName = rememberTextFieldState()
-        TextField(
-            state = workoutName,
-            placeholder = { Text("Workout name") }
-        )
-
-        Button(
-            onClick = { viewModel.createWorkout(workoutName.text.toString()) },
-            modifier = Modifier.padding(16.dp)
-        ) {
-
-            Text("Create workout")
-        }
-
-        // delete workout
-        val workoutIdToDelete = rememberTextFieldState()
-        TextField(
-            state = workoutIdToDelete,
-            placeholder = { Text("Workout id") }
-        )
-
-        Button(
-            onClick = { viewModel.deleteWorkout(workoutIdToDelete.text.toString().toLong()) }
-        ) {
-            Text("Delete workout")
-        }
-
-        // get all workouts
-        Text("Size: ${workouts.size}")
-        workouts.forEach {
-            Text(it.name)
-        }
-
-        // add exercise to workout
-        val workoutId = rememberTextFieldState()
-        TextField(
-            state = workoutId,
-            placeholder = { Text("Workout id") }
-        )
-
-        val exerciseId = rememberTextFieldState()
-        TextField(
-            state = exerciseId,
-            placeholder = { Text("Exercise id") }
-        )
-
-        Button(
-            onClick = {
-                viewModel.addExerciseToWorkout(
-                    workoutId.text.toString().toLong(),
-                    exerciseId.text.toString().toLong()
-                )
-            },
-            modifier = Modifier.padding(16.dp)
-        ) {
-
-            Text("Add to workout")
-        }
-
-        // get all exercises of workout
-        Text("Size: ${workoutExercises.size}")
-        workouts.forEach {
-            Text(it.name)
-        }
-
-        // delete exercise from workout
-        val workoutIdToDelete1 = rememberTextFieldState()
-        TextField(
-            state = workoutIdToDelete1,
-            placeholder = { Text("Workout id") }
-        )
-
-        val exerciseIdToDelete = rememberTextFieldState()
-        TextField(
-            state = exerciseIdToDelete,
-            placeholder = { Text("Exercise id") }
-        )
-
-        Button(
-            onClick = {
-                viewModel.deleteExerciseFromWorkout(
-                    workoutIdToDelete1.text.toString().toLong(),
-                    exerciseIdToDelete.text.toString().toLong()
-                )
-            }
-        ) {
-            Text("Delete workout")
-        }
-
-        // add custom exercise
-        val exerciseName = rememberTextFieldState()
-        TextField(
-            state = exerciseName,
-            placeholder = { Text("Exercise name") }
-        )
-
-        Button(
-            onClick = {
-                viewModel.addCustomExercise(
-                    exerciseName.text.toString(),
-                    "test.png"
-                )
-            }
-        ) {
-            Text("Add custom exercise")
-        }
-
-        // add custom exercise
-        val exerciseId1 = rememberTextFieldState()
-        TextField(
-            state = exerciseId1,
-            placeholder = { Text("Exercise id") }
-        )
-
-        Button(
-            onClick = {
-                viewModel.deleteCustomExercise(
-                    exerciseId1.text.toString().toLong()
-                )
-            }
-        ) {
-            Text("Delete custom exercise")
+        composable(Routes.Subcategory.route) {
+            Subcategory()
         }
     }
 }

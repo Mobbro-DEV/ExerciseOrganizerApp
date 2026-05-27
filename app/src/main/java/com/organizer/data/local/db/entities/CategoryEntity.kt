@@ -24,5 +24,6 @@ data class CategoryEntity(
     @PrimaryKey
     val categoryId: Long,
     val name: String,
+    val iconUrl: String,
     val parentCategoryId: Long?,
 )
