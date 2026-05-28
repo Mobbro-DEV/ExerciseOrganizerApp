@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 data class Category (
     val categoryId: Long,
     val name: String,
-    val iconUrl: String,
+    val iconUrl: String?,
     val parentCategory: Category?,
 )

@@ -53,7 +53,7 @@ fun CategoryCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            if (category.iconUrl.isNotBlank()) {
+            if (!category.iconUrl.isNullOrBlank()) {
                 Box(
                     modifier = Modifier
                         .size(68.dp)
