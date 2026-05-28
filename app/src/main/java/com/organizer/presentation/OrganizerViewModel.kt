@@ -61,14 +61,14 @@ class OrganizerViewModel @Inject constructor(
                 emptyList()
             )
 
-    val selectedCategoryId = MutableStateFlow<Long?>(null)
+    val selectedCategory = MutableStateFlow<CategoryEntity?>(null)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val subcategoriesUiState: StateFlow<List<CategoryEntity>> =
-        selectedCategoryId
-            .flatMapLatest { id ->
-                if (id != null) {
-                    categoryRepo.observeSubcategories(id)
+        selectedCategory
+            .flatMapLatest { category ->
+                if (category != null) {
+                    categoryRepo.observeSubcategories(category.categoryId)
                 } else {
                     flowOf(emptyList())
                 }

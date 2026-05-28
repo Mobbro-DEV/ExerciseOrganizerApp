@@ -10,7 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.organizer.presentation.OrganizerViewModel
 import com.organizer.screens.SportsScreen
-import com.organizer.screens.Subcategory
+import com.organizer.screens.SubcategoriesScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -37,14 +37,23 @@ fun Main(viewModel: OrganizerViewModel){
             SportsScreen(
                 viewModel = viewModel,
                 onSportClick = { category ->
-                    viewModel.selectedCategoryId.value = category.categoryId
+                    viewModel.selectedCategory.value = category
                     navController.navigate(Routes.Subcategory.route)
                 }
             )
         }
 
         composable(Routes.Subcategory.route) {
-            Subcategory(viewModel = viewModel)
+            SubcategoriesScreen(
+                viewModel = viewModel,
+                onSportClick = { category ->
+                    viewModel.selectedCategory.value = category
+                    navController.navigate(Routes.Subcategory.route)
+                },
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }
