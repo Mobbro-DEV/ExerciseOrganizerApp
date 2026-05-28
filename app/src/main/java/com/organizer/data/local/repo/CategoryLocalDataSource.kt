@@ -24,7 +24,11 @@ class CategoryLocalDataSource @Inject constructor(
         return dao.getSports()
     }
 
-    suspend fun getById(id: Long): CategoryEntity? {
+    fun getSubcategories(categoryId: Long): Flow<List<CategoryEntity>> {
+        return dao.getSubcategories(categoryId)
+    }
+
+    fun getById(id: Long): Flow<CategoryEntity?> {
         return dao.getById(id)
     }
 

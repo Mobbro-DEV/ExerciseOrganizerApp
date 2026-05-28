@@ -15,10 +15,13 @@ import com.organizer.data.repo.WorkoutExerciseRepository
 import com.organizer.data.repo.WorkoutRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -58,6 +61,23 @@ class OrganizerViewModel @Inject constructor(
                 emptyList()
             )
 
+    fun getSubcategories(categoryId: Long): StateFlow<List<CategoryEntity>> {
+        return categoryRepo.observeSubcategories(categoryId)
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                emptyList()
+            )
+    }
+
+    fun getCategoryById(id: Long): StateFlow<CategoryEntity?> {
+        return categoryRepo.observeCategoryById(id)
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                null
+            )
+    }
 
     val exercisesUiState: StateFlow<List<ExerciseEntity>> =
         exerciseRepo.observeExercises()
