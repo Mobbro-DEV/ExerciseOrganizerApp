@@ -37,18 +37,26 @@ fun Main(viewModel: OrganizerViewModel){
             SportsScreen(
                 viewModel = viewModel,
                 onSportClick = { category ->
-                    viewModel.selectedCategory.value = category
-                    navController.navigate(Routes.Subcategory.route)
+                    navController.navigate(
+                        Routes.Subcategory.createRoute(category.categoryId)
+                    )
                 }
             )
         }
 
-        composable(Routes.Subcategory.route) {
+        composable(Routes.Subcategory.route) { backStackEntry ->
+            val categoryId =
+                backStackEntry.arguments
+                    ?.getString("categoryId")
+                    ?.toLongOrNull()
+
             SubcategoriesScreen(
                 viewModel = viewModel,
-                onSportClick = { category ->
-                    viewModel.selectedCategory.value = category
-                    navController.navigate(Routes.Subcategory.route)
+                categoryId = categoryId ?: 0L,
+                onCategoryClick = { category ->
+                    navController.navigate(
+                        Routes.Subcategory.createRoute(category.categoryId)
+                    )
                 },
                 onBackClick = {
                     navController.popBackStack()

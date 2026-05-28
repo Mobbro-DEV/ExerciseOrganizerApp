@@ -33,11 +33,12 @@ import com.organizer.presentation.OrganizerViewModel
 @Composable
 fun SubcategoriesScreen(
     viewModel: OrganizerViewModel,
-    onSportClick: (CategoryEntity) -> Unit,
-    onBackClick: () -> Unit = {}
-) {
-    val subcategories by viewModel.subcategoriesUiState.collectAsState()
-    val selectedCategory by viewModel.selectedCategory.collectAsState()
+    categoryId: Long,
+    onCategoryClick: (CategoryEntity) -> Unit,
+    onBackClick: () -> Unit
+){
+    val subcategories by viewModel.getSubcategories(categoryId).collectAsState()
+    val selectedCategory by viewModel.getCategoryById(categoryId).collectAsState()
 
     Scaffold(
         bottomBar = {
@@ -61,7 +62,9 @@ fun SubcategoriesScreen(
             ) {
 
                 IconButton(
-                    onClick = onBackClick
+                    onClick = {
+                        onBackClick()
+                    }
                 ) {
                     Text(
                         text = "←",
@@ -112,7 +115,7 @@ fun SubcategoriesScreen(
                         CategoryCard(
                             category = category,
                             onClick = {
-                                onSportClick(category)
+                                onCategoryClick(category)
                             }
                         )
                     }

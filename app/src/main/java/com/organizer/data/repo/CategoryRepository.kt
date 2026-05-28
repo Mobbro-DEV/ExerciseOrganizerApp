@@ -35,7 +35,7 @@ class CategoryRepository @Inject constructor(
         localDataSource.insert(remoteCategories)
     }
 
-    suspend fun getCategory(id: Long): CategoryEntity? {
+    fun observeCategoryById(id: Long): Flow<CategoryEntity?> {
         return localDataSource.getById(id)
     }
 }

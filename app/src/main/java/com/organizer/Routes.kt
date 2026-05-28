@@ -1,6 +1,10 @@
 package com.organizer
 
 sealed class Routes(val route: String) {
-    data object Sports: Routes("sports")
-    data object Subcategory: Routes("category")
+    object Sports: Routes("sports")
+    object Subcategory: Routes("subcategory/{categoryId}") {
+        fun createRoute(categoryId: Long): String {
+            return "subcategory/$categoryId"
+        }
+    }
 }
