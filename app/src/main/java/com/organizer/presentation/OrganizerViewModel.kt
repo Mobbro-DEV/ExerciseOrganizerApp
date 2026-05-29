@@ -15,14 +15,12 @@ import com.organizer.data.repo.WorkoutExerciseRepository
 import com.organizer.data.repo.WorkoutRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.forEach
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -77,6 +75,19 @@ class OrganizerViewModel @Inject constructor(
                 SharingStarted.WhileSubscribed(5000),
                 null
             )
+    }
+
+    fun getCategoryPath(categoryId: Long): Flow<List<CategoryEntity>> = flow {
+        val path = mutableListOf<CategoryEntity>()
+        var current = categoryRepo.observeCategoryByIdOnce(categoryId)
+
+        while (current != null) {
+            path.add(current)
+            current = current.parentCategoryId?.let {
+                    categoryRepo.observeCategoryByIdOnce(it)
+                }
+        }
+        emit(path.reversed())
     }
 
     val exercisesUiState: StateFlow<List<ExerciseEntity>> =

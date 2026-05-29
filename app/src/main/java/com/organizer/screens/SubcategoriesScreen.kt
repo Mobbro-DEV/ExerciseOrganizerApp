@@ -39,6 +39,7 @@ fun SubcategoriesScreen(
 ){
     val subcategories by viewModel.getSubcategories(categoryId).collectAsState()
     val selectedCategory by viewModel.getCategoryById(categoryId).collectAsState()
+    val categoryPath by viewModel.getCategoryPath(categoryId).collectAsState(initial = emptyList())
 
     Scaffold(
         bottomBar = {
@@ -56,15 +57,12 @@ fun SubcategoriesScreen(
 
             // Header
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
                 IconButton(
-                    onClick = {
-                        onBackClick()
-                    }
+                    onClick = onBackClick
                 ) {
                     Text(
                         text = "←",
@@ -72,14 +70,31 @@ fun SubcategoriesScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
-                Text(
-                    text = selectedCategory?.name ?: "Not Found",
-                    fontSize = 26.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    categoryPath.forEachIndexed { index, category ->
+
+                        Text(
+                            text = category.name,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.Black
+                        )
+
+                        if (index != categoryPath.lastIndex) {
+
+                            Text(
+                                text = " > ",
+                                fontSize = 18.sp,
+                                color = Color.Gray,
+                                modifier = Modifier.padding(horizontal = 4.dp)
+                            )
+                        }
+                    }
+                }
 
                 AsyncImage(
                     model = "http://10.0.2.2:8080/icons/" + selectedCategory?.iconUrl,
