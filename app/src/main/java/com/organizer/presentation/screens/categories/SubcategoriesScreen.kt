@@ -1,4 +1,4 @@
-package com.organizer.screens
+package com.organizer.presentation.screens.categories
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,16 +26,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.organizer.data.local.db.entities.CategoryEntity
 import com.organizer.presentation.OrganizerViewModel
+import com.organizer.presentation.screens.general.BottomNavigationBar
 
 @Composable
 fun SubcategoriesScreen(
-    viewModel: OrganizerViewModel,
     categoryId: Long,
     onCategoryClick: (CategoryEntity) -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    viewModel: OrganizerViewModel = hiltViewModel()
 ){
     val subcategories by viewModel.getSubcategories(categoryId).collectAsState()
     val selectedCategory by viewModel.getCategoryById(categoryId).collectAsState()

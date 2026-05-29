@@ -1,4 +1,4 @@
-package com.organizer.screens
+package com.organizer.presentation.screens.general
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
@@ -9,8 +9,10 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+@Preview
 @Composable
 fun BottomNavigationBar() {
     NavigationBar(

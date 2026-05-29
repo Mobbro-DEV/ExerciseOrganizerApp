@@ -1,4 +1,4 @@
-package com.organizer
+package com.organizer.presentation
 
 sealed class Routes(val route: String) {
     object Sports: Routes("sports")

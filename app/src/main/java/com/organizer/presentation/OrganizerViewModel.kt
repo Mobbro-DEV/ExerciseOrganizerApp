@@ -31,13 +31,9 @@ class OrganizerViewModel @Inject constructor(
     private val workoutRepo: WorkoutRepository,
     private val workoutExerciseRepo: WorkoutExerciseRepository,
 ) : ViewModel() {
-    val categoriesUiState: StateFlow<List<CategoryEntity>> =
-        categoryRepo.observeCategories()
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                emptyList()
-            )
+
+    var errorMessage by mutableStateOf("")
+        private set
 
     val searchQuery = MutableStateFlow("")
 
@@ -54,10 +50,27 @@ class OrganizerViewModel @Inject constructor(
                 }
             }
         }.stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                emptyList()
-            )
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            emptyList()
+        )
+
+    init {
+        viewModelScope.launch {
+            syncDb()
+        }
+    }
+
+    fun syncDb() {
+        viewModelScope.launch {
+            try {
+                categoryRepo.refreshCategories()
+                exerciseRepo.refreshExercises()
+            } catch (e: Exception) {
+                errorMessage = "Could not refresh: ${e.message}"
+            }
+        }
+    }
 
     fun getSubcategories(categoryId: Long): StateFlow<List<CategoryEntity>> {
         return categoryRepo.observeSubcategories(categoryId)
@@ -89,6 +102,14 @@ class OrganizerViewModel @Inject constructor(
         }
         emit(path.reversed())
     }
+
+    val categoriesUiState: StateFlow<List<CategoryEntity>> =
+        categoryRepo.observeCategories()
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                emptyList()
+            )
 
     val exercisesUiState: StateFlow<List<ExerciseEntity>> =
         exerciseRepo.observeExercises()
@@ -122,30 +143,6 @@ class OrganizerViewModel @Inject constructor(
                 SharingStarted.WhileSubscribed(5000),
                 emptyList()
             )
-
-    var errorMessage by mutableStateOf<String?>(null)
-        private set
-
-    init {
-        viewModelScope.launch {
-            syncDb()
-        }
-    }
-
-    fun syncDb() {
-        viewModelScope.launch {
-            try {
-                categoryRepo.refreshCategories()
-                exerciseRepo.refreshExercises()
-            } catch (e: Exception) {
-                errorMessage = "Could not refresh: ${e.message}"
-            }
-        }
-    }
-
-    fun onSearchQueryChange(query: String) {
-        searchQuery.value = query
-    }
 
     fun createWorkout(name: String) {
         viewModelScope.launch {

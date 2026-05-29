@@ -1,11 +1,8 @@
-package com.organizer.screens
+package com.organizer.presentation.screens.categories
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -16,13 +13,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.data.local.db.entities.CategoryEntity
 import com.organizer.presentation.OrganizerViewModel
+import com.organizer.presentation.screens.general.BottomNavigationBar
+import com.organizer.presentation.screens.general.SearchBar
 
 @Composable
 fun SportsScreen(
-    viewModel: OrganizerViewModel,
-    onSportClick: (CategoryEntity) -> Unit
+    onSportClick: (CategoryEntity) -> Unit,
+    viewModel: OrganizerViewModel = hiltViewModel()
 ) {
     val sports by viewModel.sportsUiState.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
@@ -63,7 +63,7 @@ fun SportsScreen(
             SearchBar(
                 query = searchQuery,
                 onQueryChange = {
-                    viewModel.onSearchQueryChange(it)
+                    viewModel.searchQuery.value = it
                 }
             )
 
@@ -101,28 +101,4 @@ fun SportsScreen(
             }
         }
     }
-}
-
-@Composable
-fun SearchBar(
-    query: String,
-    onQueryChange: (String) -> Unit
-) {
-
-    OutlinedTextField(
-        value = query,
-        onValueChange = onQueryChange,
-        modifier = Modifier.fillMaxWidth(),
-        placeholder = {
-            Text("Search")
-        },
-        shape = RoundedCornerShape(18.dp),
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Outlined.Search,
-                contentDescription = null
-            )
-        },
-        singleLine = true
-    )
 }
