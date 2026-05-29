@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.organizer.presentation.Routes
-import com.organizer.presentation.screens.categories.SportsScreen
+import com.organizer.presentation.screens.sports.SportsScreen
 import com.organizer.presentation.screens.categories.SubcategoriesScreen
 import dagger.hilt.android.AndroidEntryPoint
 
