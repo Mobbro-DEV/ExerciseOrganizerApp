@@ -1,4 +1,4 @@
-package com.organizer.screens
+package com.organizer.presentation.screens.categories
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.organizer.data.local.db.entities.CategoryEntity
 
-
 @Composable
 fun CategoryCard(
     category: CategoryEntity,
@@ -45,14 +44,12 @@ fun CategoryCard(
             defaultElevation = 4.dp
         )
     ) {
-
         Row(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             if (!category.iconUrl.isNullOrBlank()) {
                 Box(
                     modifier = Modifier

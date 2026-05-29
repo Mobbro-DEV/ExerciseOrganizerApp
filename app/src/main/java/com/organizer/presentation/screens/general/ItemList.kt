@@ -1,4 +1,4 @@
-package com.organizer.presentation.screens.sports
+package com.organizer.presentation.screens.general
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,42 +12,37 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.organizer.data.local.db.entities.CategoryEntity
-import com.organizer.presentation.screens.categories.CategoryCard
 
 @Composable
-fun SportList(
-    sports: List<CategoryEntity>,
-    error: String?,
-    onSportClick: (CategoryEntity) -> Unit
+fun <T> ItemList(
+    items: List<T>,
+    key: (T) -> Any,
+    message: String,
+    itemContent: @Composable (T) -> Unit
 ) {
-    if (sports.isEmpty()) {
+    if (items.isEmpty()) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = error ?: "Loading..",
+                text = message,
                 color = Color.Gray,
                 fontSize = 18.sp
             )
         }
+    }
 
-    } else {
+    else {
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(20.dp),
             modifier = Modifier.fillMaxSize()
         ) {
             items(
-                items = sports,
-                key = { it.categoryId }
-            ) { sport ->
-                CategoryCard(
-                    category = sport,
-                    onClick = {
-                        onSportClick(sport)
-                    }
-                )
+                items = items,
+                key = key
+            ) { item ->
+                itemContent(item)
             }
         }
     }

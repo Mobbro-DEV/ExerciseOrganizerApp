@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.organizer.presentation.Routes
 import com.organizer.presentation.screens.sports.SportsScreen
-import com.organizer.presentation.screens.categories.SubcategoriesScreen
+import com.organizer.presentation.screens.categories.CategoryContentScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -45,7 +45,7 @@ fun AppNavigation() {
                     ?.getString("categoryId")
                     ?.toLongOrNull()
 
-            SubcategoriesScreen(
+            CategoryContentScreen(
                 categoryId = categoryId ?: 0L,
                 onCategoryClick = { category ->
                     navController.navigate(

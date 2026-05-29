@@ -5,13 +5,17 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.data.local.db.entities.CategoryEntity
 import com.organizer.presentation.OrganizerViewModel
+import com.organizer.presentation.screens.categories.CategoryCard
 import com.organizer.presentation.screens.general.BottomNavigationBar
+import com.organizer.presentation.screens.general.ItemList
 import com.organizer.presentation.screens.general.SearchBar
 
 @Composable
@@ -48,7 +52,35 @@ fun SportsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            SportList(sports, errorByLoading, onSportClick)
+
+            if (sports.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Loading..",
+                        color = Color.Gray,
+                        fontSize = 18.sp
+                    )
+                }
+            }
+            // List of sport types
+            else {
+                ItemList(
+                    items = sports,
+                    key = { it.categoryId },
+                    message = errorByLoading
+                ) { category ->
+
+                    CategoryCard(
+                        category = category,
+                        onClick = {
+                            onSportClick(category)
+                        }
+                    )
+                }
+            }
         }
     }
 }

@@ -32,7 +32,7 @@ class OrganizerViewModel @Inject constructor(
     private val workoutExerciseRepo: WorkoutExerciseRepository,
 ) : ViewModel() {
 
-    var errorMessage by mutableStateOf<String?>(null)
+    var errorMessage by mutableStateOf("")
         private set
 
     val searchQuery = MutableStateFlow("")
@@ -78,15 +78,6 @@ class OrganizerViewModel @Inject constructor(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(5000),
                 emptyList()
-            )
-    }
-
-    fun getCategoryById(id: Long): StateFlow<CategoryEntity?> {
-        return categoryRepo.observeCategoryById(id)
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                null
             )
     }
 
