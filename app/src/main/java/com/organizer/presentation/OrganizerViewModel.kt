@@ -87,6 +87,15 @@ class OrganizerViewModel @Inject constructor(
                 emptyList()
             )
 
+    fun getExercisesById(categoryId: Long): StateFlow<List<ExerciseEntity>> {
+        return exerciseRepo.observeExercisesByCategory(categoryId)
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                emptyList()
+            )
+    }
+
     val workoutsUiState: StateFlow<List<WorkoutEntity>> =
         workoutRepo.observeWorkouts()
             .stateIn(
