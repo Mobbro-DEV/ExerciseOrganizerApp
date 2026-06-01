@@ -53,7 +53,10 @@ fun AppNavigation() {
                     )
                 },
                 onBackClick = {
-                    navController.popBackStack()
+                    val currentRout = navController.currentDestination?.route
+                    if (currentRout != Routes.Sports.route) {
+                        navController.popBackStack()
+                    }
                 }
             )
         }
