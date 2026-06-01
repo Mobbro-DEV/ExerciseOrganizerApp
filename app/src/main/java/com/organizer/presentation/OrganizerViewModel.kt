@@ -56,9 +56,7 @@ class OrganizerViewModel @Inject constructor(
         )
 
     init {
-        viewModelScope.launch {
-            syncDb()
-        }
+        syncDb()
     }
 
     fun syncDb() {
