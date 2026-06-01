@@ -20,6 +20,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -35,31 +37,20 @@ class OrganizerViewModel @Inject constructor(
     var errorMessage: String? by mutableStateOf(null)
         private set
 
+    // SEARCH
     val searchQuery = MutableStateFlow("")
 
-    val sportsUiState: StateFlow<List<CategoryEntity>> =
-        combine(
-            categoryRepo.observeSports(),
-            searchQuery
-        ) { sports, query ->
-            if (query.isBlank()) {
-                sports
-            } else {
-                sports.filter {
-                    it.name.contains(query, ignoreCase = true)
-                }
-            }
-        }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            emptyList()
-        )
+    // INITIAL SYNC (runs once)
+    private var didSync = false
 
     init {
         syncDb()
     }
 
     fun syncDb() {
+        if (didSync) return
+        didSync = true
+
         viewModelScope.launch {
             try {
                 categoryRepo.refreshCategories()
@@ -70,102 +61,110 @@ class OrganizerViewModel @Inject constructor(
         }
     }
 
-    fun getSubcategories(categoryId: Long): StateFlow<List<CategoryEntity>> {
-        return categoryRepo.observeSubcategories(categoryId)
+    // STATIC STREAMS
+    val categoriesUiState: StateFlow<List<CategoryEntity>> =
+        categoryRepo.observeCategories()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val workoutsUiState: StateFlow<List<WorkoutEntity>> =
+        workoutRepo.observeWorkouts()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val workoutExercisesUiState: StateFlow<List<WorkoutExerciseEntity>> =
+        workoutExerciseRepo.observeWorkoutExercises()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    // SPORTS (SEARCHABLE)
+    val sportsUiState: StateFlow<List<CategoryEntity>> =
+        combine(
+            categoryRepo.observeSports(),
+            searchQuery
+        ) { sports, query ->
+            if (query.isBlank()) sports
+            else sports.filter {
+                it.name.contains(query, ignoreCase = true)
+            }
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            emptyList()
+        )
+
+    fun onSearchQueryChange(query: String) {
+        searchQuery.value = query
+    }
+
+    // CATEGORY NAVIGATION STATE
+    private val selectedCategoryId = MutableStateFlow<Long?>(null)
+
+    fun selectCategory(id: Long) {
+        selectedCategoryId.value = id
+    }
+
+    // SUBCATEGORIES (FIXED)
+    val subcategoriesUiState: StateFlow<List<CategoryEntity>> =
+        selectedCategoryId
+            .filterNotNull()
+            .flatMapLatest { id ->
+                categoryRepo.observeSubcategories(id)
+            }
             .stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(5000),
                 emptyList()
             )
-    }
 
+    // EXERCISES
+    val exercisesByCategoryUiState: StateFlow<List<ExerciseEntity>> =
+        selectedCategoryId
+            .filterNotNull()
+            .flatMapLatest { id ->
+                exerciseRepo.observeExercisesByCategory(id)
+            }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                emptyList()
+            )
+
+    // CATEGORY PATH
     fun getCategoryPath(categoryId: Long): Flow<List<CategoryEntity>> = flow {
         val path = mutableListOf<CategoryEntity>()
+
         var current = categoryRepo.observeCategoryByIdOnce(categoryId)
 
         while (current != null) {
             path.add(current)
             current = current.parentCategoryId?.let {
-                    categoryRepo.observeCategoryByIdOnce(it)
-                }
+                categoryRepo.observeCategoryByIdOnce(it)
+            }
         }
+
         emit(path.reversed())
     }
 
-    val categoriesUiState: StateFlow<List<CategoryEntity>> =
-        categoryRepo.observeCategories()
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                emptyList()
-            )
-
-    val exercisesUiState: StateFlow<List<ExerciseEntity>> =
-        exerciseRepo.observeExercises()
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                emptyList()
-            )
-
-    fun getExercisesById(categoryId: Long): StateFlow<List<ExerciseEntity>> {
-        return exerciseRepo.observeExercisesByCategory(categoryId)
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                emptyList()
-            )
+    // WORKOUT OPERATIONS
+    fun createWorkout(name: String) = viewModelScope.launch {
+        workoutRepo.createWorkout(name)
     }
 
-    val workoutsUiState: StateFlow<List<WorkoutEntity>> =
-        workoutRepo.observeWorkouts()
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                emptyList()
-            )
-
-    val workoutExercisesUiState: StateFlow<List<WorkoutExerciseEntity>> =
-        workoutExerciseRepo.observeWorkoutExercises()
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                emptyList()
-            )
-
-    fun createWorkout(name: String) {
-        viewModelScope.launch {
-            workoutRepo.createWorkout(name)
-        }
+    fun deleteWorkout(id: Long) = viewModelScope.launch {
+        workoutRepo.deleteWorkout(id)
     }
 
-    fun deleteWorkout(id: Long) {
-        viewModelScope.launch {
-            workoutRepo.deleteWorkout(id)
-        }
+    fun addExerciseToWorkout(workoutId: Long, exerciseId: Long) = viewModelScope.launch {
+        workoutExerciseRepo.addExerciseToWorkout(workoutId, exerciseId)
     }
 
-    fun addExerciseToWorkout(workoutId: Long, exerciseId: Long) {
-        viewModelScope.launch {
-            workoutExerciseRepo.addExerciseToWorkout(workoutId, exerciseId)
-        }
+    fun deleteExerciseFromWorkout(workoutId: Long, exerciseId: Long) = viewModelScope.launch {
+        workoutExerciseRepo.deleteExerciseFromWorkout(workoutId, exerciseId)
     }
 
-    fun deleteExerciseFromWorkout(workoutId: Long, exerciseId: Long) {
-        viewModelScope.launch {
-            workoutExerciseRepo.deleteExerciseFromWorkout(workoutId, exerciseId)
-        }
+    fun addCustomExercise(name: String, imageUrl: String) = viewModelScope.launch {
+        exerciseRepo.addCustomExercise(name, imageUrl)
     }
 
-    fun addCustomExercise(name: String, imageUrl: String) {
-        viewModelScope.launch {
-            exerciseRepo.addCustomExercise(name, imageUrl)
-        }
-    }
-
-    fun deleteCustomExercise(id: Long) {
-        viewModelScope.launch {
-            exerciseRepo.deleteCustomExercise(id)
-        }
+    fun deleteCustomExercise(id: Long) = viewModelScope.launch {
+        exerciseRepo.deleteCustomExercise(id)
     }
 }
