@@ -38,4 +38,8 @@ class CategoryRepository @Inject constructor(
     fun observeCategoryById(id: Long): Flow<CategoryEntity?> {
         return localDataSource.getById(id)
     }
+
+    suspend fun observeCategoryByIdOnce(id: Long): CategoryEntity? {
+        return localDataSource.getByIdOnce(id)
+    }
 }

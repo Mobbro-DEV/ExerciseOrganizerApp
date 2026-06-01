@@ -15,14 +15,12 @@ import com.organizer.data.repo.WorkoutExerciseRepository
 import com.organizer.data.repo.WorkoutRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.forEach
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -33,13 +31,9 @@ class OrganizerViewModel @Inject constructor(
     private val workoutRepo: WorkoutRepository,
     private val workoutExerciseRepo: WorkoutExerciseRepository,
 ) : ViewModel() {
-    val categoriesUiState: StateFlow<List<CategoryEntity>> =
-        categoryRepo.observeCategories()
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                emptyList()
-            )
+
+    var errorMessage by mutableStateOf("")
+        private set
 
     val searchQuery = MutableStateFlow("")
 
@@ -56,10 +50,25 @@ class OrganizerViewModel @Inject constructor(
                 }
             }
         }.stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                emptyList()
-            )
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            emptyList()
+        )
+
+    init {
+        syncDb()
+    }
+
+    fun syncDb() {
+        viewModelScope.launch {
+            try {
+                categoryRepo.refreshCategories()
+                exerciseRepo.refreshExercises()
+            } catch (e: Exception) {
+                errorMessage = "Could not refresh: ${e.message}"
+            }
+        }
+    }
 
     fun getSubcategories(categoryId: Long): StateFlow<List<CategoryEntity>> {
         return categoryRepo.observeSubcategories(categoryId)
@@ -70,14 +79,26 @@ class OrganizerViewModel @Inject constructor(
             )
     }
 
-    fun getCategoryById(id: Long): StateFlow<CategoryEntity?> {
-        return categoryRepo.observeCategoryById(id)
+    fun getCategoryPath(categoryId: Long): Flow<List<CategoryEntity>> = flow {
+        val path = mutableListOf<CategoryEntity>()
+        var current = categoryRepo.observeCategoryByIdOnce(categoryId)
+
+        while (current != null) {
+            path.add(current)
+            current = current.parentCategoryId?.let {
+                    categoryRepo.observeCategoryByIdOnce(it)
+                }
+        }
+        emit(path.reversed())
+    }
+
+    val categoriesUiState: StateFlow<List<CategoryEntity>> =
+        categoryRepo.observeCategories()
             .stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(5000),
-                null
+                emptyList()
             )
-    }
 
     val exercisesUiState: StateFlow<List<ExerciseEntity>> =
         exerciseRepo.observeExercises()
@@ -86,6 +107,15 @@ class OrganizerViewModel @Inject constructor(
                 SharingStarted.WhileSubscribed(5000),
                 emptyList()
             )
+
+    fun getExercisesById(categoryId: Long): StateFlow<List<ExerciseEntity>> {
+        return exerciseRepo.observeExercisesByCategory(categoryId)
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                emptyList()
+            )
+    }
 
     val workoutsUiState: StateFlow<List<WorkoutEntity>> =
         workoutRepo.observeWorkouts()
@@ -102,30 +132,6 @@ class OrganizerViewModel @Inject constructor(
                 SharingStarted.WhileSubscribed(5000),
                 emptyList()
             )
-
-    var errorMessage by mutableStateOf<String?>(null)
-        private set
-
-    init {
-        viewModelScope.launch {
-            syncDb()
-        }
-    }
-
-    fun syncDb() {
-        viewModelScope.launch {
-            try {
-                categoryRepo.refreshCategories()
-                exerciseRepo.refreshExercises()
-            } catch (e: Exception) {
-                errorMessage = "Could not refresh: ${e.message}"
-            }
-        }
-    }
-
-    fun onSearchQueryChange(query: String) {
-        searchQuery.value = query
-    }
 
     fun createWorkout(name: String) {
         viewModelScope.launch {

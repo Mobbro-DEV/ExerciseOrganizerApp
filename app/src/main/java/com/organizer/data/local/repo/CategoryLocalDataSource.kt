@@ -32,6 +32,10 @@ class CategoryLocalDataSource @Inject constructor(
         return dao.getById(id)
     }
 
+    suspend fun getByIdOnce(id: Long): CategoryEntity? {
+        return dao.getByIdOnce(id)
+    }
+
     suspend fun delete(category: CategoryEntity) {
         dao.delete(category)
     }

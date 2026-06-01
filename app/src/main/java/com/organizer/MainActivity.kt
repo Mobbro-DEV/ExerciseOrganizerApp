@@ -3,31 +3,28 @@ package com.organizer
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.organizer.presentation.OrganizerViewModel
-import com.organizer.screens.SportsScreen
-import com.organizer.screens.SubcategoriesScreen
+import com.organizer.presentation.Routes
+import com.organizer.presentation.screens.sports.SportsScreen
+import com.organizer.presentation.screens.categories.CategoryContentScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: OrganizerViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Main(viewModel)
+            AppNavigation()
         }
     }
 }
 
 @Composable
-fun Main(viewModel: OrganizerViewModel){
+fun AppNavigation() {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
@@ -35,7 +32,6 @@ fun Main(viewModel: OrganizerViewModel){
     ) {
         composable(Routes.Sports.route) {
             SportsScreen(
-                viewModel = viewModel,
                 onSportClick = { category ->
                     navController.navigate(
                         Routes.Subcategory.createRoute(category.categoryId)
@@ -45,13 +41,11 @@ fun Main(viewModel: OrganizerViewModel){
         }
 
         composable(Routes.Subcategory.route) { backStackEntry ->
-            val categoryId =
-                backStackEntry.arguments
+            val categoryId = backStackEntry.arguments
                     ?.getString("categoryId")
                     ?.toLongOrNull()
 
-            SubcategoriesScreen(
-                viewModel = viewModel,
+            CategoryContentScreen(
                 categoryId = categoryId ?: 0L,
                 onCategoryClick = { category ->
                     navController.navigate(
@@ -59,7 +53,10 @@ fun Main(viewModel: OrganizerViewModel){
                     )
                 },
                 onBackClick = {
-                    navController.popBackStack()
+                    val currentRout = navController.currentDestination?.route
+                    if (currentRout != Routes.Sports.route) {
+                        navController.popBackStack()
+                    }
                 }
             )
         }

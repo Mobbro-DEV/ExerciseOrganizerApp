@@ -1,8 +1,6 @@
 package com.organizer.data.local.repo
 
-import com.organizer.data.local.dao.CategoryDao
 import com.organizer.data.local.dao.ExerciseDao
-import com.organizer.data.local.db.entities.CategoryEntity
 import com.organizer.data.local.db.entities.ExerciseEntity
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -20,6 +18,10 @@ class ExerciseLocalDataSource @Inject constructor(
 
     suspend fun getAllOnce(): List<ExerciseEntity> {
         return dao.getAllOnce()
+    }
+
+    fun getExercisesByCategory(categoryId: Long): Flow<List<ExerciseEntity>> {
+        return dao.getExercisesByCategory(categoryId)
     }
 
     suspend fun getById(id: Long): ExerciseEntity? {

@@ -19,6 +19,9 @@ interface ExerciseDao {
     @Query("SELECT * FROM exercise")
     suspend fun getAllOnce(): List<ExerciseEntity>
 
+    @Query("SELECT * FROM exercise WHERE categoryId = :categoryId")
+    fun getExercisesByCategory(categoryId: Long): Flow<List<ExerciseEntity>>
+
     @Query("SELECT * FROM exercise WHERE exerciseId = :id")
     suspend fun getById(id: Long): ExerciseEntity?
 
