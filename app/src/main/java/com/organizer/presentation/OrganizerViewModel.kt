@@ -32,7 +32,7 @@ class OrganizerViewModel @Inject constructor(
     private val workoutExerciseRepo: WorkoutExerciseRepository,
 ) : ViewModel() {
 
-    var errorMessage by mutableStateOf("")
+    var errorMessage: String? by mutableStateOf(null)
         private set
 
     val searchQuery = MutableStateFlow("")

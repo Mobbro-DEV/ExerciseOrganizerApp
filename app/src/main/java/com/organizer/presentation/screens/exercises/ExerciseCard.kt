@@ -52,15 +52,14 @@ fun ExerciseCard(
             if (exercise.imageUrl.isNotBlank()) {
                 Box(
                     modifier = Modifier
-                        .size(68.dp)
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(Color.LightGray),
+                        .size(80.dp)
+                        .clip(RoundedCornerShape(18.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     AsyncImage(
                         model = "http://10.0.2.2:8080/images/" + exercise.imageUrl,
                         contentDescription = exercise.name,
-                        modifier = Modifier.size(40.dp),
+                        modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Fit
                     )
                 }

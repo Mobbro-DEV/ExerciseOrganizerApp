@@ -1,6 +1,5 @@
 package com.organizer.presentation.screens.categories
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -54,14 +53,12 @@ fun CategoryCard(
                 Box(
                     modifier = Modifier
                         .size(68.dp)
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(Color.LightGray),
+                        .clip(RoundedCornerShape(18.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     AsyncImage(
                         model = "http://10.0.2.2:8080/icons/" + category.iconUrl,
                         contentDescription = category.name,
-                        modifier = Modifier.size(40.dp),
                         contentScale = ContentScale.Fit
                     )
                 }
