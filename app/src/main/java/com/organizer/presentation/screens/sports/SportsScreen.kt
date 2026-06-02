@@ -92,7 +92,8 @@ fun SportsScreen(
                             category = sport,
                             onClick = {
                                 onSportClick(sport)
-                            }
+                            },
+                            viewModel = viewModel
                         )
                     }
                 }

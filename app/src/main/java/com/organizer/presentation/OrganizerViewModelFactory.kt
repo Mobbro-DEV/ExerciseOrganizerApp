@@ -2,6 +2,7 @@ package com.organizer.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.organizer.data.local.repo.IconStorage
 import com.organizer.data.repo.CategoryRepository
 import com.organizer.data.repo.ExerciseRepository
 import com.organizer.data.repo.WorkoutExerciseRepository
@@ -11,13 +12,14 @@ class OrganizerViewModelFactory(
     private val categoryRepo: CategoryRepository,
     private val exerciseRepo: ExerciseRepository,
     private val workoutRepo: WorkoutRepository,
-    private val workoutExerciseRepo: WorkoutExerciseRepository
+    private val workoutExerciseRepo: WorkoutExerciseRepository,
+    private val iconStorage: IconStorage,
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(OrganizerViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return OrganizerViewModel(categoryRepo, exerciseRepo, workoutRepo, workoutExerciseRepo) as T
+            return OrganizerViewModel(categoryRepo, exerciseRepo, workoutRepo, workoutExerciseRepo, iconStorage) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

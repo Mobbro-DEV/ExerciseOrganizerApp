@@ -40,7 +40,8 @@ fun CategoryList(
                 category = category,
                 onClick = {
                     onCategoryClick(category)
-                }
+                },
+                viewModel = viewModel
             )
         }
 

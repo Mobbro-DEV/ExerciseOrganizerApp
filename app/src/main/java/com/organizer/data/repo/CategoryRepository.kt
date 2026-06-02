@@ -2,6 +2,7 @@ package com.organizer.data.repo
 
 import com.organizer.data.local.db.entities.CategoryEntity
 import com.organizer.data.local.repo.CategoryLocalDataSource
+import com.organizer.data.local.repo.IconStorage
 import com.organizer.data.remote.repo.CategoryRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -9,6 +10,7 @@ import javax.inject.Inject
 class CategoryRepository @Inject constructor(
     private val localDataSource: CategoryLocalDataSource,
     private val remoteDataSource: CategoryRemoteDataSource,
+    private val iconStorage: IconStorage,
 ) {
     fun observeCategories(): Flow<List<CategoryEntity>> {
         return localDataSource.getAll()
@@ -29,9 +31,15 @@ class CategoryRepository @Inject constructor(
         for (category in localCategories) {
             if (!remoteCategories.contains(category)) {
                 localDataSource.delete(category)
+                category.iconUrl?.let { iconStorage.deleteIcon(it) }
             }
         }
 
+        iconStorage.saveIcons(
+            remoteCategories.mapNotNull {
+                it.iconUrl
+            }
+        )
         localDataSource.insert(remoteCategories)
     }
 
