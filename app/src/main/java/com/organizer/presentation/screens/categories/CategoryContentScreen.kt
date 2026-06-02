@@ -16,7 +16,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.data.local.db.entities.CategoryEntity
 import com.organizer.presentation.OrganizerViewModel
 import com.organizer.presentation.screens.general.BottomNavigationBar
-import com.organizer.presentation.screens.general.ItemList
 
 @Composable
 fun CategoryContentScreen(
@@ -25,7 +24,6 @@ fun CategoryContentScreen(
     onBackClick: () -> Unit,
     viewModel: OrganizerViewModel = hiltViewModel()
 ) {
-    val categories by viewModel.getSubcategories(categoryId).collectAsState()
     val categoryPath by viewModel.getCategoryPath(categoryId).collectAsState(initial = emptyList())
 
     Scaffold(
@@ -49,20 +47,7 @@ fun CategoryContentScreen(
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // List of categories
-            ItemList(
-                items = categories,
-                key = { it.categoryId },
-                message = "Loading.."
-            ) { category ->
-
-                CategoryCard(
-                    category = category,
-                    onClick = {
-                        onCategoryClick(category)
-                    }
-                )
-            }
+            CategoryList(categoryId, onCategoryClick, viewModel)
         }
     }
 }

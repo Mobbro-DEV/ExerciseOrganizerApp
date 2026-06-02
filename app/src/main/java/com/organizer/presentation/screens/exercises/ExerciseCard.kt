@@ -1,5 +1,6 @@
-package com.organizer.presentation.screens.categories
+package com.organizer.presentation.screens.exercises
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,21 +24,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.organizer.data.local.db.entities.CategoryEntity
+import com.organizer.data.local.db.entities.ExerciseEntity
+
 
 @Composable
-fun CategoryCard(
-    category: CategoryEntity,
-    onClick: () -> Unit
+fun ExerciseCard(
+    exercise: ExerciseEntity,
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(110.dp),
-        onClick = onClick,
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = Color.Yellow
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 4.dp
@@ -49,16 +49,17 @@ fun CategoryCard(
                 .padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (!category.iconUrl.isNullOrBlank()) {
+            if (exercise.imageUrl.isNotBlank()) {
                 Box(
                     modifier = Modifier
-                        .size(68.dp)
+                        .size(80.dp)
                         .clip(RoundedCornerShape(18.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     AsyncImage(
-                        model = "http://10.0.2.2:8080/icons/" + category.iconUrl,
-                        contentDescription = category.name,
+                        model = "http://10.0.2.2:8080/images/" + exercise.imageUrl,
+                        contentDescription = exercise.name,
+                        modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Fit
                     )
                 }
@@ -67,7 +68,7 @@ fun CategoryCard(
             Spacer(modifier = Modifier.width(24.dp))
 
             Text(
-                text = category.name,
+                text = exercise.name,
                 fontSize = 28.sp,
                 color = Color.Black,
                 fontWeight = FontWeight.Medium

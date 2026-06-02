@@ -1,6 +1,8 @@
 package com.organizer.presentation.screens.sports
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -15,7 +17,6 @@ import com.organizer.data.local.db.entities.CategoryEntity
 import com.organizer.presentation.OrganizerViewModel
 import com.organizer.presentation.screens.categories.CategoryCard
 import com.organizer.presentation.screens.general.BottomNavigationBar
-import com.organizer.presentation.screens.general.ItemList
 import com.organizer.presentation.screens.general.SearchBar
 
 @Composable
@@ -66,19 +67,34 @@ fun SportsScreen(
                 }
             }
             // List of sport types
-            else {
-                ItemList(
-                    items = sports,
-                    key = { it.categoryId },
-                    message = errorByLoading
-                ) { category ->
-
-                    CategoryCard(
-                        category = category,
-                        onClick = {
-                            onSportClick(category)
-                        }
+            if (sports.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = errorByLoading ?: "Loading..",
+                        color = Color.Gray,
+                        fontSize = 18.sp
                     )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+
+                    items(
+                        items = sports,
+                        key = { it.categoryId }
+                    ) { sport ->
+                        CategoryCard(
+                            category = sport,
+                            onClick = {
+                                onSportClick(sport)
+                            }
+                        )
+                    }
                 }
             }
         }
