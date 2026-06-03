@@ -9,6 +9,7 @@ import javax.inject.Inject
 class ExerciseRepository @Inject constructor(
     private val localDataSource: ExerciseLocalDataSource,
     private val remoteDataSource: ExerciseRemoteDataSource,
+    private val fileRepository: FileRepository,
 ) {
     fun observeExercises(): Flow<List<ExerciseEntity>> {
         return localDataSource.getAll()
@@ -20,15 +21,16 @@ class ExerciseRepository @Inject constructor(
 
     suspend fun refreshExercises() {
         val remoteExercises = remoteDataSource.getAll()
-        val localExercises = localDataSource.getAllOnce()
 
-        for (exercise in localExercises) {
-            if (!remoteExercises.contains(exercise) && !exercise.isCustom) {
+        localDataSource.getAllOnce()
+            .filter { it !in remoteExercises.toSet() }
+            .forEach { exercise ->
                 localDataSource.delete(exercise)
+                fileRepository.deleteImage(exercise.imageUrl)
             }
-        }
 
         localDataSource.insert(remoteExercises)
+        fileRepository.downloadAndSaveImages(remoteExercises.map { it.imageUrl })
     }
 
     suspend fun addCustomExercise(name: String, imageUrl: String) {

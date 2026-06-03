@@ -1,5 +1,6 @@
 package com.organizer.presentation
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,6 +12,7 @@ import com.organizer.data.local.db.entities.WorkoutEntity
 import com.organizer.data.local.db.entities.WorkoutExerciseEntity
 import com.organizer.data.repo.CategoryRepository
 import com.organizer.data.repo.ExerciseRepository
+import com.organizer.data.repo.FileRepository
 import com.organizer.data.repo.WorkoutExerciseRepository
 import com.organizer.data.repo.WorkoutRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +27,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.io.File
 
 @HiltViewModel
 class OrganizerViewModel @Inject constructor(
@@ -32,6 +35,7 @@ class OrganizerViewModel @Inject constructor(
     private val exerciseRepo: ExerciseRepository,
     private val workoutRepo: WorkoutRepository,
     private val workoutExerciseRepo: WorkoutExerciseRepository,
+    private val fileRepository: FileRepository,
 ) : ViewModel() {
 
     var errorMessage: String? by mutableStateOf(null)
@@ -40,22 +44,17 @@ class OrganizerViewModel @Inject constructor(
     // SEARCH
     val searchQuery = MutableStateFlow("")
 
-    // INITIAL SYNC (runs once)
-    private var didSync = false
-
     init {
         syncDb()
     }
 
     fun syncDb() {
-        if (didSync) return
-        didSync = true
-
         viewModelScope.launch {
             try {
                 categoryRepo.refreshCategories()
                 exerciseRepo.refreshExercises()
             } catch (e: Exception) {
+                Log.e("SYNC", "Sync failed", e)
                 errorMessage = "Could not refresh: ${e.message}"
             }
         }
@@ -141,6 +140,15 @@ class OrganizerViewModel @Inject constructor(
         }
 
         emit(path.reversed())
+    }
+
+    // IMAGE STORAGE
+    fun getIconFile(name: String): File {
+        return fileRepository.getIcon(name)
+    }
+
+    fun getImageFile(name: String): File {
+        return fileRepository.getImage(name)
     }
 
     // WORKOUT OPERATIONS

@@ -24,11 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.organizer.data.local.db.entities.CategoryEntity
+import com.organizer.presentation.OrganizerViewModel
 
 @Composable
 fun CategoryCard(
     category: CategoryEntity,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    viewModel: OrganizerViewModel
 ) {
     Card(
         modifier = Modifier
@@ -57,7 +59,7 @@ fun CategoryCard(
                     contentAlignment = Alignment.Center
                 ) {
                     AsyncImage(
-                        model = "http://10.0.2.2:8080/icons/" + category.iconUrl,
+                        model = viewModel.getIconFile(category.iconUrl),
                         contentDescription = category.name,
                         contentScale = ContentScale.Fit
                     )

@@ -9,6 +9,7 @@ import javax.inject.Inject
 class CategoryRepository @Inject constructor(
     private val localDataSource: CategoryLocalDataSource,
     private val remoteDataSource: CategoryRemoteDataSource,
+    private val fileRepository: FileRepository,
 ) {
     fun observeCategories(): Flow<List<CategoryEntity>> {
         return localDataSource.getAll()
@@ -24,15 +25,16 @@ class CategoryRepository @Inject constructor(
 
     suspend fun refreshCategories() {
         val remoteCategories = remoteDataSource.getAll()
-        val localCategories = localDataSource.getAllOnce()
 
-        for (category in localCategories) {
-            if (!remoteCategories.contains(category)) {
+        localDataSource.getAllOnce()
+            .filter { it !in remoteCategories.toSet() }
+            .forEach { category ->
                 localDataSource.delete(category)
+                fileRepository.deleteIcon(category.iconUrl)
             }
-        }
 
         localDataSource.insert(remoteCategories)
+        fileRepository.downloadAndSaveIcons(remoteCategories.map { it.iconUrl })
     }
 
     fun observeCategoryById(id: Long): Flow<CategoryEntity?> {

@@ -40,7 +40,8 @@ fun CategoryList(
                 category = category,
                 onClick = {
                     onCategoryClick(category)
-                }
+                },
+                viewModel = viewModel
             )
         }
 
@@ -48,7 +49,7 @@ fun CategoryList(
             items = exercises,
             key = { it.exerciseId }
         ) { exercise ->
-            ExerciseCard(exercise)
+            ExerciseCard(exercise, viewModel)
         }
     }
 }

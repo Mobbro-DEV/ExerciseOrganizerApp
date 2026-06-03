@@ -1,6 +1,5 @@
 package com.organizer.presentation.screens.exercises
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,11 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.organizer.data.local.db.entities.ExerciseEntity
+import com.organizer.presentation.OrganizerViewModel
 
 
 @Composable
 fun ExerciseCard(
     exercise: ExerciseEntity,
+    viewModel: OrganizerViewModel
 ) {
     Card(
         modifier = Modifier
@@ -57,7 +58,7 @@ fun ExerciseCard(
                     contentAlignment = Alignment.Center
                 ) {
                     AsyncImage(
-                        model = "http://10.0.2.2:8080/images/" + exercise.imageUrl,
+                        model = viewModel.getImageFile(exercise.imageUrl),
                         contentDescription = exercise.name,
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Fit
