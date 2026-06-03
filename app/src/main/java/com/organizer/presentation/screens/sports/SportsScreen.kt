@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.data.local.db.entities.CategoryEntity
 import com.organizer.presentation.OrganizerViewModel
-import com.organizer.presentation.screens.categories.CategoryCard
+import com.organizer.presentation.screens.categories.CategoryListItem
 import com.organizer.presentation.screens.general.BottomNavigationBar
 import com.organizer.presentation.screens.general.SearchBar
 
@@ -88,7 +88,7 @@ fun SportsScreen(
                         items = sports,
                         key = { it.categoryId }
                     ) { sport ->
-                        CategoryCard(
+                        CategoryListItem(
                             category = sport,
                             onClick = {
                                 onSportClick(sport)

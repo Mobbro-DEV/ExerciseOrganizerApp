@@ -24,7 +24,7 @@ class ExerciseLocalDataSource @Inject constructor(
         return dao.getExercisesByCategory(categoryId)
     }
 
-    suspend fun getById(id: Long): ExerciseEntity? {
+    fun getById(id: Long): Flow<ExerciseEntity?> {
         return dao.getById(id)
     }
 

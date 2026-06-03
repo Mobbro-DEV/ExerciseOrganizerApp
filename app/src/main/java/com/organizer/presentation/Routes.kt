@@ -7,4 +7,9 @@ sealed class Routes(val route: String) {
             return "subcategory/$categoryId"
         }
     }
+    object ExerciseCard: Routes("exercise/{exerciseId}") {
+        fun createRoute(exerciseId: Long): String {
+            return "exercise/$exerciseId"
+        }
+    }
 }

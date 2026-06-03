@@ -4,6 +4,7 @@ import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.data.local.repo.ExerciseLocalDataSource
 import com.organizer.data.remote.repo.ExerciseRemoteDataSource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 class ExerciseRepository @Inject constructor(
@@ -47,13 +48,13 @@ class ExerciseRepository @Inject constructor(
     }
 
     suspend fun deleteCustomExercise(id: Long) {
-        val exercise = getExercise(id)
-        if (exercise != null && exercise.isCustom) {
+        val exercise = observeExercise(id).firstOrNull()
+        if (exercise?.isCustom == true) {
             localDataSource.delete(exercise)
         }
     }
 
-    suspend fun getExercise(id: Long): ExerciseEntity? {
+    fun observeExercise(id: Long): Flow<ExerciseEntity?> {
         return localDataSource.getById(id)
     }
 }
