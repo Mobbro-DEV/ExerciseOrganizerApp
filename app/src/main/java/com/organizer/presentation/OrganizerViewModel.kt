@@ -143,11 +143,11 @@ class OrganizerViewModel @Inject constructor(
     }
 
     // IMAGE STORAGE
-    fun getIconFile(name: String): File {
+    fun getIconFile(name: String): File? {
         return fileRepository.getIcon(name)
     }
 
-    fun getImageFile(name: String): File {
+    fun getImageFile(name: String): File? {
         return fileRepository.getImage(name)
     }
 

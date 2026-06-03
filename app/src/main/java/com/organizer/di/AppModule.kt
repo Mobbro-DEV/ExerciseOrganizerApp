@@ -3,6 +3,7 @@ package com.organizer.di
 import android.content.Context
 import androidx.room.Room
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.organizer.constants.AppConfig
 import com.organizer.data.local.dao.CategoryDao
 import com.organizer.data.local.dao.ExerciseDao
 import com.organizer.data.local.dao.WorkoutDao
@@ -24,13 +25,11 @@ import kotlin.jvm.java
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    private const val BASE_URL = "http://10.0.2.2:8080/"
-
     @Provides
     @Singleton
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(AppConfig.API_BASE_URL)
             .addConverterFactory(
                 Json.asConverterFactory(
                     "application/json".toMediaType()
@@ -55,7 +54,7 @@ object AppModule {
         return Room.databaseBuilder(
             context,
             AppDatabase::class.java,
-            "app_db"
+            AppConfig.DATABASE_NAME
         ).build()
     }
 
