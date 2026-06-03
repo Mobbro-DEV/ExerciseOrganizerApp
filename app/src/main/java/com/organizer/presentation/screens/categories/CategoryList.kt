@@ -49,7 +49,7 @@ fun CategoryList(
             items = exercises,
             key = { it.exerciseId }
         ) { exercise ->
-            ExerciseCard(exercise)
+            ExerciseCard(exercise, viewModel)
         }
     }
 }

@@ -2,6 +2,7 @@ package com.organizer.data.repo
 
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.data.local.repo.ExerciseLocalDataSource
+import com.organizer.data.local.storage.FileStorage
 import com.organizer.data.remote.repo.ExerciseRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -9,6 +10,7 @@ import javax.inject.Inject
 class ExerciseRepository @Inject constructor(
     private val localDataSource: ExerciseLocalDataSource,
     private val remoteDataSource: ExerciseRemoteDataSource,
+    private val fileStorage: FileStorage,
 ) {
     fun observeExercises(): Flow<List<ExerciseEntity>> {
         return localDataSource.getAll()
@@ -25,10 +27,15 @@ class ExerciseRepository @Inject constructor(
         for (exercise in localExercises) {
             if (!remoteExercises.contains(exercise) && !exercise.isCustom) {
                 localDataSource.delete(exercise)
+                fileStorage.deleteLocalFile("images", exercise.imageUrl)
             }
         }
 
         localDataSource.insert(remoteExercises)
+        fileStorage.downloadAndSaveFiles(
+            "images",
+            remoteExercises.map { it.imageUrl }
+        )
     }
 
     suspend fun addCustomExercise(name: String, imageUrl: String) {

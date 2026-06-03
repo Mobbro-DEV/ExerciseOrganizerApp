@@ -1,5 +1,6 @@
 package com.organizer.presentation
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,7 +10,7 @@ import com.organizer.data.local.db.entities.CategoryEntity
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.data.local.db.entities.WorkoutEntity
 import com.organizer.data.local.db.entities.WorkoutExerciseEntity
-import com.organizer.data.local.repo.IconStorage
+import com.organizer.data.local.storage.FileStorage
 import com.organizer.data.repo.CategoryRepository
 import com.organizer.data.repo.ExerciseRepository
 import com.organizer.data.repo.WorkoutExerciseRepository
@@ -34,7 +35,7 @@ class OrganizerViewModel @Inject constructor(
     private val exerciseRepo: ExerciseRepository,
     private val workoutRepo: WorkoutRepository,
     private val workoutExerciseRepo: WorkoutExerciseRepository,
-    private val iconStorage: IconStorage,
+    private val fileStorage: FileStorage,
 ) : ViewModel() {
 
     var errorMessage: String? by mutableStateOf(null)
@@ -53,6 +54,7 @@ class OrganizerViewModel @Inject constructor(
                 categoryRepo.refreshCategories()
                 exerciseRepo.refreshExercises()
             } catch (e: Exception) {
+                Log.e("SYNC", "Sync failed", e)
                 errorMessage = "Could not refresh: ${e.message}"
             }
         }
@@ -142,7 +144,11 @@ class OrganizerViewModel @Inject constructor(
 
     // IMAGE STORAGE
     fun getIconFile(name: String): File {
-        return File(iconStorage.iconDir(), name)
+        return File(fileStorage.dir("icons"), name)
+    }
+
+    fun getImageFile(name: String): File {
+        return File(fileStorage.dir("images"), name)
     }
 
     // WORKOUT OPERATIONS
