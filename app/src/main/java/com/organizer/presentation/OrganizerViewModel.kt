@@ -113,7 +113,26 @@ class OrganizerViewModel @Inject constructor(
                 emptyList()
             )
 
+    // EXERCISE NAVIGATION STATE
+    private val selectedExerciseId = MutableStateFlow<Long?>(null)
+
+    fun selectExercise(id: Long) {
+        selectedExerciseId.value = id
+    }
+
     // EXERCISES
+    val exerciseUiState: StateFlow<ExerciseEntity?> =
+        selectedExerciseId
+            .filterNotNull()
+            .flatMapLatest { id ->
+                exerciseRepo.observeExercise(id)
+            }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                null
+            )
+
     val exercisesByCategoryUiState: StateFlow<List<ExerciseEntity>> =
         selectedCategoryId
             .filterNotNull()

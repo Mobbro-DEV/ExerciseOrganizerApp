@@ -27,7 +27,7 @@ import com.organizer.data.local.db.entities.CategoryEntity
 import com.organizer.presentation.OrganizerViewModel
 
 @Composable
-fun CategoryCard(
+fun CategoryListItem(
     category: CategoryEntity,
     onClick: () -> Unit,
     viewModel: OrganizerViewModel

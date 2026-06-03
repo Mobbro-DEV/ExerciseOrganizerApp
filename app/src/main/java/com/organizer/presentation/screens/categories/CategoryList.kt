@@ -11,13 +11,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.organizer.data.local.db.entities.CategoryEntity
+import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.presentation.OrganizerViewModel
-import com.organizer.presentation.screens.exercises.ExerciseCard
+import com.organizer.presentation.screens.exercises.ExerciseListItem
 
 @Composable
 fun CategoryList(
     categoryId: Long,
     onCategoryClick: (CategoryEntity) -> Unit,
+    onExerciseClick: (ExerciseEntity) -> Unit,
     viewModel: OrganizerViewModel
 ) {
     LaunchedEffect(categoryId) {
@@ -36,7 +38,7 @@ fun CategoryList(
             items = categories,
             key = { it.categoryId }
         ) { category ->
-            CategoryCard(
+            CategoryListItem(
                 category = category,
                 onClick = {
                     onCategoryClick(category)
@@ -49,7 +51,13 @@ fun CategoryList(
             items = exercises,
             key = { it.exerciseId }
         ) { exercise ->
-            ExerciseCard(exercise, viewModel)
+            ExerciseListItem(
+                exercise = exercise,
+                onClick = {
+                    onExerciseClick(exercise)
+                },
+                viewModel = viewModel
+            )
         }
     }
 }

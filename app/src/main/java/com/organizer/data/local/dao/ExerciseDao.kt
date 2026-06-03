@@ -23,7 +23,7 @@ interface ExerciseDao {
     fun getExercisesByCategory(categoryId: Long): Flow<List<ExerciseEntity>>
 
     @Query("SELECT * FROM exercise WHERE exerciseId = :id")
-    suspend fun getById(id: Long): ExerciseEntity?
+    fun getById(id: Long): Flow<ExerciseEntity?>
 
     @Delete
     suspend fun delete(exercise: ExerciseEntity)

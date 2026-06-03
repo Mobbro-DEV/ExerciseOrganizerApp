@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.data.local.db.entities.CategoryEntity
+import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.presentation.OrganizerViewModel
 import com.organizer.presentation.screens.general.BottomNavigationBar
 
@@ -21,6 +22,7 @@ import com.organizer.presentation.screens.general.BottomNavigationBar
 fun CategoryContentScreen(
     categoryId: Long,
     onCategoryClick: (CategoryEntity) -> Unit,
+    onExerciseClick: (ExerciseEntity) -> Unit,
     onBackClick: () -> Unit,
     viewModel: OrganizerViewModel = hiltViewModel()
 ) {
@@ -48,7 +50,7 @@ fun CategoryContentScreen(
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            CategoryList(categoryId, onCategoryClick, viewModel)
+            CategoryList(categoryId, onCategoryClick, onExerciseClick, viewModel)
         }
     }
 }

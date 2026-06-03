@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.organizer.presentation.Routes
 import com.organizer.presentation.screens.sports.SportsScreen
 import com.organizer.presentation.screens.categories.CategoryContentScreen
+import com.organizer.presentation.screens.exercises.ExerciseCard
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -42,8 +43,8 @@ fun AppNavigation() {
 
         composable(Routes.Subcategory.route) { backStackEntry ->
             val categoryId = backStackEntry.arguments
-                    ?.getString("categoryId")
-                    ?.toLongOrNull()
+                ?.getString("categoryId")
+                ?.toLongOrNull()
 
             CategoryContentScreen(
                 categoryId = categoryId ?: 0L,
@@ -52,6 +53,28 @@ fun AppNavigation() {
                         Routes.Subcategory.createRoute(category.categoryId)
                     )
                 },
+                onExerciseClick = { exercise ->
+                    navController.navigate(
+                        Routes.ExerciseCard.createRoute(exercise.exerciseId)
+                    )
+                },
+                onBackClick = {
+                    val currentRout = navController.currentDestination?.route
+                    if (currentRout != Routes.Sports.route) {
+                        navController.popBackStack()
+                    }
+                }
+            )
+        }
+
+        composable(Routes.ExerciseCard.route) { backStackEntry ->
+            val exerciseId = backStackEntry.arguments
+                ?.getString("exerciseId")
+                ?.toLongOrNull() ?: 0L
+
+            ExerciseCard(
+                exerciseId = exerciseId,
+                onSaveClick = {},
                 onBackClick = {
                     val currentRout = navController.currentDestination?.route
                     if (currentRout != Routes.Sports.route) {
