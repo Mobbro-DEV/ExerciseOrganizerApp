@@ -1,5 +1,6 @@
 package com.organizer.data.repo
 
+import com.organizer.constants.StorageFolders
 import com.organizer.data.local.storage.FileStorage
 import java.io.File
 import javax.inject.Inject
@@ -9,35 +10,37 @@ class FileRepository @Inject constructor(
 ) {
     suspend fun downloadAndSaveIcons(iconNames: List<String?>) {
         fileStorage.downloadAndSaveFiles(
-            "icons",
+            StorageFolders.ICONS,
             iconNames.filterNotNull().filter { it.isNotBlank() }
         )
     }
-    // TODO add an enum for subfolder
+
     suspend fun downloadAndSaveImages(imageNames: List<String>) {
         fileStorage.downloadAndSaveFiles(
-            "images",
+            StorageFolders.IMAGES,
             imageNames.filter { it.isNotBlank() }
         )
     }
 
-    fun getIcon(name: String): File {
-        return File(fileStorage.dir("icons"), name)
+    fun getIcon(name: String): File? {
+        val file = File(fileStorage.dir(StorageFolders.ICONS), name)
+        return file.takeIf { it.exists() }
     }
 
-    fun getImage(name: String): File {
-        return File(fileStorage.dir("images"), name)
+    fun getImage(name: String): File? {
+        val file = File(fileStorage.dir(StorageFolders.IMAGES), name)
+        return file.takeIf { it.exists() }
     }
 
     fun deleteIcon(iconName: String?) {
         if (!iconName.isNullOrBlank()) {
-            fileStorage.deleteLocalFile("icons", iconName)
+            fileStorage.deleteLocalFile(StorageFolders.ICONS, iconName)
         }
     }
 
     fun deleteImage(imageName: String) {
         if (imageName.isNotBlank()) {
-            fileStorage.deleteLocalFile("images", imageName)
+            fileStorage.deleteLocalFile(StorageFolders.IMAGES, imageName)
         }
     }
 }

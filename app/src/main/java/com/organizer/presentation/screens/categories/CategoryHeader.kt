@@ -22,11 +22,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.organizer.data.local.db.entities.CategoryEntity
+import com.organizer.presentation.OrganizerViewModel
 
 @Composable
 fun CategoryHeader(
     categoryPath: MutableList<CategoryEntity>,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    viewModel: OrganizerViewModel
 ) {
     val sport = categoryPath.firstOrNull()
     val subcategories = categoryPath.drop(1)
@@ -56,7 +58,7 @@ fun CategoryHeader(
             sport?.let {
 
                 AsyncImage(
-                    model = "http://10.0.2.2:8080/icons/${it.iconUrl}",
+                    model = viewModel.getIconFile(it.iconUrl ?: ""),
                     contentDescription = it.name,
                     modifier = Modifier.size(40.dp),
                     contentScale = ContentScale.Fit
