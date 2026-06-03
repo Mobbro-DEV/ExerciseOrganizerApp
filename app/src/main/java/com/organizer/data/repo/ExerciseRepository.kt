@@ -2,7 +2,6 @@ package com.organizer.data.repo
 
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.data.local.repo.ExerciseLocalDataSource
-import com.organizer.data.local.storage.FileStorage
 import com.organizer.data.remote.repo.ExerciseRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -10,7 +9,7 @@ import javax.inject.Inject
 class ExerciseRepository @Inject constructor(
     private val localDataSource: ExerciseLocalDataSource,
     private val remoteDataSource: ExerciseRemoteDataSource,
-    private val fileStorage: FileStorage,
+    private val fileRepository: FileRepository,
 ) {
     fun observeExercises(): Flow<List<ExerciseEntity>> {
         return localDataSource.getAll()
@@ -22,20 +21,16 @@ class ExerciseRepository @Inject constructor(
 
     suspend fun refreshExercises() {
         val remoteExercises = remoteDataSource.getAll()
-        val localExercises = localDataSource.getAllOnce()
 
-        for (exercise in localExercises) {
-            if (!remoteExercises.contains(exercise) && !exercise.isCustom) {
+        localDataSource.getAllOnce()
+            .filter { it !in remoteExercises.toSet() }
+            .forEach { exercise ->
                 localDataSource.delete(exercise)
-                fileStorage.deleteLocalFile("images", exercise.imageUrl)
+                fileRepository.deleteImage(exercise.imageUrl)
             }
-        }
 
         localDataSource.insert(remoteExercises)
-        fileStorage.downloadAndSaveFiles(
-            "images",
-            remoteExercises.map { it.imageUrl }
-        )
+        fileRepository.downloadAndSaveImages(remoteExercises.map { it.imageUrl })
     }
 
     suspend fun addCustomExercise(name: String, imageUrl: String) {

@@ -10,9 +10,9 @@ import com.organizer.data.local.db.entities.CategoryEntity
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.data.local.db.entities.WorkoutEntity
 import com.organizer.data.local.db.entities.WorkoutExerciseEntity
-import com.organizer.data.local.storage.FileStorage
 import com.organizer.data.repo.CategoryRepository
 import com.organizer.data.repo.ExerciseRepository
+import com.organizer.data.repo.FileRepository
 import com.organizer.data.repo.WorkoutExerciseRepository
 import com.organizer.data.repo.WorkoutRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,7 +35,7 @@ class OrganizerViewModel @Inject constructor(
     private val exerciseRepo: ExerciseRepository,
     private val workoutRepo: WorkoutRepository,
     private val workoutExerciseRepo: WorkoutExerciseRepository,
-    private val fileStorage: FileStorage,
+    private val fileRepository: FileRepository,
 ) : ViewModel() {
 
     var errorMessage: String? by mutableStateOf(null)
@@ -144,11 +144,11 @@ class OrganizerViewModel @Inject constructor(
 
     // IMAGE STORAGE
     fun getIconFile(name: String): File {
-        return File(fileStorage.dir("icons"), name)
+        return fileRepository.getIcon(name)
     }
 
     fun getImageFile(name: String): File {
-        return File(fileStorage.dir("images"), name)
+        return fileRepository.getImage(name)
     }
 
     // WORKOUT OPERATIONS

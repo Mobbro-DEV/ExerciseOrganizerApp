@@ -2,7 +2,6 @@ package com.organizer.data.repo
 
 import com.organizer.data.local.db.entities.CategoryEntity
 import com.organizer.data.local.repo.CategoryLocalDataSource
-import com.organizer.data.local.storage.FileStorage
 import com.organizer.data.remote.repo.CategoryRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -10,7 +9,7 @@ import javax.inject.Inject
 class CategoryRepository @Inject constructor(
     private val localDataSource: CategoryLocalDataSource,
     private val remoteDataSource: CategoryRemoteDataSource,
-    private val fileStorage: FileStorage,
+    private val fileRepository: FileRepository,
 ) {
     fun observeCategories(): Flow<List<CategoryEntity>> {
         return localDataSource.getAll()
@@ -26,24 +25,16 @@ class CategoryRepository @Inject constructor(
 
     suspend fun refreshCategories() {
         val remoteCategories = remoteDataSource.getAll()
-        val localCategories = localDataSource.getAllOnce()
 
-        for (category in localCategories) {
-            if (!remoteCategories.contains(category)) {
+        localDataSource.getAllOnce()
+            .filter { it !in remoteCategories.toSet() }
+            .forEach { category ->
                 localDataSource.delete(category)
-                if (!category.iconUrl.isNullOrBlank()) {
-                    fileStorage.deleteLocalFile("icons", category.iconUrl)
-                }
+                fileRepository.deleteIcon(category.iconUrl)
             }
-        }
 
         localDataSource.insert(remoteCategories)
-        fileStorage.downloadAndSaveFiles(
-            "icons",
-            remoteCategories
-                .mapNotNull { it.iconUrl }
-                .filter { it.isNotBlank() }
-        )
+        fileRepository.downloadAndSaveIcons(remoteCategories.map { it.iconUrl })
     }
 
     fun observeCategoryById(id: Long): Flow<CategoryEntity?> {
