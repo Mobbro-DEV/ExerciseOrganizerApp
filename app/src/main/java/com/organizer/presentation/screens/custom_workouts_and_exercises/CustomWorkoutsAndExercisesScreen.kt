@@ -3,8 +3,12 @@ package com.organizer.presentation.screens.custom_workouts_and_exercises
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,18 +44,24 @@ fun CustomWorkoutsAndExercisesScreen(
 
         Spacer(Modifier.height(28.dp))
 
-        WorkoutList(
-            workouts = workouts,
-            onWorkoutClick = onWorkoutClick
-        )
+        if (selectedTab == CustomsTab.WORKOUTS) {
+            WorkoutList(
+                workouts = workouts,
+                onWorkoutClick = onWorkoutClick
+            )
 
-        Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f))
 
-        CreateButton(
-            selectedTab = selectedTab,
-            onClick = onCreateClick,
-            viewModel = viewModel
-        )
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                onClick = onCreateClick,
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Text("Create New Workout")
+            }
+        }
 
         Spacer(Modifier.height(24.dp))
     }
