@@ -9,20 +9,24 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.organizer.presentation.Routes
 
-@Preview
 @Composable
-fun BottomNavigationBar() {
+fun BottomNavigationBar(
+    currentRoute: String?,
+    onHomeClick: () -> Unit,
+    onWorkoutsClick: () -> Unit,
+    onAddCardClick: () -> Unit,
+) {
     NavigationBar(
         containerColor = Color.White,
         tonalElevation = 8.dp
     ) {
 
         NavigationBarItem(
-            selected = true,
-            onClick = { },
+            selected = currentRoute == Routes.Sports.route,
+            onClick = onHomeClick,
             icon = {
                 Icon(
                     imageVector = Icons.Outlined.Home,
@@ -32,8 +36,8 @@ fun BottomNavigationBar() {
         )
 
         NavigationBarItem(
-            selected = false,
-            onClick = { },
+            selected = currentRoute == Routes.Workouts.route,
+            onClick = onWorkoutsClick,
             icon = {
                 Icon(
                     imageVector = Icons.Outlined.FitnessCenter,
@@ -43,8 +47,8 @@ fun BottomNavigationBar() {
         )
 
         NavigationBarItem(
-            selected = false,
-            onClick = { },
+            selected = currentRoute == Routes.AddCard.route,
+            onClick = onAddCardClick,
             icon = {
                 Icon(
                     imageVector = Icons.Outlined.Add,

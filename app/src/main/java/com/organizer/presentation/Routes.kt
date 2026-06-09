@@ -12,4 +12,6 @@ sealed class Routes(val route: String) {
             return "exercise/$exerciseId"
         }
     }
+    object Workouts: Routes("workouts")
+    object AddCard: Routes("addCard")
 }
