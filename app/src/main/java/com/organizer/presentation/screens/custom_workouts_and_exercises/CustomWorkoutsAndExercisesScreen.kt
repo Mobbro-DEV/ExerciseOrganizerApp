@@ -1,4 +1,4 @@
-package com.organizer.presentation.screens.`custom-workouts-and-exercises`
+package com.organizer.presentation.screens.custom_workouts_and_exercises
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.data.local.db.entities.WorkoutEntity
 import com.organizer.presentation.OrganizerViewModel
+import com.organizer.presentation.screens.workout.WorkoutList
 
 @Composable
 fun CustomWorkoutsAndExercisesScreen(
@@ -46,9 +47,10 @@ fun CustomWorkoutsAndExercisesScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        CreateWorkoutButton(
+        CreateButton(
             selectedTab = selectedTab,
-            onClick = onCreateClick
+            onClick = onCreateClick,
+            viewModel = viewModel
         )
 
         Spacer(Modifier.height(24.dp))

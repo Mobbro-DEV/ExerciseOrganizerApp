@@ -21,9 +21,10 @@ import com.organizer.presentation.screens.addcard.AddCardScreen
 import com.organizer.presentation.screens.sports.SportsScreen
 import com.organizer.presentation.screens.categories.CategoryContentScreen
 import com.organizer.presentation.screens.exercises.ExerciseCard
+import com.organizer.presentation.screens.workout.CreateWorkoutScreen
 import com.organizer.presentation.screens.general.BottomNavigationBar
-import com.organizer.presentation.screens.`custom-workouts-and-exercises`.CustomsTab
-import com.organizer.presentation.screens.`custom-workouts-and-exercises`.CustomWorkoutsAndExercisesScreen
+import com.organizer.presentation.screens.custom_workouts_and_exercises.CustomsTab
+import com.organizer.presentation.screens.custom_workouts_and_exercises.CustomWorkoutsAndExercisesScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -134,7 +135,19 @@ fun AppNavigation() {
                     selectedTab = selectedTab,
                     onTabSelected = { selectedTab = it },
                     onWorkoutClick = {},
-                    onCreateClick = {}
+                    onCreateClick = { navController.navigate(Routes.CreateWorkout.route) }
+                )
+            }
+
+            composable(Routes.CreateWorkout.route) {
+                CreateWorkoutScreen(
+                    onBackClick = {
+                        // TODO might be redundant
+                        val currentRout = navController.currentDestination?.route
+                        if (currentRout != Routes.Sports.route) {
+                            navController.popBackStack()
+                        }
+                    },
                 )
             }
 

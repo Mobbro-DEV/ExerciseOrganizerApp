@@ -1,4 +1,4 @@
-package com.organizer.presentation.screens.`custom-workouts-and-exercises`
+package com.organizer.presentation.screens.workout
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
