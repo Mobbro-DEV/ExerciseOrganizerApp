@@ -6,14 +6,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.organizer.presentation.screens.general.BottomNavigationBar
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -48,95 +46,87 @@ fun ExerciseCard(
 
     val exercise by viewModel.exerciseUiState.collectAsState()
 
-    Scaffold(
-        bottomBar = {
-            BottomNavigationBar()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        if (exercise == null) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Loading...",
+                    color = Color.Gray,
+                    fontSize = 16.sp
+                )
+            }
+            return@Column
         }
-    ) { padding ->
 
-        Column(
+        val data = exercise!!
+
+        // Top bar
+        Row(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxWidth()
+                .padding(top = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-
-            if (exercise == null) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Loading...",
-                        color = Color.Gray,
-                        fontSize = 16.sp
-                    )
-                }
-                return@Column
-            }
-
-            val data = exercise!!
-
-            // Top bar
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = null
-                    )
-                }
-
-                Text(
-                    text = data.name,
-                    modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Spacer(modifier = Modifier.width(48.dp))
-            }
-
-
-            Spacer(modifier = Modifier.height(28.dp))
-
-            // MAIN IMAGE CARD
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(320.dp),
-                shape = RoundedCornerShape(24.dp)
-            ) {
-                AsyncImage(
-                    model = viewModel.getImageFile(data.imageUrl),
-                    contentDescription = data.name,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = null
                 )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                text = data.name,
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.Center,
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold
+            )
 
-            // Save button
-            Button(
-                onClick = onSaveClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Text(
-                    "Save",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
+            Spacer(modifier = Modifier.width(48.dp))
+        }
+
+
+        Spacer(modifier = Modifier.height(28.dp))
+
+        // MAIN IMAGE CARD
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(320.dp),
+            shape = RoundedCornerShape(24.dp)
+        ) {
+            AsyncImage(
+                model = viewModel.getImageFile(data.imageUrl),
+                contentDescription = data.name,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Save button
+        Button(
+            onClick = onSaveClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Text(
+                "Save",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold
+            )
         }
     }
 }
