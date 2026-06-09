@@ -53,10 +53,7 @@ fun AppNavigation() {
             BottomNavigationBar(
                 currentRoute = currentRoute,
                 onHomeClick = {
-                    navController.navigate(Routes.Sports.route) {
-                        popUpTo(Routes.Sports.route)
-                        launchSingleTop = true
-                    }
+                    navController.navigate(Routes.Sports.route)
                 },
                 onWorkoutsClick = {
                     navController.navigate(Routes.Workouts.route)
@@ -101,7 +98,6 @@ fun AppNavigation() {
                         )
                     },
                     onBackClick = {
-                        // TODO might be redundant
                         val currentRout = navController.currentDestination?.route
                         if (currentRout != Routes.Sports.route) {
                             navController.popBackStack()
@@ -119,7 +115,6 @@ fun AppNavigation() {
                     exerciseId = exerciseId,
                     onSaveClick = {},
                     onBackClick = {
-                        // TODO might be redundant
                         val currentRout = navController.currentDestination?.route
                         if (currentRout != Routes.Sports.route) {
                             navController.popBackStack()
@@ -142,7 +137,6 @@ fun AppNavigation() {
             composable(Routes.CreateWorkout.route) {
                 CreateWorkoutScreen(
                     onBackClick = {
-                        // TODO might be redundant
                         val currentRout = navController.currentDestination?.route
                         if (currentRout != Routes.Sports.route) {
                             navController.popBackStack()

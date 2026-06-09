@@ -21,7 +21,6 @@ fun CreateWorkoutScreen(
 ) {
     var workoutName by remember { mutableStateOf("") }
 
-    val purple = Color(0xFF9C7AC7)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -72,7 +71,7 @@ fun CreateWorkoutScreen(
                 viewModel.createWorkout(workoutName)
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = purple
+                containerColor = Color(0xFF9C7AC7)
             ),
             shape = RoundedCornerShape(14.dp),
             modifier = Modifier
