@@ -2,6 +2,7 @@ package com.organizer.data.local.storage
 
 import android.content.Context
 import android.util.Log
+import com.organizer.constants.AppConfig
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +28,7 @@ class FileStorage @Inject constructor(
 
             for (fileName in fileNames) {
                 try {
-                    val url = URL("http://10.0.2.2:8080/$subfolder/$fileName")
+                    val url = URL("${AppConfig.API_BASE_URL}/$subfolder/$fileName")
                     val imageData = url.openStream().readBytes()
 
                     File(dir, fileName).writeBytes(imageData)
