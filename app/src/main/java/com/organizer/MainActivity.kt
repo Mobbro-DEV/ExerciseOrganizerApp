@@ -6,6 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
@@ -18,7 +22,8 @@ import com.organizer.presentation.screens.sports.SportsScreen
 import com.organizer.presentation.screens.categories.CategoryContentScreen
 import com.organizer.presentation.screens.exercises.ExerciseCard
 import com.organizer.presentation.screens.general.BottomNavigationBar
-import com.organizer.presentation.screens.workouts.WorkoutsScreen
+import com.organizer.presentation.screens.`custom-workouts-and-exercises`.CustomsTab
+import com.organizer.presentation.screens.`custom-workouts-and-exercises`.CustomWorkoutsAndExercisesScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -123,7 +128,14 @@ fun AppNavigation() {
             }
 
             composable(Routes.Workouts.route) {
-                WorkoutsScreen()
+                var selectedTab by remember { mutableStateOf(CustomsTab.WORKOUTS) }
+
+                CustomWorkoutsAndExercisesScreen(
+                    selectedTab = selectedTab,
+                    onTabSelected = { selectedTab = it },
+                    onWorkoutClick = {},
+                    onCreateClick = {}
+                )
             }
 
             composable(Routes.AddCard.route) {
