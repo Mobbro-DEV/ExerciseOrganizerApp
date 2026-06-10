@@ -17,7 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.organizer.presentation.Routes
-import com.organizer.presentation.screens.addcard.AddCardScreen
+import com.organizer.presentation.screens.add_card.AddCardScreen
 import com.organizer.presentation.screens.sports.SportsScreen
 import com.organizer.presentation.screens.categories.CategoryContentScreen
 import com.organizer.presentation.screens.exercises.ExerciseCard
@@ -25,7 +25,6 @@ import com.organizer.presentation.screens.workout.CreateWorkoutScreen
 import com.organizer.presentation.screens.general.BottomNavigationBar
 import com.organizer.presentation.screens.workouts_and_exercises.CustomsTab
 import com.organizer.presentation.screens.workouts_and_exercises.CustomWorkoutsAndExercisesScreen
-import com.organizer.presentation.screens.exercises.CreateExerciseScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -133,7 +132,7 @@ fun AppNavigation() {
                     onWorkoutClick = {},
                     onExerciseClick = {},
                     onCreateWorkoutClick = { navController.navigate(Routes.CreateWorkout.route) },
-                    onCreateExerciseClick = { navController.navigate(Routes.CreateExercise.route) },
+                    onCreateExerciseClick = { navController.navigate(Routes.AddCard.route) },
                 )
             }
 
@@ -148,8 +147,8 @@ fun AppNavigation() {
                 )
             }
 
-            composable(Routes.CreateExercise.route) {
-                CreateExerciseScreen(
+            composable(Routes.AddCard.route) {
+                AddCardScreen(
                     onBackClick = {
                         val currentRout = navController.currentDestination?.route
                         if (currentRout != Routes.Sports.route) {
@@ -157,10 +156,6 @@ fun AppNavigation() {
                         }
                     },
                 )
-            }
-
-            composable(Routes.AddCard.route) {
-                AddCardScreen()
             }
         }
     }

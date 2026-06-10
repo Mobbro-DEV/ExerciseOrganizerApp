@@ -1,4 +1,4 @@
-package com.organizer.presentation.screens.exercises
+package com.organizer.presentation.screens.add_card
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,7 +15,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.presentation.OrganizerViewModel
 
 @Composable
-fun CreateExerciseScreen(
+fun AddCardScreen(
     onBackClick: () -> Unit = {},
     viewModel: OrganizerViewModel = hiltViewModel(),
 ) {

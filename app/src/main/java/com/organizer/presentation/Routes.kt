@@ -14,6 +14,5 @@ sealed class Routes(val route: String) {
     }
     object Workouts: Routes("workouts")
     object CreateWorkout: Routes("createWorkout")
-    object CreateExercise: Routes("createExercise")
     object AddCard: Routes("addCard")
 }
