@@ -1,4 +1,4 @@
-package com.organizer.presentation.screens.custom_workouts_and_exercises
+package com.organizer.presentation.screens.workouts_and_exercises
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

@@ -73,6 +73,10 @@ class OrganizerViewModel @Inject constructor(
         workoutExerciseRepo.observeWorkoutExercises()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    val customExercisesUiState: StateFlow<List<ExerciseEntity>> =
+        exerciseRepo.observeCustomExercises()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     // SPORTS (SEARCHABLE)
     val sportsUiState: StateFlow<List<CategoryEntity>> =
         combine(
@@ -187,8 +191,8 @@ class OrganizerViewModel @Inject constructor(
         workoutExerciseRepo.deleteExerciseFromWorkout(workoutId, exerciseId)
     }
 
-    fun addCustomExercise(name: String, imageUrl: String) = viewModelScope.launch {
-        exerciseRepo.addCustomExercise(name, imageUrl)
+    fun createCustomExercise(name: String) = viewModelScope.launch {
+        exerciseRepo.addCustomExercise(name)
     }
 
     fun deleteCustomExercise(id: Long) = viewModelScope.launch {

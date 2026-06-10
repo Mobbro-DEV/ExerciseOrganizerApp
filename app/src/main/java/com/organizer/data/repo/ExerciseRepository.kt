@@ -6,6 +6,7 @@ import com.organizer.data.remote.repo.ExerciseRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
+import kotlin.time.Clock
 
 class ExerciseRepository @Inject constructor(
     private val localDataSource: ExerciseLocalDataSource,
@@ -20,29 +21,31 @@ class ExerciseRepository @Inject constructor(
         return localDataSource.getExercisesByCategory(categoryId)
     }
 
+    fun observeCustomExercises(): Flow<List<ExerciseEntity>> {
+        return localDataSource.getCustomExercises()
+    }
+
     suspend fun refreshExercises() {
         val remoteExercises = remoteDataSource.getAll()
 
         localDataSource.getAllOnce()
-            .filter { it !in remoteExercises.toSet() }
+            .filter { it !in remoteExercises.toSet() && !it.isCustom }
             .forEach { exercise ->
                 localDataSource.delete(exercise)
                 fileRepository.deleteImage(exercise.imageUrl)
             }
 
-        localDataSource.insert(remoteExercises)
+        localDataSource.insertAll(remoteExercises)
         fileRepository.downloadAndSaveImages(remoteExercises.map { it.imageUrl })
     }
 
-    suspend fun addCustomExercise(name: String, imageUrl: String) {
+    suspend fun addCustomExercise(name: String) {
         localDataSource.insert(
-            listOf(
-                ExerciseEntity(
-                    name = name,
-                    imageUrl = imageUrl,
-                    categoryId = null,
-                    isCustom = true
-                )
+            ExerciseEntity(
+                name = name,
+                imageUrl = Clock.System.now().toString(),
+                categoryId = null,
+                isCustom = true
             )
         )
     }

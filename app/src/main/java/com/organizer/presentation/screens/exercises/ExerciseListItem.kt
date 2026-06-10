@@ -22,6 +22,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.presentation.OrganizerViewModel
@@ -31,7 +32,7 @@ import com.organizer.presentation.OrganizerViewModel
 fun ExerciseListItem(
     exercise: ExerciseEntity,
     onClick: () -> Unit,
-    viewModel: OrganizerViewModel
+    viewModel: OrganizerViewModel = hiltViewModel(),
 ) {
     Card(
         modifier = Modifier
