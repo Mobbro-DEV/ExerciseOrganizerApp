@@ -108,7 +108,7 @@ fun AppNavigation() {
 
                 ExerciseCard(
                     exerciseId = exerciseId,
-                    onSaveClick = {},
+                    onCreateWorkoutClick = { navController.navigate(Routes.CreateWorkout.route) },
                     onBackClick = {
                         val currentRout = navController.currentDestination?.route
                         if (currentRout != Routes.Sports.route) {

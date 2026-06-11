@@ -32,11 +32,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.organizer.presentation.OrganizerViewModel
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 @Composable
 fun ExerciseCard(
     exerciseId: Long,
-    onSaveClick: () -> Unit,
+    onCreateWorkoutClick: () -> Unit,
     onBackClick: () -> Unit,
     viewModel: OrganizerViewModel = hiltViewModel()
 ) {
@@ -45,6 +48,7 @@ fun ExerciseCard(
     }
 
     val exercise by viewModel.exerciseUiState.collectAsState()
+    var showSavePopup by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -116,7 +120,7 @@ fun ExerciseCard(
 
         // Save button
         Button(
-            onClick = onSaveClick,
+            onClick = { showSavePopup = true },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
@@ -126,6 +130,16 @@ fun ExerciseCard(
                 "Save",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold
+            )
+        }
+
+        if (showSavePopup) {
+            SaveExercisePopup(
+                exerciseId = exerciseId,
+                onDismiss = {
+                    showSavePopup = false
+                },
+                onCreateWorkoutClick = onCreateWorkoutClick
             )
         }
     }
