@@ -3,6 +3,7 @@ package com.organizer.presentation
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,6 +16,7 @@ import com.organizer.data.repo.ExerciseRepository
 import com.organizer.data.repo.FileRepository
 import com.organizer.data.repo.WorkoutExerciseRepository
 import com.organizer.data.repo.WorkoutRepository
+import com.organizer.presentation.screens.workouts_and_exercises.CustomsTab
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -164,6 +166,8 @@ class OrganizerViewModel @Inject constructor(
 
         emit(path.reversed())
     }
+
+    val selectedTab = MutableStateFlow(CustomsTab.WORKOUTS)
 
     // IMAGE STORAGE
     fun getIconFile(name: String): File? {

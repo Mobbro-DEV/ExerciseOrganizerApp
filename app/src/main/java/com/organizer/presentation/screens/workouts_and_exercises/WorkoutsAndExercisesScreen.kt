@@ -13,8 +13,6 @@ import com.organizer.data.local.db.entities.WorkoutEntity
 
 @Composable
 fun CustomWorkoutsAndExercisesScreen(
-    selectedTab: CustomsTab,
-    onTabSelected: (CustomsTab) -> Unit,
     onWorkoutClick: (WorkoutEntity) -> Unit,
     onExerciseClick: (ExerciseEntity) -> Unit,
     onCreateWorkoutClick: () -> Unit,
@@ -28,15 +26,11 @@ fun CustomWorkoutsAndExercisesScreen(
 
         Spacer(Modifier.height(32.dp))
 
-        TabSwitcher(
-            selectedTab = selectedTab,
-            onTabSelected = onTabSelected
-        )
+        TabSwitcher()
 
         Spacer(Modifier.height(28.dp))
 
         CustomsList(
-            selectedTab,
             onWorkoutClick,
             onExerciseClick,
             onCreateWorkoutClick,

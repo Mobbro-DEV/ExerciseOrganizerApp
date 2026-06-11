@@ -10,12 +10,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.organizer.presentation.OrganizerViewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 
 @Composable
 fun TabSwitcher(
-    selectedTab: CustomsTab,
-    onTabSelected: (CustomsTab) -> Unit,
+    viewModel: OrganizerViewModel = hiltViewModel(),
 ) {
+    val selectedTab by viewModel.selectedTab.collectAsState()
 
     Row(
         modifier = Modifier
@@ -29,14 +33,14 @@ fun TabSwitcher(
             title = "My Workouts",
             selected = selectedTab == CustomsTab.WORKOUTS,
             modifier = Modifier.weight(1f),
-            onClick = { onTabSelected(CustomsTab.WORKOUTS) }
+            onClick = { viewModel.selectedTab.value = CustomsTab.WORKOUTS }
         )
 
         TabButton(
             title = "My Exercises",
             selected = selectedTab == CustomsTab.EXERCISES,
             modifier = Modifier.weight(1f),
-            onClick = { onTabSelected(CustomsTab.EXERCISES) }
+            onClick = { viewModel.selectedTab.value = CustomsTab.EXERCISES }
         )
     }
 }

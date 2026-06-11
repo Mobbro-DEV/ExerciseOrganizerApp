@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun CustomsList(
-    selectedTab: CustomsTab,
     onWorkoutClick: (WorkoutEntity) -> Unit,
     onExerciseClick: (ExerciseEntity) -> Unit,
     onCreateWorkoutClick: () -> Unit,
@@ -34,6 +33,7 @@ fun CustomsList(
 ) {
     val workouts by viewModel.workoutsUiState.collectAsState()
     val customExercises by viewModel.customExercisesUiState.collectAsState()
+    val selectedTab by viewModel.selectedTab.collectAsState()
 
     Column(
         modifier = Modifier.fillMaxSize()
