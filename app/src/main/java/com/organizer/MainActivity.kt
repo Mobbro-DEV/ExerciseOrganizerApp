@@ -149,9 +149,9 @@ fun AppNavigation() {
 
                 WorkoutContentScreen(
                     workoutId = workoutId,
-                    onExerciseClick = { exercise ->
+                    onOpenExerciseClick = { exercise ->
                         navController.navigate(
-                            Routes.Workout.createRoute(exercise.exerciseId)
+                            Routes.ExerciseCard.createRoute(exercise.exerciseId)
                         )
                     },
                     onBackClick = {

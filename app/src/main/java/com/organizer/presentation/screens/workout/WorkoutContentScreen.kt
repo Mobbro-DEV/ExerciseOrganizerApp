@@ -12,17 +12,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.presentation.OrganizerViewModel
-import com.organizer.presentation.screens.exercises.ExerciseListItem
 
 @Composable
 fun WorkoutContentScreen(
     workoutId: Long,
-    onExerciseClick: (ExerciseEntity) -> Unit,
+    onOpenExerciseClick: (ExerciseEntity) -> Unit,
     onBackClick: () -> Unit,
     viewModel: OrganizerViewModel = hiltViewModel(),
 ) {
@@ -32,6 +34,7 @@ fun WorkoutContentScreen(
 
     val workout by viewModel.workoutUiState.collectAsState()
     val exercises by viewModel.workoutExercisesByIdsUiState.collectAsState()
+    var expandedExerciseId by remember { mutableStateOf<Long?>(null) }
 
     Column(
         modifier = Modifier
@@ -55,10 +58,22 @@ fun WorkoutContentScreen(
                 items = exercises,
                 key = { it.exerciseId }
             ) { exercise ->
-                ExerciseListItem(
+                WorkoutExerciseListItem(
                     exercise = exercise,
+                    expanded = expandedExerciseId == exercise.exerciseId,
                     onClick = {
-                        onExerciseClick(exercise)
+                        expandedExerciseId =
+                            if (expandedExerciseId == exercise.exerciseId)
+                                null
+                            else
+                                exercise.exerciseId
+                    },
+                    onOpenClick = { onOpenExerciseClick(exercise) },
+                    onDeleteClick = {
+                        viewModel.deleteExerciseFromWorkout(
+                            workoutId,
+                            exercise.exerciseId
+                        )
                     },
                     viewModel = viewModel
                 )
