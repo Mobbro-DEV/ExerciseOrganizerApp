@@ -8,11 +8,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.presentation.OrganizerViewModel
+import com.organizer.presentation.screens.general.SaveButton
 
 @Composable
 fun AddCardScreen(
@@ -66,23 +66,11 @@ fun AddCardScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         // Save Button
-        Button(
+        SaveButton(
             onClick = {
                 viewModel.createCustomExercise(exerciseName)
+                onBackClick()
             },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF9C7AC7)
-            ),
-            shape = RoundedCornerShape(14.dp),
-            modifier = Modifier
-                .fillMaxWidth(0.65f)
-                .align(Alignment.CenterHorizontally)
-                .height(56.dp)
-        ) {
-            Text(
-                text = "Save",
-                fontSize = 20.sp
-            )
-        }
+        )
     }
 }
