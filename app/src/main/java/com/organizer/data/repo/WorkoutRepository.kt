@@ -16,6 +16,10 @@ class WorkoutRepository @Inject constructor(
         return dao.getAll()
     }
 
+    fun observeWorkoutById(id: Long): Flow<WorkoutEntity?> {
+        return dao.getById(id)
+    }
+
     suspend fun deleteWorkout(id: Long) {
         dao.delete(id)
     }

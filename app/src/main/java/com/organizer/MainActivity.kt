@@ -19,6 +19,7 @@ import com.organizer.presentation.screens.categories.CategoryContentScreen
 import com.organizer.presentation.screens.exercises.ExerciseCard
 import com.organizer.presentation.screens.workout.CreateWorkoutScreen
 import com.organizer.presentation.screens.general.BottomNavigationBar
+import com.organizer.presentation.screens.workout.WorkoutContentScreen
 import com.organizer.presentation.screens.workouts_and_exercises.CustomWorkoutsAndExercisesScreen
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -122,7 +123,11 @@ fun AppNavigation() {
             composable(Routes.Workouts.route) {
 
                 CustomWorkoutsAndExercisesScreen(
-                    onWorkoutClick = {},
+                    onWorkoutClick = { workout ->
+                        navController.navigate(
+                            Routes.Workout.createRoute(workout.workoutId)
+                        )
+                    },
                     onExerciseClick = {},
                     onCreateWorkoutClick = { navController.navigate(Routes.CreateWorkout.route) },
                     onCreateExerciseClick = { navController.navigate(Routes.AddCard.route) },
@@ -131,6 +136,24 @@ fun AppNavigation() {
 
             composable(Routes.CreateWorkout.route) {
                 CreateWorkoutScreen(
+                    onBackClick = {
+                        popBackScreen()
+                    },
+                )
+            }
+
+            composable(Routes.Workout.route) { backStackEntry ->
+                val workoutId = backStackEntry.arguments
+                    ?.getString("workoutId")
+                    ?.toLongOrNull() ?: 0L
+
+                WorkoutContentScreen(
+                    workoutId = workoutId,
+                    onExerciseClick = { exercise ->
+                        navController.navigate(
+                            Routes.Workout.createRoute(exercise.exerciseId)
+                        )
+                    },
                     onBackClick = {
                         popBackScreen()
                     },

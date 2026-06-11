@@ -183,6 +183,26 @@ class OrganizerViewModel @Inject constructor(
         workoutRepo.createWorkout(name)
     }
 
+    // WORKOUT NAVIGATION STATE
+    private val selectedWorkoutId = MutableStateFlow<Long?>(null)
+
+    fun selectWorkout(id: Long) {
+        selectedWorkoutId.value = id
+    }
+
+    // WORKOUT
+    val workoutUiState: StateFlow<WorkoutEntity?> =
+        selectedWorkoutId
+            .filterNotNull()
+            .flatMapLatest { id ->
+                workoutRepo.observeWorkoutById(id)
+            }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                null
+            )
+
     fun deleteWorkout(id: Long) = viewModelScope.launch {
         workoutRepo.deleteWorkout(id)
     }
