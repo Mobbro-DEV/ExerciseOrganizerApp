@@ -13,7 +13,7 @@ interface WorkoutDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(workoutEntity: WorkoutEntity)
 
-    @Query("SELECT * FROM workout")
+    @Query("SELECT * FROM workout ORDER BY workoutId DESC")
     fun getAll(): Flow<List<WorkoutEntity>>
 
     @Query("DELETE FROM workout WHERE workoutId = :id")

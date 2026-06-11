@@ -25,7 +25,7 @@ interface ExerciseDao {
     @Query("SELECT * FROM exercise WHERE categoryId = :categoryId")
     fun getExercisesByCategory(categoryId: Long): Flow<List<ExerciseEntity>>
 
-    @Query("SELECT * FROM exercise WHERE isCustom = 1")
+    @Query("SELECT * FROM exercise WHERE isCustom = 1 ORDER BY exerciseId DESC")
     fun getCustomExercises(): Flow<List<ExerciseEntity>>
 
     @Query("SELECT * FROM exercise WHERE exerciseId = :id")
