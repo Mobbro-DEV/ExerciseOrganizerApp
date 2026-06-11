@@ -13,12 +13,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.organizer.presentation.Routes
-import com.organizer.presentation.screens.addcard.AddCardScreen
+import com.organizer.presentation.screens.add_card.AddCardScreen
 import com.organizer.presentation.screens.sports.SportsScreen
 import com.organizer.presentation.screens.categories.CategoryContentScreen
 import com.organizer.presentation.screens.exercises.ExerciseCard
+import com.organizer.presentation.screens.workout.CreateWorkoutScreen
 import com.organizer.presentation.screens.general.BottomNavigationBar
-import com.organizer.presentation.screens.workouts.WorkoutsScreen
+import com.organizer.presentation.screens.workouts_and_exercises.CustomWorkoutsAndExercisesScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -47,10 +48,7 @@ fun AppNavigation() {
             BottomNavigationBar(
                 currentRoute = currentRoute,
                 onHomeClick = {
-                    navController.navigate(Routes.Sports.route) {
-                        popUpTo(Routes.Sports.route)
-                        launchSingleTop = true
-                    }
+                    navController.navigate(Routes.Sports.route)
                 },
                 onWorkoutsClick = {
                     navController.navigate(Routes.Workouts.route)
@@ -95,7 +93,6 @@ fun AppNavigation() {
                         )
                     },
                     onBackClick = {
-                        // TODO might be redundant
                         val currentRout = navController.currentDestination?.route
                         if (currentRout != Routes.Sports.route) {
                             navController.popBackStack()
@@ -113,7 +110,6 @@ fun AppNavigation() {
                     exerciseId = exerciseId,
                     onSaveClick = {},
                     onBackClick = {
-                        // TODO might be redundant
                         val currentRout = navController.currentDestination?.route
                         if (currentRout != Routes.Sports.route) {
                             navController.popBackStack()
@@ -123,11 +119,35 @@ fun AppNavigation() {
             }
 
             composable(Routes.Workouts.route) {
-                WorkoutsScreen()
+
+                CustomWorkoutsAndExercisesScreen(
+                    onWorkoutClick = {},
+                    onExerciseClick = {},
+                    onCreateWorkoutClick = { navController.navigate(Routes.CreateWorkout.route) },
+                    onCreateExerciseClick = { navController.navigate(Routes.AddCard.route) },
+                )
+            }
+
+            composable(Routes.CreateWorkout.route) {
+                CreateWorkoutScreen(
+                    onBackClick = {
+                        val currentRout = navController.currentDestination?.route
+                        if (currentRout != Routes.Sports.route) {
+                            navController.popBackStack()
+                        }
+                    },
+                )
             }
 
             composable(Routes.AddCard.route) {
-                AddCardScreen()
+                AddCardScreen(
+                    onBackClick = {
+                        val currentRout = navController.currentDestination?.route
+                        if (currentRout != Routes.Sports.route) {
+                            navController.popBackStack()
+                        }
+                    },
+                )
             }
         }
     }

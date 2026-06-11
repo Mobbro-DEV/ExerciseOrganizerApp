@@ -8,8 +8,12 @@ import kotlinx.coroutines.flow.Flow
 class ExerciseLocalDataSource @Inject constructor(
     private val dao: ExerciseDao
 ) {
-    suspend fun insert(exercises: List<ExerciseEntity>) {
-        dao.insert(exercises)
+    suspend fun insertAll(exercises: List<ExerciseEntity>) {
+        dao.insertAll(exercises)
+    }
+
+    suspend fun insert(exercise: ExerciseEntity) {
+        dao.insert(exercise)
     }
 
     fun getAll(): Flow<List<ExerciseEntity>> {
@@ -22,6 +26,10 @@ class ExerciseLocalDataSource @Inject constructor(
 
     fun getExercisesByCategory(categoryId: Long): Flow<List<ExerciseEntity>> {
         return dao.getExercisesByCategory(categoryId)
+    }
+
+    fun getCustomExercises(): Flow<List<ExerciseEntity>> {
+        return dao.getCustomExercises()
     }
 
     fun getById(id: Long): Flow<ExerciseEntity?> {

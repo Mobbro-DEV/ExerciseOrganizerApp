@@ -3,6 +3,7 @@ package com.organizer.presentation
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,6 +16,7 @@ import com.organizer.data.repo.ExerciseRepository
 import com.organizer.data.repo.FileRepository
 import com.organizer.data.repo.WorkoutExerciseRepository
 import com.organizer.data.repo.WorkoutRepository
+import com.organizer.presentation.screens.workouts_and_exercises.CustomsTab
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -71,6 +73,10 @@ class OrganizerViewModel @Inject constructor(
 
     val workoutExercisesUiState: StateFlow<List<WorkoutExerciseEntity>> =
         workoutExerciseRepo.observeWorkoutExercises()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val customExercisesUiState: StateFlow<List<ExerciseEntity>> =
+        exerciseRepo.observeCustomExercises()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // SPORTS (SEARCHABLE)
@@ -161,6 +167,8 @@ class OrganizerViewModel @Inject constructor(
         emit(path.reversed())
     }
 
+    val selectedTab = MutableStateFlow(CustomsTab.WORKOUTS)
+
     // IMAGE STORAGE
     fun getIconFile(name: String): File? {
         return fileRepository.getIcon(name)
@@ -187,8 +195,8 @@ class OrganizerViewModel @Inject constructor(
         workoutExerciseRepo.deleteExerciseFromWorkout(workoutId, exerciseId)
     }
 
-    fun addCustomExercise(name: String, imageUrl: String) = viewModelScope.launch {
-        exerciseRepo.addCustomExercise(name, imageUrl)
+    fun createCustomExercise(name: String) = viewModelScope.launch {
+        exerciseRepo.addCustomExercise(name)
     }
 
     fun deleteCustomExercise(id: Long) = viewModelScope.launch {
