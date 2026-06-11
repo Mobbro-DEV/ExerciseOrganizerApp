@@ -42,6 +42,13 @@ fun AppNavigation() {
         ?.destination
         ?.route
 
+    fun popBackScreen() {
+        val currentRout = navController.currentDestination?.route
+        if (currentRout != Routes.Sports.route) {
+            navController.popBackStack()
+        }
+    }
+
     Scaffold(
         containerColor = Color(0xFFF8F5F5),
         bottomBar = {
@@ -93,10 +100,7 @@ fun AppNavigation() {
                         )
                     },
                     onBackClick = {
-                        val currentRout = navController.currentDestination?.route
-                        if (currentRout != Routes.Sports.route) {
-                            navController.popBackStack()
-                        }
+                        popBackScreen()
                     },
                 )
             }
@@ -110,10 +114,7 @@ fun AppNavigation() {
                     exerciseId = exerciseId,
                     onCreateWorkoutClick = { navController.navigate(Routes.CreateWorkout.route) },
                     onBackClick = {
-                        val currentRout = navController.currentDestination?.route
-                        if (currentRout != Routes.Sports.route) {
-                            navController.popBackStack()
-                        }
+                        popBackScreen()
                     },
                 )
             }
@@ -131,10 +132,7 @@ fun AppNavigation() {
             composable(Routes.CreateWorkout.route) {
                 CreateWorkoutScreen(
                     onBackClick = {
-                        val currentRout = navController.currentDestination?.route
-                        if (currentRout != Routes.Sports.route) {
-                            navController.popBackStack()
-                        }
+                        popBackScreen()
                     },
                 )
             }
@@ -142,10 +140,7 @@ fun AppNavigation() {
             composable(Routes.AddCard.route) {
                 AddCardScreen(
                     onBackClick = {
-                        val currentRout = navController.currentDestination?.route
-                        if (currentRout != Routes.Sports.route) {
-                            navController.popBackStack()
-                        }
+                        popBackScreen()
                     },
                 )
             }
