@@ -3,7 +3,6 @@ package com.organizer.presentation
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,6 +26,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File
@@ -201,6 +201,33 @@ class OrganizerViewModel @Inject constructor(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(5000),
                 null
+            )
+
+    val exerciseIdsByWorkoutUiState: StateFlow<List<Long>> =
+        selectedWorkoutId
+            .filterNotNull()
+            .flatMapLatest { id ->
+                workoutExerciseRepo.observeExerciseIdsByWorkout(id)
+            }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                emptyList()
+            )
+
+    val workoutExercisesByIdsUiState: StateFlow<List<ExerciseEntity>> =
+        exerciseIdsByWorkoutUiState
+            .flatMapLatest { ids ->
+                if (ids.isEmpty()) {
+                    flowOf(emptyList())
+                } else {
+                    exerciseRepo.observeExercisesByIds(ids)
+                }
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyList()
             )
 
     fun deleteWorkout(id: Long) = viewModelScope.launch {

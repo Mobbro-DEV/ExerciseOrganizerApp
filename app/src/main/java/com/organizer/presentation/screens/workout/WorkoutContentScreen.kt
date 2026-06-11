@@ -1,8 +1,13 @@
 package com.organizer.presentation.screens.workout
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -12,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.presentation.OrganizerViewModel
+import com.organizer.presentation.screens.exercises.ExerciseListItem
 
 @Composable
 fun WorkoutContentScreen(
@@ -25,6 +31,7 @@ fun WorkoutContentScreen(
     }
 
     val workout by viewModel.workoutUiState.collectAsState()
+    val exercises by viewModel.workoutExercisesByIdsUiState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -36,9 +43,26 @@ fun WorkoutContentScreen(
             workout = workout,
             onBackClick = onBackClick
         )
-//
-//        Spacer(modifier = Modifier.height(28.dp))
-//
-//        CategoryList(categoryId, onCategoryClick, onExerciseClick, viewModel)
+
+        Spacer(modifier = Modifier.height(28.dp))
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+
+            items(
+                items = exercises,
+                key = { it.exerciseId }
+            ) { exercise ->
+                ExerciseListItem(
+                    exercise = exercise,
+                    onClick = {
+                        onExerciseClick(exercise)
+                    },
+                    viewModel = viewModel
+                )
+            }
+        }
     }
 }
