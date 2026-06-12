@@ -16,7 +16,8 @@ import com.organizer.presentation.screens.general.SaveButton
 
 @Composable
 fun AddCardScreen(
-    onBackClick: () -> Unit = {},
+    onBackClick: () -> Unit,
+    onSaveClick: () -> Unit,
     viewModel: OrganizerViewModel = hiltViewModel(),
 ) {
     var exerciseName by remember { mutableStateOf("") }
@@ -65,11 +66,16 @@ fun AddCardScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        // Add Image
+        AddImageField()
+
+        Spacer(modifier = Modifier.height(24.dp))
+
         // Save Button
         SaveButton(
             onClick = {
                 viewModel.createCustomExercise(exerciseName)
-                onBackClick()
+                onSaveClick()
             },
         )
     }

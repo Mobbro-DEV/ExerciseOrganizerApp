@@ -162,6 +162,9 @@ fun AppNavigation() {
 
             composable(Routes.AddCard.route) {
                 AddCardScreen(
+                    onSaveClick = {
+                        navController.navigate(Routes.AddCard.route)
+                    },
                     onBackClick = {
                         popBackScreen()
                     },
