@@ -28,6 +28,10 @@ class ExerciseLocalDataSource @Inject constructor(
         return dao.getExercisesByCategory(categoryId)
     }
 
+    fun getExercisesByIds(exerciseIds: List<Long>): Flow<List<ExerciseEntity>> {
+        return dao.getExercisesByIds(exerciseIds)
+    }
+
     fun getCustomExercises(): Flow<List<ExerciseEntity>> {
         return dao.getCustomExercises()
     }

@@ -17,6 +17,9 @@ interface WorkoutExerciseDao {
     @Query("SELECT * FROM workout_exercise")
     fun getAll(): Flow<List<WorkoutExerciseEntity>>
 
+    @Query("SELECT exerciseId FROM workout_exercise WHERE workoutId = :workoutId")
+    fun getExerciseIdsByWorkout(workoutId: Long): Flow<List<Long>>
+
     @Delete
     suspend fun delete(workoutExercise: WorkoutExerciseEntity)
 }

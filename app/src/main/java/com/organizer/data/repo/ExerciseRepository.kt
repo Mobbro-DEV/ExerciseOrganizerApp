@@ -21,6 +21,10 @@ class ExerciseRepository @Inject constructor(
         return localDataSource.getExercisesByCategory(categoryId)
     }
 
+    fun observeExercisesByIds(exerciseIds: List<Long>): Flow<List<ExerciseEntity>> {
+        return localDataSource.getExercisesByIds(exerciseIds)
+    }
+
     fun observeCustomExercises(): Flow<List<ExerciseEntity>> {
         return localDataSource.getCustomExercises()
     }

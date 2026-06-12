@@ -19,6 +19,7 @@ import com.organizer.presentation.screens.categories.CategoryContentScreen
 import com.organizer.presentation.screens.exercises.ExerciseCard
 import com.organizer.presentation.screens.workout.CreateWorkoutScreen
 import com.organizer.presentation.screens.general.BottomNavigationBar
+import com.organizer.presentation.screens.workout.WorkoutContentScreen
 import com.organizer.presentation.screens.workouts_and_exercises.CustomWorkoutsAndExercisesScreen
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -41,6 +42,13 @@ fun AppNavigation() {
         .value
         ?.destination
         ?.route
+
+    fun popBackScreen() {
+        val currentRout = navController.currentDestination?.route
+        if (currentRout != Routes.Sports.route) {
+            navController.popBackStack()
+        }
+    }
 
     Scaffold(
         containerColor = Color(0xFFF8F5F5),
@@ -93,10 +101,7 @@ fun AppNavigation() {
                         )
                     },
                     onBackClick = {
-                        val currentRout = navController.currentDestination?.route
-                        if (currentRout != Routes.Sports.route) {
-                            navController.popBackStack()
-                        }
+                        popBackScreen()
                     },
                 )
             }
@@ -110,10 +115,7 @@ fun AppNavigation() {
                     exerciseId = exerciseId,
                     onCreateWorkoutClick = { navController.navigate(Routes.CreateWorkout.route) },
                     onBackClick = {
-                        val currentRout = navController.currentDestination?.route
-                        if (currentRout != Routes.Sports.route) {
-                            navController.popBackStack()
-                        }
+                        popBackScreen()
                     },
                 )
             }
@@ -121,7 +123,11 @@ fun AppNavigation() {
             composable(Routes.Workouts.route) {
 
                 CustomWorkoutsAndExercisesScreen(
-                    onWorkoutClick = {},
+                    onWorkoutClick = { workout ->
+                        navController.navigate(
+                            Routes.Workout.createRoute(workout.workoutId)
+                        )
+                    },
                     onExerciseClick = {},
                     onCreateWorkoutClick = { navController.navigate(Routes.CreateWorkout.route) },
                     onCreateExerciseClick = { navController.navigate(Routes.AddCard.route) },
@@ -131,10 +137,25 @@ fun AppNavigation() {
             composable(Routes.CreateWorkout.route) {
                 CreateWorkoutScreen(
                     onBackClick = {
-                        val currentRout = navController.currentDestination?.route
-                        if (currentRout != Routes.Sports.route) {
-                            navController.popBackStack()
-                        }
+                        popBackScreen()
+                    },
+                )
+            }
+
+            composable(Routes.Workout.route) { backStackEntry ->
+                val workoutId = backStackEntry.arguments
+                    ?.getString("workoutId")
+                    ?.toLongOrNull() ?: 0L
+
+                WorkoutContentScreen(
+                    workoutId = workoutId,
+                    onOpenExerciseClick = { exercise ->
+                        navController.navigate(
+                            Routes.ExerciseCard.createRoute(exercise.exerciseId)
+                        )
+                    },
+                    onBackClick = {
+                        popBackScreen()
                     },
                 )
             }
@@ -142,10 +163,7 @@ fun AppNavigation() {
             composable(Routes.AddCard.route) {
                 AddCardScreen(
                     onBackClick = {
-                        val currentRout = navController.currentDestination?.route
-                        if (currentRout != Routes.Sports.route) {
-                            navController.popBackStack()
-                        }
+                        popBackScreen()
                     },
                 )
             }
