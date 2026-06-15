@@ -1,6 +1,7 @@
 package com.organizer.data.local.storage
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import com.organizer.constants.AppConfig
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -36,6 +37,29 @@ class FileStorage @Inject constructor(
                     Log.e("FILES", "Failed downloading $fileName", e)
                 }
             }
+        }
+    }
+
+    // saves file from uri to device storage and returns its name
+    fun saveUriToStorage(
+        subfolder: String,
+        uri: Uri,
+    ): String? {
+        return try {
+            val dir = dir(subfolder)
+            val fileName = "image_${System.currentTimeMillis()}.jpg"
+            val destinationFile = File(dir, fileName)
+
+            context.contentResolver.openInputStream(uri)?.use { input ->
+                destinationFile.outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
+
+            fileName
+        } catch (e: Exception) {
+            Log.e("FILES", "Failed saving image", e)
+            null
         }
     }
 

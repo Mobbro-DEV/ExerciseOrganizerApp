@@ -1,5 +1,6 @@
 package com.organizer.presentation.screens.add_card
 
+import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -21,6 +22,9 @@ fun AddCardScreen(
     viewModel: OrganizerViewModel = hiltViewModel(),
 ) {
     var exerciseName by remember { mutableStateOf("") }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val canSave = exerciseName.isNotBlank()
+    var isSaving by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -67,16 +71,26 @@ fun AddCardScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         // Add Image
-        AddImageField()
+        AddImageField(
+            imageUri = imageUri,
+            onImageSelected = { uri ->
+                imageUri = uri
+            }
+        )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         // Save Button
         SaveButton(
+            enabled = canSave && !isSaving,
             onClick = {
-                viewModel.createCustomExercise(exerciseName)
+                isSaving = true
+                viewModel.createCustomExercise(
+                    name = exerciseName.trim(),
+                    uri = imageUri
+                )
                 onSaveClick()
-            },
+            }
         )
     }
 }

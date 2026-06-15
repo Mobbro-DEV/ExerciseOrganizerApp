@@ -109,7 +109,7 @@ fun ExerciseCard(
             shape = RoundedCornerShape(24.dp)
         ) {
             AsyncImage(
-                model = viewModel.getImageFile(data.imageUrl),
+                model = viewModel.getImageFile(data.imageUrl, data.isCustom),
                 contentDescription = data.name,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop

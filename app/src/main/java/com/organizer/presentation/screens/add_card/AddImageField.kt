@@ -21,12 +21,14 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun AddImageField() {
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
+fun AddImageField(
+    imageUri: Uri?,
+    onImageSelected: (Uri?) -> Unit
+) {
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        imageUri = uri
+    ) { uri ->
+        onImageSelected(uri)
     }
 
     Box(
