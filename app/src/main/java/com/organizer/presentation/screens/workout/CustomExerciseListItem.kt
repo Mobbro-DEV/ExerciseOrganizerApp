@@ -29,7 +29,7 @@ import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.presentation.OrganizerViewModel
 
 @Composable
-fun WorkoutExerciseListItem(
+fun CustomExerciseListItem(
     exercise: ExerciseEntity,
     expanded: Boolean,
     onClick: () -> Unit,
@@ -61,7 +61,7 @@ fun WorkoutExerciseListItem(
                         contentAlignment = Alignment.Center
                     ) {
                         AsyncImage(
-                            model = viewModel.getImageFile(exercise.imageUrl),
+                            model = viewModel.getImageFile(exercise.imageUrl, exercise.isCustom),
                             contentDescription = exercise.name,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Fit

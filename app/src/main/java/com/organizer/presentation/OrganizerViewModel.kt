@@ -1,5 +1,6 @@
 package com.organizer.presentation
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -174,8 +175,12 @@ class OrganizerViewModel @Inject constructor(
         return fileRepository.getIcon(name)
     }
 
-    fun getImageFile(name: String): File? {
-        return fileRepository.getImage(name)
+    fun getImageFile(name: String, isCustom: Boolean): File? {
+        return fileRepository.getImage(name, isCustom)
+    }
+
+    fun saveCustomImage(uri: Uri): String? {
+        return fileRepository.saveCustomImage(uri)
     }
 
     // WORKOUT OPERATIONS
@@ -242,8 +247,8 @@ class OrganizerViewModel @Inject constructor(
         workoutExerciseRepo.deleteExerciseFromWorkout(workoutId, exerciseId)
     }
 
-    fun createCustomExercise(name: String) = viewModelScope.launch {
-        exerciseRepo.addCustomExercise(name)
+    fun createCustomExercise(name: String, imageName: String) = viewModelScope.launch {
+        exerciseRepo.addCustomExercise(name, imageName)
     }
 
     fun deleteCustomExercise(id: Long) = viewModelScope.launch {

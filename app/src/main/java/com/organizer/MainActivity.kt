@@ -128,7 +128,11 @@ fun AppNavigation() {
                             Routes.Workout.createRoute(workout.workoutId)
                         )
                     },
-                    onExerciseClick = {},
+                    onExerciseClick = { exercise ->
+                        navController.navigate(
+                            Routes.ExerciseCard.createRoute(exercise.exerciseId)
+                        )
+                    },
                     onCreateWorkoutClick = { navController.navigate(Routes.CreateWorkout.route) },
                     onCreateExerciseClick = { navController.navigate(Routes.AddCard.route) },
                 )
@@ -162,6 +166,9 @@ fun AppNavigation() {
 
             composable(Routes.AddCard.route) {
                 AddCardScreen(
+                    onSaveClick = {
+                        navController.navigate(Routes.AddCard.route)
+                    },
                     onBackClick = {
                         popBackScreen()
                     },

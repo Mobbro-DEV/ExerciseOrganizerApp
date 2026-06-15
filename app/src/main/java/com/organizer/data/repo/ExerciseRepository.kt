@@ -43,11 +43,11 @@ class ExerciseRepository @Inject constructor(
         fileRepository.downloadAndSaveImages(remoteExercises.map { it.imageUrl })
     }
 
-    suspend fun addCustomExercise(name: String) {
+    suspend fun addCustomExercise(name: String, imageName: String) {
         localDataSource.insert(
             ExerciseEntity(
                 name = name,
-                imageUrl = Clock.System.now().toString(),
+                imageUrl = imageName,
                 categoryId = null,
                 isCustom = true
             )

@@ -64,7 +64,7 @@ fun WorkoutContentScreen(
                 items = exercises,
                 key = { it.exerciseId }
             ) { exercise ->
-                WorkoutExerciseListItem(
+                CustomExerciseListItem(
                     exercise = exercise,
                     expanded = expandedExerciseId == exercise.exerciseId,
                     onClick = {

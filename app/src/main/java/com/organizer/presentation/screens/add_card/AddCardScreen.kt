@@ -1,5 +1,6 @@
 package com.organizer.presentation.screens.add_card
 
+import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -16,10 +17,15 @@ import com.organizer.presentation.screens.general.SaveButton
 
 @Composable
 fun AddCardScreen(
-    onBackClick: () -> Unit = {},
+    onBackClick: () -> Unit,
+    onSaveClick: () -> Unit,
     viewModel: OrganizerViewModel = hiltViewModel(),
 ) {
     var exerciseName by remember { mutableStateOf("") }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val canSave = exerciseName.isNotBlank() && imageUri != null
+    var isSaving by remember { mutableStateOf(false) }
+    var showImageError by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -65,12 +71,48 @@ fun AddCardScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        // Add Image
+        AddImageField(
+            imageUri = imageUri,
+            onImageSelected = { uri ->
+                imageUri = uri
+            }
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
         // Save Button
         SaveButton(
+            enabled = canSave && !isSaving,
             onClick = {
-                viewModel.createCustomExercise(exerciseName)
-                onBackClick()
-            },
+                isSaving = true
+                val imageName = viewModel.saveCustomImage(imageUri!!)
+                if (imageName == null) {
+                    isSaving = false
+                    showImageError = true
+                    return@SaveButton
+                }
+                viewModel.createCustomExercise(
+                    name = exerciseName.trim(),
+                    imageName = imageName
+                )
+                onSaveClick()
+            }
         )
+
+        if (showImageError) {
+            AlertDialog(
+                onDismissRequest = { showImageError = false },
+                confirmButton = {
+                    TextButton(
+                        onClick = { showImageError = false }
+                    ) {
+                        Text("OK")
+                    }
+                },
+                title = { Text("Error") },
+                text = { Text("Image could not be saved") }
+            )
+        }
     }
 }
