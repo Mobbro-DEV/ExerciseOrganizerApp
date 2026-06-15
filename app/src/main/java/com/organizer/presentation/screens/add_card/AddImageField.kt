@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.layout.*
@@ -39,7 +40,12 @@ fun AddImageField(
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .clickable {
                 imagePickerLauncher.launch("image/*")
-            },
+            }
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline,
+                shape = RoundedCornerShape(18.dp)
+            ),
         contentAlignment = Alignment.Center
     ) {
 
@@ -60,12 +66,6 @@ fun AddImageField(
                     text = "Add Image",
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.primary
-                )
-
-                Text(
-                    text = "Optional",
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 

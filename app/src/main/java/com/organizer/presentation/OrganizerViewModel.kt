@@ -247,10 +247,7 @@ class OrganizerViewModel @Inject constructor(
         workoutExerciseRepo.deleteExerciseFromWorkout(workoutId, exerciseId)
     }
 
-    fun createCustomExercise(name: String, uri: Uri?) = viewModelScope.launch {
-        val imageName = uri?.let {
-            saveCustomImage(it)
-        } ?: return@launch
+    fun createCustomExercise(name: String, imageName: String) = viewModelScope.launch {
         exerciseRepo.addCustomExercise(name, imageName)
     }
 
