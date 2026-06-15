@@ -29,7 +29,7 @@ import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.presentation.OrganizerViewModel
 
 @Composable
-fun WorkoutExerciseListItem(
+fun CustomExerciseListItem(
     exercise: ExerciseEntity,
     expanded: Boolean,
     onClick: () -> Unit,

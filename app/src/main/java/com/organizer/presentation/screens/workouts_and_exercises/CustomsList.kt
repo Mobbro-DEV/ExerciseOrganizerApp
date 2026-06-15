@@ -17,6 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,13 +27,13 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.data.local.db.entities.WorkoutEntity
 import com.organizer.presentation.OrganizerViewModel
-import com.organizer.presentation.screens.exercises.ExerciseListItem
+import com.organizer.presentation.screens.workout.CustomExerciseListItem
 import com.organizer.presentation.screens.workout.WorkoutListItem
 
 @Composable
 fun CustomsList(
     onWorkoutClick: (WorkoutEntity) -> Unit,
-    onExerciseClick: (ExerciseEntity) -> Unit,
+    onOpenExerciseClick: (ExerciseEntity) -> Unit,
     onCreateWorkoutClick: () -> Unit,
     onCreateExerciseClick: () -> Unit,
     viewModel: OrganizerViewModel = hiltViewModel(),
@@ -38,6 +41,7 @@ fun CustomsList(
     val workouts by viewModel.workoutsUiState.collectAsState()
     val customExercises by viewModel.customExercisesUiState.collectAsState()
     val selectedTab by viewModel.selectedTab.collectAsState()
+    var expandedExerciseId by remember { mutableStateOf<Long?>(null) }
 
     val isEmpty = when (selectedTab) {
         CustomsTab.WORKOUTS -> workouts.isEmpty()
@@ -91,9 +95,21 @@ fun CustomsList(
                             items = customExercises,
                             key = { it.exerciseId }
                         ) { exercise ->
-                            ExerciseListItem(
+                            CustomExerciseListItem(
                                 exercise = exercise,
-                                onClick = { onExerciseClick(exercise) }
+                                expanded = expandedExerciseId == exercise.exerciseId,
+                                onClick = {
+                                    expandedExerciseId =
+                                        if (expandedExerciseId == exercise.exerciseId)
+                                            null
+                                        else
+                                            exercise.exerciseId
+                                },
+                                onOpenClick = { onOpenExerciseClick(exercise) },
+                                onDeleteClick = {
+                                    viewModel.deleteCustomExercise(exercise.exerciseId)
+                                },
+                                viewModel = viewModel
                             )
                         }
                     }
