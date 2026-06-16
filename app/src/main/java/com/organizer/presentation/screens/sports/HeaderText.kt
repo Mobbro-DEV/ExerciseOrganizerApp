@@ -18,8 +18,8 @@ fun HeaderText() {
         text = "Build Your\nOwn Workout!",
         fontSize = 34.sp,
         lineHeight = 38.sp,
-        fontWeight = FontWeight.Bold,
-        color = Color.Black
+        fontWeight = FontWeight.SemiBold,
+        color = Color.Black,
     )
 
     Spacer(modifier = Modifier.height(12.dp))
