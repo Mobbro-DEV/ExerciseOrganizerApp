@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.presentation.OrganizerViewModel
+import com.organizer.presentation.screens.exercises.ExerciseListItem
 
 @Composable
 fun WorkoutContentScreen(
@@ -64,7 +65,7 @@ fun WorkoutContentScreen(
                 items = exercises,
                 key = { it.exerciseId }
             ) { exercise ->
-                CustomExerciseListItem(
+                ExerciseListItem(
                     exercise = exercise,
                     expanded = expandedExerciseId == exercise.exerciseId,
                     onClick = {

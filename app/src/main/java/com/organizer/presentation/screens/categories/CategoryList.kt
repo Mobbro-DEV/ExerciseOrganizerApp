@@ -53,9 +53,10 @@ fun CategoryList(
         ) { exercise ->
             ExerciseListItem(
                 exercise = exercise,
-                onClick = {
-                    onExerciseClick(exercise)
-                },
+                expanded = false,
+                onClick = { onExerciseClick(exercise) },
+                onOpenClick = {},
+                onDeleteClick = {},
                 viewModel = viewModel
             )
         }

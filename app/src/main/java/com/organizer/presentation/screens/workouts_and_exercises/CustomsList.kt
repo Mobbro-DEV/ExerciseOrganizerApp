@@ -27,7 +27,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.data.local.db.entities.WorkoutEntity
 import com.organizer.presentation.OrganizerViewModel
-import com.organizer.presentation.screens.workout.CustomExerciseListItem
+import com.organizer.presentation.screens.exercises.ExerciseListItem
 import com.organizer.presentation.screens.workout.WorkoutListItem
 
 @Composable
@@ -95,7 +95,7 @@ fun CustomsList(
                             items = customExercises,
                             key = { it.exerciseId }
                         ) { exercise ->
-                            CustomExerciseListItem(
+                            ExerciseListItem(
                                 exercise = exercise,
                                 expanded = expandedExerciseId == exercise.exerciseId,
                                 onClick = {
