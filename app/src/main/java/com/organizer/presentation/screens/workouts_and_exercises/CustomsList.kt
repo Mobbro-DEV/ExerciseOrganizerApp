@@ -3,6 +3,7 @@ package com.organizer.presentation.screens.workouts_and_exercises
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -49,12 +50,14 @@ fun CustomsList(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
     ) {
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
+            contentPadding = PaddingValues(top = 20.dp, bottom = 20.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
 
@@ -118,8 +121,6 @@ fun CustomsList(
         }
 
         if (!isEmpty) {
-            Spacer(modifier = Modifier.height(16.dp))
-
             when (selectedTab) {
                 CustomsTab.WORKOUTS -> {
                     CreateButton(
@@ -135,8 +136,6 @@ fun CustomsList(
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

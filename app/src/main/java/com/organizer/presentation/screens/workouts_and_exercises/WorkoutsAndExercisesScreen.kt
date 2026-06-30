@@ -28,8 +28,6 @@ fun CustomWorkoutsAndExercisesScreen(
 
         TabSwitcher()
 
-        Spacer(Modifier.height(28.dp))
-
         CustomsList(
             onWorkoutClick,
             onExerciseClick,
