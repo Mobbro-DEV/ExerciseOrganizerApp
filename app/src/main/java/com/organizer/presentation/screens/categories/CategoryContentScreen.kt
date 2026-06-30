@@ -28,7 +28,8 @@ fun CategoryContentScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 20.dp, vertical = 16.dp)
+            .padding(horizontal = 24.dp)
+            .padding(top = 16.dp)
     ) {
 
         CategoryHeader(
