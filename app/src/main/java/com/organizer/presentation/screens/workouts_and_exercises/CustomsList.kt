@@ -100,6 +100,7 @@ fun CustomsList(
                         ) { exercise ->
                             ExerciseListItem(
                                 exercise = exercise,
+                                deletionInfo = Pair("Delete Exercise?", "This exercise will be permanently deleted."),
                                 expanded = expandedExerciseId == exercise.exerciseId,
                                 onClick = {
                                     expandedExerciseId =

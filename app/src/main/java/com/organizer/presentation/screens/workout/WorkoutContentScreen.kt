@@ -28,6 +28,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.presentation.OrganizerViewModel
 import com.organizer.presentation.screens.exercises.ExerciseListItem
+import com.organizer.presentation.screens.general.DeleteConfirmationDialog
 
 @Composable
 fun WorkoutContentScreen(
@@ -43,6 +44,7 @@ fun WorkoutContentScreen(
     val workout by viewModel.workoutUiState.collectAsState()
     val exercises by viewModel.workoutExercisesByIdsUiState.collectAsState()
     var expandedExerciseId by remember { mutableStateOf<Long?>(null) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -72,6 +74,7 @@ fun WorkoutContentScreen(
             ) { exercise ->
                 ExerciseListItem(
                     exercise = exercise,
+                    deletionInfo = Pair("Delete Exercise?", "This exercise will be deleted from the workout."),
                     expanded = expandedExerciseId == exercise.exerciseId,
                     onClick = {
                         expandedExerciseId =
@@ -100,13 +103,25 @@ fun WorkoutContentScreen(
                 containerColor = MaterialTheme.colorScheme.error,
                 contentColor = MaterialTheme.colorScheme.onError
             ),
-            onClick = {
-                viewModel.deleteWorkout(workoutId)
-                onBackClick()
-                      },
+            onClick = { showDeleteDialog = true },
             shape = RoundedCornerShape(16.dp)
         ) {
             Text("Delete Workout")
+        }
+
+        if (showDeleteDialog) {
+            DeleteConfirmationDialog(
+                title = "Delete Workout?",
+                message = "This workout will be permanently deleted.",
+                onConfirm = {
+                    viewModel.deleteWorkout(workoutId)
+                    showDeleteDialog = false
+                    onBackClick()
+                },
+                onDismiss = {
+                    showDeleteDialog = false
+                }
+            )
         }
     }
 }

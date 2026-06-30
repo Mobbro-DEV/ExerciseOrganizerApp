@@ -20,6 +20,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,12 +36,14 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.presentation.OrganizerViewModel
+import com.organizer.presentation.screens.general.DeleteConfirmationDialog
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun ExerciseListItem(
     exercise: ExerciseEntity,
+    deletionInfo: Pair<String, String>?,
     expanded: Boolean,
     onClick: () -> Unit,
     onOpenClick: () -> Unit,
@@ -45,6 +51,7 @@ fun ExerciseListItem(
     viewModel: OrganizerViewModel = hiltViewModel(),
 ) {
     val textScrollState = rememberScrollState()
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(exercise.name) {
         delay(1000.milliseconds)
@@ -129,7 +136,7 @@ fun ExerciseListItem(
             Spacer(modifier = Modifier.width(12.dp))
 
             Button(
-                onClick = onDeleteClick,
+                onClick = { showDeleteDialog = true },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.error,
@@ -137,6 +144,20 @@ fun ExerciseListItem(
                 ),
             ) {
                 Text("Delete")
+            }
+
+            if (showDeleteDialog) {
+                DeleteConfirmationDialog(
+                    title = deletionInfo?.first ?: "no message provided",
+                    message = deletionInfo?.second ?: "no message provided",
+                    onConfirm = {
+                        onDeleteClick()
+                        showDeleteDialog = false
+                    },
+                    onDismiss = {
+                        showDeleteDialog = false
+                    }
+                )
             }
         }
     }
