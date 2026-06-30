@@ -16,6 +16,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -50,7 +51,8 @@ fun SaveExercisePopup(
         ) {
 
             Column(
-                modifier = Modifier.padding(24.dp),
+                modifier = Modifier
+                    .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
@@ -66,9 +68,16 @@ fun SaveExercisePopup(
                 }
 
                 Text(
-                    text = "Where To Save This Exercise?",
+                    text = "Save Exercise",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = "Select one or more workouts.",
+                    fontSize = 14.sp
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -113,7 +122,10 @@ fun SaveExercisePopup(
                     },
                     enabled = selectedWorkoutIds.isNotEmpty()
                 ) {
-                    Text("Save")
+                    Text(
+                        text = "Save",
+                        fontSize = 18.sp
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -122,18 +134,14 @@ fun SaveExercisePopup(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                Text(
-                    text = "Or Create A New Workout",
-                    fontSize = 20.sp
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Button(
-                    onClick = onCreateWorkoutClick,
+                TextButton(
+                    onClick = {
+                        onDismiss()
+                        onCreateWorkoutClick()
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Create")
+                    Text("Create New Workout")
                 }
             }
         }
