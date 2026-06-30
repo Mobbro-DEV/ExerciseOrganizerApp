@@ -63,7 +63,7 @@ fun CreateWorkoutScreen(
             singleLine = true
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.weight(1f))
 
         SaveButton(
             onClick = {
