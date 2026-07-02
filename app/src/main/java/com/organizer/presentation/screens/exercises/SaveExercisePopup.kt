@@ -2,6 +2,7 @@ package com.organizer.presentation.screens.exercises
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -82,28 +83,42 @@ fun SaveExercisePopup(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 300.dp),
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
-                ) {
-                    items(
-                        items = workouts,
-                        key = { it.workoutId }
-                    ) { workout ->
-                        WorkoutMarkableListItem(
-                            title = workout.name,
-                            selected = workout.workoutId in selectedWorkoutIds,
-                            onSelectedChange = { isSelected ->
-                                selectedWorkoutIds =
-                                    if (isSelected) {
-                                        selectedWorkoutIds + workout.workoutId
-                                    } else {
-                                        selectedWorkoutIds - workout.workoutId
-                                    }
-                            }
+                if (workouts.isEmpty()) {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Text(
+                            text = "You don't have any workouts yet.",
+                            modifier = Modifier.padding(24.dp),
+                            fontSize = 16.sp
                         )
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 300.dp),
+                        contentPadding = PaddingValues(top = 20.dp, bottom = 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(20.dp)
+                    ) {
+                        items(
+                            items = workouts,
+                            key = { it.workoutId }
+                        ) { workout ->
+                            WorkoutMarkableListItem(
+                                title = workout.name,
+                                selected = workout.workoutId in selectedWorkoutIds,
+                                onSelectedChange = { isSelected ->
+                                    selectedWorkoutIds =
+                                        if (isSelected) {
+                                            selectedWorkoutIds + workout.workoutId
+                                        } else {
+                                            selectedWorkoutIds - workout.workoutId
+                                        }
+                                }
+                            )
+                        }
                     }
                 }
 
