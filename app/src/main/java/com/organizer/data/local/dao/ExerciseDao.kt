@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.organizer.data.local.db.entities.ExerciseEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -15,6 +16,9 @@ interface ExerciseDao {
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(exercise: ExerciseEntity)
+
+    @Update
+    suspend fun updateAll(exercises: List<ExerciseEntity>)
 
     @Query("SELECT * FROM exercise")
     fun getAll(): Flow<List<ExerciseEntity>>
