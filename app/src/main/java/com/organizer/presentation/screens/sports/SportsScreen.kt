@@ -30,7 +30,8 @@ fun SportsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp, vertical = 16.dp)
+            .padding(horizontal = 24.dp)
+            .padding(top = 16.dp)
     ) {
 
         HeaderText()
@@ -42,21 +43,6 @@ fun SportsScreen(
             }
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
-
-
-        if (sports.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Loading..",
-                    color = Color.Gray,
-                    fontSize = 18.sp
-                )
-            }
-        }
         // List of sport types
         if (sports.isEmpty()) {
             Box(
@@ -72,9 +58,9 @@ fun SportsScreen(
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(top = 20.dp, bottom = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-
                 items(
                     items = sports,
                     key = { it.categoryId }

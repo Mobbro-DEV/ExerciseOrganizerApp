@@ -2,6 +2,7 @@ package com.organizer.presentation.screens.workout
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +12,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.presentation.OrganizerViewModel
+import com.organizer.presentation.screens.exercises.ExerciseListItem
+import com.organizer.presentation.screens.general.DeleteConfirmationDialog
 
 @Composable
 fun WorkoutContentScreen(
@@ -39,11 +44,13 @@ fun WorkoutContentScreen(
     val workout by viewModel.workoutUiState.collectAsState()
     val exercises by viewModel.workoutExercisesByIdsUiState.collectAsState()
     var expandedExerciseId by remember { mutableStateOf<Long?>(null) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 20.dp, vertical = 16.dp)
+            .padding(horizontal = 24.dp)
+            .padding(top = 16.dp)
     ) {
 
         WorkoutHeader(
@@ -57,6 +64,7 @@ fun WorkoutContentScreen(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
+            contentPadding = PaddingValues(top = 20.dp, bottom = 20.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
 
@@ -64,8 +72,9 @@ fun WorkoutContentScreen(
                 items = exercises,
                 key = { it.exerciseId }
             ) { exercise ->
-                CustomExerciseListItem(
+                ExerciseListItem(
                     exercise = exercise,
+                    deletionInfo = Pair("Delete Exercise?", "This exercise will be deleted from the workout."),
                     expanded = expandedExerciseId == exercise.exerciseId,
                     onClick = {
                         expandedExerciseId =
@@ -89,14 +98,30 @@ fun WorkoutContentScreen(
         Button(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp),
-            onClick = {
-                viewModel.deleteWorkout(workoutId)
-                onBackClick()
-                      },
+                .height(36.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.error,
+                contentColor = MaterialTheme.colorScheme.onError
+            ),
+            onClick = { showDeleteDialog = true },
             shape = RoundedCornerShape(16.dp)
         ) {
             Text("Delete Workout")
+        }
+
+        if (showDeleteDialog) {
+            DeleteConfirmationDialog(
+                title = "Delete Workout?",
+                message = "This workout will be permanently deleted.",
+                onConfirm = {
+                    viewModel.deleteWorkout(workoutId)
+                    showDeleteDialog = false
+                    onBackClick()
+                },
+                onDismiss = {
+                    showDeleteDialog = false
+                }
+            )
         }
     }
 }

@@ -70,4 +70,5 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     implementation(libs.font.awesome)
     implementation(libs.icons.extended)
+    implementation(libs.core.splashscreen)
 }

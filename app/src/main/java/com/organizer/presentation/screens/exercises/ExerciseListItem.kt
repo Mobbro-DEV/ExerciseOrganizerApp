@@ -1,5 +1,6 @@
 package com.organizer.presentation.screens.exercises
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,11 +10,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,14 +36,32 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.presentation.OrganizerViewModel
-
+import com.organizer.presentation.screens.general.DeleteConfirmationDialog
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun ExerciseListItem(
     exercise: ExerciseEntity,
+    deletionInfo: Pair<String, String>?,
+    expanded: Boolean,
     onClick: () -> Unit,
+    onOpenClick: () -> Unit,
+    onDeleteClick: () -> Unit,
     viewModel: OrganizerViewModel = hiltViewModel(),
 ) {
+    val textScrollState = rememberScrollState()
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(exercise.name) {
+        delay(1000.milliseconds)
+        textScrollState.animateScrollTo(
+            textScrollState.maxValue
+        )
+        delay(1000.milliseconds)
+        textScrollState.animateScrollTo(0)
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -41,7 +69,7 @@ fun ExerciseListItem(
         onClick = onClick,
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.Yellow
+            containerColor = Color(0xFF7B61A8)
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 4.dp
@@ -73,18 +101,64 @@ fun ExerciseListItem(
 
             Text(
                 text = exercise.name,
+                modifier = Modifier
+                    .weight(1f)
+                    .horizontalScroll(textScrollState),
                 fontSize = 28.sp,
-                color = Color.Black,
-                fontWeight = FontWeight.Medium
+                color = Color.White,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1
             )
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.width(15.dp))
 
             Text(
                 text = "➜",
                 fontSize = 28.sp,
-                color = Color.Black
+                color = Color.White.copy(alpha = 0.8f)
             )
+        }
+    }
+    if (expanded) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Button(
+                onClick = onOpenClick,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Open")
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Button(
+                onClick = { showDeleteDialog = true },
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError
+                ),
+            ) {
+                Text("Delete")
+            }
+
+            if (showDeleteDialog) {
+                DeleteConfirmationDialog(
+                    title = deletionInfo?.first ?: "no message provided",
+                    message = deletionInfo?.second ?: "no message provided",
+                    onConfirm = {
+                        onDeleteClick()
+                        showDeleteDialog = false
+                    },
+                    onDismiss = {
+                        showDeleteDialog = false
+                    }
+                )
+            }
         }
     }
 }

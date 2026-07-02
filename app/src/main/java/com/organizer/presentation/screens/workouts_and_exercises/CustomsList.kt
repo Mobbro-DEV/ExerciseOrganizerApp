@@ -3,6 +3,7 @@ package com.organizer.presentation.screens.workouts_and_exercises
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,7 +28,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.data.local.db.entities.WorkoutEntity
 import com.organizer.presentation.OrganizerViewModel
-import com.organizer.presentation.screens.workout.CustomExerciseListItem
+import com.organizer.presentation.screens.exercises.ExerciseListItem
 import com.organizer.presentation.screens.workout.WorkoutListItem
 
 @Composable
@@ -49,12 +50,14 @@ fun CustomsList(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
     ) {
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
+            contentPadding = PaddingValues(top = 20.dp, bottom = 20.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
 
@@ -95,8 +98,9 @@ fun CustomsList(
                             items = customExercises,
                             key = { it.exerciseId }
                         ) { exercise ->
-                            CustomExerciseListItem(
+                            ExerciseListItem(
                                 exercise = exercise,
+                                deletionInfo = Pair("Delete Exercise?", "This exercise will be permanently deleted."),
                                 expanded = expandedExerciseId == exercise.exerciseId,
                                 onClick = {
                                     expandedExerciseId =
@@ -118,8 +122,6 @@ fun CustomsList(
         }
 
         if (!isEmpty) {
-            Spacer(modifier = Modifier.height(16.dp))
-
             when (selectedTab) {
                 CustomsTab.WORKOUTS -> {
                     CreateButton(
@@ -135,8 +137,6 @@ fun CustomsList(
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

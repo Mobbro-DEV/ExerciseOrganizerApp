@@ -2,4 +2,18 @@
 <resources>
 
     <style name="Theme.ExerciseOrganizerApp" parent="android:Theme.Material.Light.NoActionBar" />
+
+
+    <style name="Theme.ExerciseOrganizerApp.Splash"
+        parent="Theme.SplashScreen">
+
+        <item name="windowSplashScreenBackground">#FFFFFF</item>
+
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/exercise_organizer_logo_round</item>
+
+        <item name="postSplashScreenTheme">
+            @style/Theme.ExerciseOrganizerApp
+        </item>
+
+    </style>
 </resources>

@@ -86,18 +86,7 @@ fun ExerciseCard(
                     contentDescription = null
                 )
             }
-
-            Text(
-                text = data.name,
-                modifier = Modifier.weight(1f),
-                textAlign = TextAlign.Center,
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.width(48.dp))
         }
-
 
         Spacer(modifier = Modifier.height(28.dp))
 
@@ -116,7 +105,17 @@ fun ExerciseCard(
             )
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(28.dp))
+
+        Text(
+            text = data.name,
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Center,
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
 
         // Save button
         Button(
@@ -128,7 +127,7 @@ fun ExerciseCard(
         ) {
             Text(
                 "Save",
-                fontSize = 16.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold
             )
         }
