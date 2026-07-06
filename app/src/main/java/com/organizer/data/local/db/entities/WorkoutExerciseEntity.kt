@@ -28,5 +28,6 @@ import androidx.room.Index
 )
 data class WorkoutExerciseEntity(
     val workoutId: Long,
-    val exerciseId: Long
+    val exerciseId: Long,
+    val orderIndex: Int
 )

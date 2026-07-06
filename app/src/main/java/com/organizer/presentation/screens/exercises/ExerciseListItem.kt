@@ -2,6 +2,7 @@ package com.organizer.presentation.screens.exercises
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,10 +13,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.DragIndicator
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,6 +46,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun ExerciseListItem(
+    modifier: Modifier = Modifier,
     exercise: ExerciseEntity,
     deletionInfo: Pair<String, String>?,
     expanded: Boolean,
@@ -62,102 +67,110 @@ fun ExerciseListItem(
         textScrollState.animateScrollTo(0)
     }
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(110.dp),
-        onClick = onClick,
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF7B61A8)
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp
-        )
+    Column(
+        modifier = modifier
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            if (exercise.imageUrl.isNotBlank()) {
-                Box(
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(RoundedCornerShape(12.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    AsyncImage(
-                        model = viewModel.getImageFile(exercise.imageUrl, exercise.isCustom),
-                        contentDescription = exercise.name,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.width(24.dp))
-
-            Text(
-                text = exercise.name,
-                modifier = Modifier
-                    .weight(1f)
-                    .horizontalScroll(textScrollState),
-                fontSize = 28.sp,
-                color = Color.White,
-                fontWeight = FontWeight.Medium,
-                maxLines = 1
-            )
-
-            Spacer(modifier = Modifier.width(15.dp))
-
-            Text(
-                text = "➜",
-                fontSize = 28.sp,
-                color = Color.White.copy(alpha = 0.8f)
-            )
-        }
-    }
-    if (expanded) {
-        Row(
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .height(110.dp),
+            onClick = onClick,
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFF7B61A8)
+            ),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 4.dp
+            )
         ) {
-            Button(
-                onClick = onOpenClick,
-                modifier = Modifier.weight(1f)
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Open")
-            }
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Button(
-                onClick = { showDeleteDialog = true },
-                modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error,
-                    contentColor = MaterialTheme.colorScheme.onError
-                ),
-            ) {
-                Text("Delete")
-            }
-
-            if (showDeleteDialog) {
-                DeleteConfirmationDialog(
-                    title = deletionInfo?.first ?: "no message provided",
-                    message = deletionInfo?.second ?: "no message provided",
-                    onConfirm = {
-                        onDeleteClick()
-                        showDeleteDialog = false
-                    },
-                    onDismiss = {
-                        showDeleteDialog = false
-                    }
+                Icon(
+                    imageVector = Icons.Rounded.DragIndicator,
+                    contentDescription = "Reorder exercise"
                 )
+
+                if (exercise.imageUrl.isNotBlank()) {
+                    Box(
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(RoundedCornerShape(12.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AsyncImage(
+                            model = viewModel.getImageFile(exercise.imageUrl, exercise.isCustom),
+                            contentDescription = exercise.name,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(24.dp))
+
+                Text(
+                    text = exercise.name,
+                    modifier = Modifier
+                        .weight(1f)
+                        .horizontalScroll(textScrollState),
+                    fontSize = 28.sp,
+                    color = Color.White,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 1
+                )
+
+                Spacer(modifier = Modifier.width(15.dp))
+
+                Text(
+                    text = "➜",
+                    fontSize = 28.sp,
+                    color = Color.White.copy(alpha = 0.8f)
+                )
+            }
+        }
+        if (expanded) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(
+                    onClick = onOpenClick,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Open")
+                }
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Button(
+                    onClick = { showDeleteDialog = true },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError
+                    ),
+                ) {
+                    Text("Delete")
+                }
+
+                if (showDeleteDialog) {
+                    DeleteConfirmationDialog(
+                        title = deletionInfo?.first ?: "no message provided",
+                        message = deletionInfo?.second ?: "no message provided",
+                        onConfirm = {
+                            onDeleteClick()
+                            showDeleteDialog = false
+                        },
+                        onDismiss = {
+                            showDeleteDialog = false
+                        }
+                    )
+                }
             }
         }
     }

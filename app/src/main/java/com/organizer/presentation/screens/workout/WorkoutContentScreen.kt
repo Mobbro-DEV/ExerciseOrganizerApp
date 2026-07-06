@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -29,6 +30,8 @@ import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.presentation.OrganizerViewModel
 import com.organizer.presentation.screens.exercises.ExerciseListItem
 import com.organizer.presentation.screens.general.DeleteConfirmationDialog
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
 fun WorkoutContentScreen(
@@ -46,6 +49,28 @@ fun WorkoutContentScreen(
     var expandedExerciseId by remember { mutableStateOf<Long?>(null) }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
+    var exerciseList by remember {
+        mutableStateOf(emptyList<ExerciseEntity>())
+    }
+
+    LaunchedEffect(exercises) {
+        exerciseList = exercises
+    }
+
+    val lazyListState = rememberLazyListState()
+
+    val reorderableState = rememberReorderableLazyListState(
+        lazyListState = lazyListState,
+        onMove = { from, to ->
+            exerciseList = exerciseList.toMutableList().apply {
+                val item = removeAt(from.index)
+                add(to.index, item)
+            }
+
+            viewModel.updateExerciseOrder(workoutId, exerciseList)
+        }
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,6 +86,7 @@ fun WorkoutContentScreen(
         Spacer(modifier = Modifier.height(28.dp))
 
         LazyColumn(
+            state = lazyListState,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
@@ -69,29 +95,39 @@ fun WorkoutContentScreen(
         ) {
 
             items(
-                items = exercises,
+                items = exerciseList,
                 key = { it.exerciseId }
             ) { exercise ->
-                ExerciseListItem(
-                    exercise = exercise,
-                    deletionInfo = Pair("Delete Exercise?", "This exercise will be deleted from the workout."),
-                    expanded = expandedExerciseId == exercise.exerciseId,
-                    onClick = {
-                        expandedExerciseId =
-                            if (expandedExerciseId == exercise.exerciseId)
-                                null
-                            else
+                ReorderableItem(
+                    state = reorderableState,
+                    key = exercise.exerciseId
+                ) {
+
+                    ExerciseListItem(
+                        modifier = Modifier.longPressDraggableHandle(),
+                        exercise = exercise,
+                        deletionInfo = Pair(
+                            "Delete Exercise?",
+                            "This exercise will be deleted from the workout."
+                        ),
+                        expanded = expandedExerciseId == exercise.exerciseId,
+                        onClick = {
+                            expandedExerciseId =
+                                if (expandedExerciseId == exercise.exerciseId)
+                                    null
+                                else
+                                    exercise.exerciseId
+                        },
+                        onOpenClick = { onOpenExerciseClick(exercise) },
+                        onDeleteClick = {
+                            viewModel.deleteExerciseFromWorkout(
+                                workoutId,
                                 exercise.exerciseId
-                    },
-                    onOpenClick = { onOpenExerciseClick(exercise) },
-                    onDeleteClick = {
-                        viewModel.deleteExerciseFromWorkout(
-                            workoutId,
-                            exercise.exerciseId
-                        )
-                    },
-                    viewModel = viewModel
-                )
+                            )
+                        },
+                        viewModel = viewModel
+                    )
+                }
             }
         }
 

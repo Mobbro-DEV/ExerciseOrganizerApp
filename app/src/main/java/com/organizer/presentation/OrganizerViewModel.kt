@@ -235,6 +235,11 @@ class OrganizerViewModel @Inject constructor(
                 initialValue = emptyList()
             )
 
+    fun updateExerciseOrder(workoutId: Long, exercises: List<ExerciseEntity>) =
+        viewModelScope.launch {
+            workoutExerciseRepo.updateExerciseOrder(workoutId, exercises)
+        }
+
     fun deleteWorkout(id: Long) = viewModelScope.launch {
         workoutRepo.deleteWorkout(id)
     }
