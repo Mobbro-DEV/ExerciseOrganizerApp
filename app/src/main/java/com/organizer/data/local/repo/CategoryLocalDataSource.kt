@@ -20,12 +20,16 @@ class CategoryLocalDataSource @Inject constructor(
         return dao.getAll()
     }
 
-    suspend fun getAllOnce(): List<CategoryEntity> {
-        return dao.getAllOnce()
+    suspend fun getCategoriesOnce(): List<CategoryEntity> {
+        return dao.getCategoriesOnce()
     }
 
     fun getSports(): Flow<List<CategoryEntity>> {
         return dao.getSports()
+    }
+
+    suspend fun getSportsOnce(): List<CategoryEntity> {
+        return dao.getSportsOnce()
     }
 
     fun getSubcategories(categoryId: Long): Flow<List<CategoryEntity>> {
