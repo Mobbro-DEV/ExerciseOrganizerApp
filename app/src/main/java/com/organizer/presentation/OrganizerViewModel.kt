@@ -55,6 +55,7 @@ class OrganizerViewModel @Inject constructor(
     fun syncDb() {
         viewModelScope.launch {
             try {
+                categoryRepo.refreshSports()
                 categoryRepo.refreshCategories()
                 exerciseRepo.refreshExercises()
             } catch (e: Exception) {

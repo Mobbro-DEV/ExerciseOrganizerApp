@@ -5,6 +5,10 @@ import com.organizer.entity.Exercise
 import retrofit2.http.GET
 
 interface ApiService {
+
+    @GET("sports")
+    suspend fun getSports(): List<Category>
+
     @GET("categories")
     suspend fun getCategories(): List<Category>
 

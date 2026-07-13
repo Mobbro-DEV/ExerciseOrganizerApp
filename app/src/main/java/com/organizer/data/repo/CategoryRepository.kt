@@ -23,11 +23,20 @@ class CategoryRepository @Inject constructor(
         return localDataSource.getSubcategories(categoryId)
     }
 
-    suspend fun refreshCategories() {
-        val remoteCategories = remoteDataSource.getAll()
-        val remoteIds = remoteCategories.map { it.categoryId }
+    suspend fun refreshSports() {
+        val remoteSports = remoteDataSource.getSports()
+        val localSports = localDataSource.getSportsOnce()
+        syncCategories(remoteSports, localSports)
+    }
 
-        val localCategories = localDataSource.getAllOnce()
+    suspend fun refreshCategories() {
+        val remoteCategories = remoteDataSource.getCategories()
+        val localCategories = localDataSource.getCategoriesOnce()
+        syncCategories(remoteCategories, localCategories)
+    }
+
+    private suspend fun syncCategories(remoteCategories: List<CategoryEntity>, localCategories: List<CategoryEntity>) {
+        val remoteIds = remoteCategories.map { it.categoryId }
         val localIds = localCategories.map { it.categoryId }
 
         val toInsert = remoteCategories.filter { it.categoryId !in localIds }
@@ -37,6 +46,9 @@ class CategoryRepository @Inject constructor(
                 local.categoryId == remote.categoryId && local != remote
             }
         }
+
+        val changedIcons = (toInsert + toUpdate).mapNotNull { it.iconUrl }
+        fileRepository.downloadAndSaveIcons(changedIcons)
 
         val toDelete = localCategories.filter { local ->
             local.categoryId !in remoteIds
@@ -49,9 +61,6 @@ class CategoryRepository @Inject constructor(
 
         localDataSource.insertAll(toInsert)
         localDataSource.updateAll(toUpdate)
-
-        val changedIcons = (toInsert + toUpdate).map { it.iconUrl }
-        fileRepository.downloadAndSaveIcons(changedIcons)
     }
 
     fun observeCategoryById(id: Long): Flow<CategoryEntity?> {

@@ -8,7 +8,13 @@ import jakarta.inject.Inject
 class CategoryRemoteDataSource @Inject constructor(
     private val api: ApiService,
 ) {
-    suspend fun getAll(): List<CategoryEntity> {
+    // get sports
+    suspend fun getSports(): List<CategoryEntity> {
+        return api.getSports().map { it.asEntity() }
+    }
+
+    // get all non-sport categories
+    suspend fun getCategories(): List<CategoryEntity> {
         return api.getCategories().map { it.asEntity() }
     }
 }
