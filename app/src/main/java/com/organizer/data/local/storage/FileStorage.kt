@@ -2,8 +2,11 @@ package com.organizer.data.local.storage
 
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.organizer.constants.AppConfig
+import com.organizer.data.remote.repo.FileRemoteDataSource
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +15,8 @@ import java.io.File
 import java.net.URL
 
 class FileStorage @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val fileRemoteDataSource: FileRemoteDataSource
 ) {
     fun dir(subfolder: String): File {
         val folder = File(context.filesDir, subfolder)
@@ -24,19 +28,18 @@ class FileStorage @Inject constructor(
         subfolder: String,
         fileNames: List<String>
     ) {
-        withContext(Dispatchers.IO) {
-            val dir = dir(subfolder)
-
             for (fileName in fileNames) {
                 try {
-                    val url = URL("${AppConfig.API_BASE_URL}/$subfolder/$fileName")
-                    val imageData = url.openStream().readBytes()
+                    val imageData = fileRemoteDataSource.downloadFile(subfolder, fileName)
 
-                    File(dir, fileName).writeBytes(imageData)
+                    imageData?.let {
+                        withContext(Dispatchers.IO) {
+                            File(dir(subfolder), fileName).writeBytes(imageData)
+                        }
+                    }
                 } catch (e: Exception) {
                     Log.e("FILES", "Failed downloading $fileName", e)
                 }
-            }
         }
     }
 
@@ -63,10 +66,10 @@ class FileStorage @Inject constructor(
         }
     }
 
-    fun deleteLocalFile(subfolder: String, fileName: String) {
-        val file = File(dir(subfolder), fileName)
-        if (file.exists()) {
-            file.delete()
-        }
+    fun deleteLocalFile(
+        subfolder: String,
+        fileName: String
+    ) {
+        File(dir(subfolder), fileName).delete()
     }
 }
