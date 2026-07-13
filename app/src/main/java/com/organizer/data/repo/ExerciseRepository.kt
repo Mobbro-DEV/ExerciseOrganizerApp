@@ -12,10 +12,6 @@ class ExerciseRepository @Inject constructor(
     private val remoteDataSource: ExerciseRemoteDataSource,
     private val fileRepository: FileRepository,
 ) {
-    fun observeExercises(): Flow<List<ExerciseEntity>> {
-        return localDataSource.getAll()
-    }
-
     fun observeExercisesByCategory(categoryId: Long): Flow<List<ExerciseEntity>> {
         return localDataSource.getExercisesByCategory(categoryId)
     }

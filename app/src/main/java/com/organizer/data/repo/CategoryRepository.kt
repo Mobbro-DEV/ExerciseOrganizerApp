@@ -11,10 +11,6 @@ class CategoryRepository @Inject constructor(
     private val remoteDataSource: CategoryRemoteDataSource,
     private val fileRepository: FileRepository,
 ) {
-    fun observeCategories(): Flow<List<CategoryEntity>> {
-        return localDataSource.getAll()
-    }
-
     fun observeSports(): Flow<List<CategoryEntity>> {
         return localDataSource.getSports()
     }
@@ -61,10 +57,6 @@ class CategoryRepository @Inject constructor(
 
         localDataSource.insertAll(toInsert)
         localDataSource.updateAll(toUpdate)
-    }
-
-    fun observeCategoryById(id: Long): Flow<CategoryEntity?> {
-        return localDataSource.getById(id)
     }
 
     suspend fun observeCategoryByIdOnce(id: Long): CategoryEntity? {

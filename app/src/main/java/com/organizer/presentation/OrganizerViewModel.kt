@@ -10,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import com.organizer.data.local.db.entities.CategoryEntity
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.data.local.db.entities.WorkoutEntity
-import com.organizer.data.local.db.entities.WorkoutExerciseEntity
 import com.organizer.data.repo.CategoryRepository
 import com.organizer.data.repo.ExerciseRepository
 import com.organizer.data.repo.FileRepository
@@ -65,17 +64,8 @@ class OrganizerViewModel @Inject constructor(
         }
     }
 
-    // STATIC STREAMS
-    val categoriesUiState: StateFlow<List<CategoryEntity>> =
-        categoryRepo.observeCategories()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
     val workoutsUiState: StateFlow<List<WorkoutEntity>> =
         workoutRepo.observeWorkouts()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    val workoutExercisesUiState: StateFlow<List<WorkoutExerciseEntity>> =
-        workoutExerciseRepo.observeWorkoutExercises()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val customExercisesUiState: StateFlow<List<ExerciseEntity>> =
@@ -97,10 +87,6 @@ class OrganizerViewModel @Inject constructor(
             SharingStarted.WhileSubscribed(5000),
             emptyList()
         )
-
-    fun onSearchQueryChange(query: String) {
-        searchQuery.value = query
-    }
 
     // CATEGORY NAVIGATION STATE
     private val selectedCategoryId = MutableStateFlow<Long?>(null)
