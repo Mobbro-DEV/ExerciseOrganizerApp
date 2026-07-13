@@ -1,34 +1,34 @@
 package com.organizer.data.repo
 
+import com.organizer.data.local.dao.ExerciseDao
 import com.organizer.data.local.db.entities.ExerciseEntity
-import com.organizer.data.local.repo.ExerciseLocalDataSource
 import com.organizer.data.remote.repo.ExerciseRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 class ExerciseRepository @Inject constructor(
-    private val localDataSource: ExerciseLocalDataSource,
+    private val exerciseDao: ExerciseDao,
     private val remoteDataSource: ExerciseRemoteDataSource,
     private val fileRepository: FileRepository,
 ) {
     fun observeExercisesByCategory(categoryId: Long): Flow<List<ExerciseEntity>> {
-        return localDataSource.getExercisesByCategory(categoryId)
+        return exerciseDao.getExercisesByCategory(categoryId)
     }
 
     fun observeExercisesByIds(exerciseIds: List<Long>): Flow<List<ExerciseEntity>> {
-        return localDataSource.getExercisesByIds(exerciseIds)
+        return exerciseDao.getExercisesByIds(exerciseIds)
     }
 
     fun observeCustomExercises(): Flow<List<ExerciseEntity>> {
-        return localDataSource.getCustomExercises()
+        return exerciseDao.getCustomExercises()
     }
 
     suspend fun refreshExercises() {
         val remoteExercises = remoteDataSource.getAll()
         val remoteIds = remoteExercises.map { it.exerciseId }
 
-        val localExercises = localDataSource.getAllOnce()
+        val localExercises = exerciseDao.getAllOnce()
         val localIds = localExercises.map { it.exerciseId }
 
         val toInsert = remoteExercises.filter { it.exerciseId !in localIds }
@@ -44,19 +44,19 @@ class ExerciseRepository @Inject constructor(
         }
 
         toDelete.forEach { exercise ->
-            localDataSource.delete(exercise)
+            exerciseDao.delete(exercise)
             fileRepository.deleteImage(exercise.imageUrl)
         }
 
-        localDataSource.insertAll(toInsert)
-        localDataSource.updateAll(toUpdate)
+        exerciseDao.insertAll(toInsert)
+        exerciseDao.updateAll(toUpdate)
 
         val changedImages = (toInsert + toUpdate).map { it.imageUrl }
         fileRepository.downloadAndSaveImages(changedImages)
     }
 
     suspend fun addCustomExercise(name: String, imageName: String) {
-        localDataSource.insert(
+        exerciseDao.insert(
             ExerciseEntity(
                 name = name,
                 imageUrl = imageName,
@@ -69,11 +69,11 @@ class ExerciseRepository @Inject constructor(
     suspend fun deleteCustomExercise(id: Long) {
         val exercise = observeExercise(id).firstOrNull()
         if (exercise?.isCustom == true) {
-            localDataSource.delete(exercise)
+            exerciseDao.delete(exercise)
         }
     }
 
     fun observeExercise(id: Long): Flow<ExerciseEntity?> {
-        return localDataSource.getById(id)
+        return exerciseDao.getById(id)
     }
 }

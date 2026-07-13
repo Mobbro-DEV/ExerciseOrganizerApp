@@ -1,33 +1,33 @@
 package com.organizer.data.repo
 
+import com.organizer.data.local.dao.CategoryDao
 import com.organizer.data.local.db.entities.CategoryEntity
-import com.organizer.data.local.repo.CategoryLocalDataSource
 import com.organizer.data.remote.repo.CategoryRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class CategoryRepository @Inject constructor(
-    private val localDataSource: CategoryLocalDataSource,
+    private val categoryDao: CategoryDao,
     private val remoteDataSource: CategoryRemoteDataSource,
     private val fileRepository: FileRepository,
 ) {
     fun observeSports(): Flow<List<CategoryEntity>> {
-        return localDataSource.getSports()
+        return categoryDao.getSports()
     }
 
     fun observeSubcategories(categoryId: Long): Flow<List<CategoryEntity>> {
-        return localDataSource.getSubcategories(categoryId)
+        return categoryDao.getSubcategories(categoryId)
     }
 
     suspend fun refreshSports() {
         val remoteSports = remoteDataSource.getSports()
-        val localSports = localDataSource.getSportsOnce()
+        val localSports = categoryDao.getSportsOnce()
         syncCategories(remoteSports, localSports)
     }
 
     suspend fun refreshCategories() {
         val remoteCategories = remoteDataSource.getCategories()
-        val localCategories = localDataSource.getCategoriesOnce()
+        val localCategories = categoryDao.getCategoriesOnce()
         syncCategories(remoteCategories, localCategories)
     }
 
@@ -51,15 +51,15 @@ class CategoryRepository @Inject constructor(
         }
 
         toDelete.forEach { category ->
-            localDataSource.delete(category)
+            categoryDao.delete(category)
             fileRepository.deleteIcon(category.iconUrl)
         }
 
-        localDataSource.insertAll(toInsert)
-        localDataSource.updateAll(toUpdate)
+        categoryDao.insertAll(toInsert)
+        categoryDao.updateAll(toUpdate)
     }
 
     suspend fun observeCategoryByIdOnce(id: Long): CategoryEntity? {
-        return localDataSource.getByIdOnce(id)
+        return categoryDao.getByIdOnce(id)
     }
 }
