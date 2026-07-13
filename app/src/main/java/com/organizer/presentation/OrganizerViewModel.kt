@@ -38,15 +38,19 @@ class OrganizerViewModel @Inject constructor(
     private val exerciseRepo: ExerciseRepository,
     private val workoutRepo: WorkoutRepository,
     private val workoutExerciseRepo: WorkoutExerciseRepository,
-    private val fileRepository: FileRepository,
+    private val fileRepo: FileRepository,
 ) : ViewModel() {
 
+    // General UI state
     var errorMessage: String? by mutableStateOf(null)
         private set
 
-    // SEARCH
+    val selectedTab = MutableStateFlow(CustomsTab.WORKOUTS)
+
+    // Search
     val searchQuery = MutableStateFlow("")
 
+    // Initialization
     init {
         syncDb()
     }
@@ -64,15 +68,13 @@ class OrganizerViewModel @Inject constructor(
         }
     }
 
-    val workoutsUiState: StateFlow<List<WorkoutEntity>> =
-        workoutRepo.observeWorkouts()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    // Categories
+    private val selectedCategoryId = MutableStateFlow<Long?>(null)
 
-    val customExercisesUiState: StateFlow<List<ExerciseEntity>> =
-        exerciseRepo.observeCustomExercises()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    fun selectCategory(id: Long) {
+        selectedCategoryId.value = id
+    }
 
-    // SPORTS (SEARCHABLE)
     val sportsUiState: StateFlow<List<CategoryEntity>> =
         combine(
             categoryRepo.observeSports(),
@@ -88,14 +90,6 @@ class OrganizerViewModel @Inject constructor(
             emptyList()
         )
 
-    // CATEGORY NAVIGATION STATE
-    private val selectedCategoryId = MutableStateFlow<Long?>(null)
-
-    fun selectCategory(id: Long) {
-        selectedCategoryId.value = id
-    }
-
-    // SUBCATEGORIES (FIXED)
     val subcategoriesUiState: StateFlow<List<CategoryEntity>> =
         selectedCategoryId
             .filterNotNull()
@@ -108,14 +102,28 @@ class OrganizerViewModel @Inject constructor(
                 emptyList()
             )
 
-    // EXERCISE NAVIGATION STATE
+    fun getCategoryPath(categoryId: Long): Flow<List<CategoryEntity>> = flow {
+        val path = mutableListOf<CategoryEntity>()
+
+        var current = categoryRepo.observeCategoryByIdOnce(categoryId)
+
+        while (current != null) {
+            path.add(current)
+            current = current.parentCategoryId?.let {
+                categoryRepo.observeCategoryByIdOnce(it)
+            }
+        }
+
+        emit(path.reversed())
+    }
+
+    // Exercises
     private val selectedExerciseId = MutableStateFlow<Long?>(null)
 
     fun selectExercise(id: Long) {
         selectedExerciseId.value = id
     }
 
-    // EXERCISES
     val exerciseUiState: StateFlow<ExerciseEntity?> =
         selectedExerciseId
             .filterNotNull()
@@ -140,50 +148,21 @@ class OrganizerViewModel @Inject constructor(
                 emptyList()
             )
 
-    // CATEGORY PATH
-    fun getCategoryPath(categoryId: Long): Flow<List<CategoryEntity>> = flow {
-        val path = mutableListOf<CategoryEntity>()
+    val customExercisesUiState: StateFlow<List<ExerciseEntity>> =
+        exerciseRepo.observeCustomExercises()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-        var current = categoryRepo.observeCategoryByIdOnce(categoryId)
-
-        while (current != null) {
-            path.add(current)
-            current = current.parentCategoryId?.let {
-                categoryRepo.observeCategoryByIdOnce(it)
-            }
-        }
-
-        emit(path.reversed())
-    }
-
-    val selectedTab = MutableStateFlow(CustomsTab.WORKOUTS)
-
-    // IMAGE STORAGE
-    fun getIconFile(name: String): File? {
-        return fileRepository.getIcon(name)
-    }
-
-    fun getImageFile(name: String, isCustom: Boolean): File? {
-        return fileRepository.getImage(name, isCustom)
-    }
-
-    fun saveCustomImage(uri: Uri): String? {
-        return fileRepository.saveCustomImage(uri)
-    }
-
-    // WORKOUT OPERATIONS
-    fun createWorkout(name: String) = viewModelScope.launch {
-        workoutRepo.createWorkout(name)
-    }
-
-    // WORKOUT NAVIGATION STATE
+    // Workouts
     private val selectedWorkoutId = MutableStateFlow<Long?>(null)
 
     fun selectWorkout(id: Long) {
         selectedWorkoutId.value = id
     }
 
-    // WORKOUT
+    val workoutsUiState: StateFlow<List<WorkoutEntity>> =
+        workoutRepo.observeWorkouts()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     val workoutUiState: StateFlow<WorkoutEntity?> =
         selectedWorkoutId
             .filterNotNull()
@@ -222,7 +201,6 @@ class OrganizerViewModel @Inject constructor(
                                 exerciseMap[id]
                             }
                         }
-
                 }
             }
             .stateIn(
@@ -231,10 +209,23 @@ class OrganizerViewModel @Inject constructor(
                 initialValue = emptyList()
             )
 
-    fun updateExerciseOrder(workoutId: Long, exercises: List<ExerciseEntity>) =
-        viewModelScope.launch {
-            workoutExerciseRepo.updateExerciseOrder(workoutId, exercises)
-        }
+    // File operations
+    fun getIconFile(name: String): File? {
+        return fileRepo.getIcon(name)
+    }
+
+    fun getImageFile(name: String, isCustom: Boolean): File? {
+        return fileRepo.getImage(name, isCustom)
+    }
+
+    fun saveCustomImage(uri: Uri): String? {
+        return fileRepo.saveCustomImage(uri)
+    }
+
+    // Commands
+    fun createWorkout(name: String) = viewModelScope.launch {
+        workoutRepo.createWorkout(name)
+    }
 
     fun deleteWorkout(id: Long) = viewModelScope.launch {
         workoutRepo.deleteWorkout(id)
@@ -247,6 +238,11 @@ class OrganizerViewModel @Inject constructor(
     fun deleteExerciseFromWorkout(workoutId: Long, exerciseId: Long) = viewModelScope.launch {
         workoutExerciseRepo.deleteExerciseFromWorkout(workoutId, exerciseId)
     }
+
+    fun updateExerciseOrder(workoutId: Long, exercises: List<ExerciseEntity>) =
+        viewModelScope.launch {
+            workoutExerciseRepo.updateExerciseOrder(workoutId, exercises)
+        }
 
     fun createCustomExercise(name: String, imageName: String) = viewModelScope.launch {
         exerciseRepo.addCustomExercise(name, imageName)

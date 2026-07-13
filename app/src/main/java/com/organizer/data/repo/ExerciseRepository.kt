@@ -12,8 +12,15 @@ class ExerciseRepository @Inject constructor(
     private val remoteDataSource: ExerciseRemoteDataSource,
     private val fileRepository: FileRepository,
 ) {
-    fun observeExercisesByCategory(categoryId: Long): Flow<List<ExerciseEntity>> {
-        return exerciseDao.getExercisesByCategory(categoryId)
+    suspend fun addCustomExercise(name: String, imageName: String) {
+        exerciseDao.insert(
+            ExerciseEntity(
+                name = name,
+                imageUrl = imageName,
+                categoryId = null,
+                isCustom = true
+            )
+        )
     }
 
     fun observeExercisesByIds(exerciseIds: List<Long>): Flow<List<ExerciseEntity>> {
@@ -22,6 +29,14 @@ class ExerciseRepository @Inject constructor(
 
     fun observeCustomExercises(): Flow<List<ExerciseEntity>> {
         return exerciseDao.getCustomExercises()
+    }
+
+    fun observeExercisesByCategory(categoryId: Long): Flow<List<ExerciseEntity>> {
+        return exerciseDao.getExercisesByCategory(categoryId)
+    }
+
+    fun observeExercise(id: Long): Flow<ExerciseEntity?> {
+        return exerciseDao.getById(id)
     }
 
     suspend fun refreshExercises() {
@@ -39,6 +54,9 @@ class ExerciseRepository @Inject constructor(
             }
         }
 
+        val changedImages = (toInsert + toUpdate).map { it.imageUrl }
+        fileRepository.downloadAndSaveImages(changedImages)
+
         val toDelete = localExercises.filter { local ->
             local.exerciseId !in remoteIds && !local.isCustom
         }
@@ -50,20 +68,6 @@ class ExerciseRepository @Inject constructor(
 
         exerciseDao.insertAll(toInsert)
         exerciseDao.updateAll(toUpdate)
-
-        val changedImages = (toInsert + toUpdate).map { it.imageUrl }
-        fileRepository.downloadAndSaveImages(changedImages)
-    }
-
-    suspend fun addCustomExercise(name: String, imageName: String) {
-        exerciseDao.insert(
-            ExerciseEntity(
-                name = name,
-                imageUrl = imageName,
-                categoryId = null,
-                isCustom = true
-            )
-        )
     }
 
     suspend fun deleteCustomExercise(id: Long) {
@@ -71,9 +75,5 @@ class ExerciseRepository @Inject constructor(
         if (exercise?.isCustom == true) {
             exerciseDao.delete(exercise)
         }
-    }
-
-    fun observeExercise(id: Long): Flow<ExerciseEntity?> {
-        return exerciseDao.getById(id)
     }
 }
