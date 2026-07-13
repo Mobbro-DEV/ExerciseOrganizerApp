@@ -84,10 +84,7 @@ class OrganizerViewModel @Inject constructor(
             else sports.filter {
                 it.name.contains(query, ignoreCase = true)
             }
-        }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            emptyList()
+        }.stateIn(viewModelScope,Sharing,emptyList()
         )
 
     val subcategoriesUiState: StateFlow<List<CategoryEntity>> =
@@ -96,26 +93,10 @@ class OrganizerViewModel @Inject constructor(
             .flatMapLatest { id ->
                 categoryRepo.observeSubcategories(id)
             }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                emptyList()
+            .stateIn(viewModelScope,Sharing,emptyList()
             )
 
-    fun getCategoryPath(categoryId: Long): Flow<List<CategoryEntity>> = flow {
-        val path = mutableListOf<CategoryEntity>()
-
-        var current = categoryRepo.observeCategoryByIdOnce(categoryId)
-
-        while (current != null) {
-            path.add(current)
-            current = current.parentCategoryId?.let {
-                categoryRepo.observeCategoryByIdOnce(it)
-            }
-        }
-
-        emit(path.reversed())
-    }
+    fun getCategoryPath(categoryId: Long): Flow<List<CategoryEntity>> = categoryRepo.getCategoryPath(categoryId)
 
     // Exercises
     private val selectedExerciseId = MutableStateFlow<Long?>(null)
@@ -130,11 +111,7 @@ class OrganizerViewModel @Inject constructor(
             .flatMapLatest { id ->
                 exerciseRepo.observeExercise(id)
             }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                null
-            )
+            .stateIn(viewModelScope,Sharing,null)
 
     val exercisesByCategoryUiState: StateFlow<List<ExerciseEntity>> =
         selectedCategoryId
@@ -142,15 +119,11 @@ class OrganizerViewModel @Inject constructor(
             .flatMapLatest { id ->
                 exerciseRepo.observeExercisesByCategory(id)
             }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                emptyList()
-            )
+            .stateIn(viewModelScope,Sharing,emptyList())
 
     val customExercisesUiState: StateFlow<List<ExerciseEntity>> =
         exerciseRepo.observeCustomExercises()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+            .stateIn(viewModelScope,Sharing,emptyList())
 
     // Workouts
     private val selectedWorkoutId = MutableStateFlow<Long?>(null)
@@ -161,7 +134,7 @@ class OrganizerViewModel @Inject constructor(
 
     val workoutsUiState: StateFlow<List<WorkoutEntity>> =
         workoutRepo.observeWorkouts()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+            .stateIn(viewModelScope,Sharing,emptyList())
 
     val workoutUiState: StateFlow<WorkoutEntity?> =
         selectedWorkoutId
@@ -169,11 +142,7 @@ class OrganizerViewModel @Inject constructor(
             .flatMapLatest { id ->
                 workoutRepo.observeWorkoutById(id)
             }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                null
-            )
+            .stateIn(viewModelScope,Sharing,null)
 
     val exerciseIdsByWorkoutUiState: StateFlow<List<Long>> =
         selectedWorkoutId
@@ -181,11 +150,7 @@ class OrganizerViewModel @Inject constructor(
             .flatMapLatest { id ->
                 workoutExerciseRepo.observeExerciseIdsByWorkout(id)
             }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                emptyList()
-            )
+            .stateIn(viewModelScope,Sharing,emptyList())
 
     val workoutExercisesByIdsUiState: StateFlow<List<ExerciseEntity>> =
         exerciseIdsByWorkoutUiState
@@ -203,11 +168,7 @@ class OrganizerViewModel @Inject constructor(
                         }
                 }
             }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = emptyList()
-            )
+            .stateIn(scope = viewModelScope,Sharing,initialValue = emptyList())
 
     // File operations
     fun getIconFile(name: String): File? {
@@ -250,5 +211,9 @@ class OrganizerViewModel @Inject constructor(
 
     fun deleteCustomExercise(id: Long) = viewModelScope.launch {
         exerciseRepo.deleteCustomExercise(id)
+    }
+
+    companion object {
+        val Sharing = SharingStarted.WhileSubscribed(5000)
     }
 }

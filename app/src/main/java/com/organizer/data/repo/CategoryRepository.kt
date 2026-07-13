@@ -4,6 +4,7 @@ import com.organizer.data.local.dao.CategoryDao
 import com.organizer.data.local.db.entities.CategoryEntity
 import com.organizer.data.remote.repo.CategoryRemoteDataSource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class CategoryRepository @Inject constructor(
@@ -61,5 +62,20 @@ class CategoryRepository @Inject constructor(
 
     suspend fun observeCategoryByIdOnce(id: Long): CategoryEntity? {
         return categoryDao.getByIdOnce(id)
+    }
+
+    fun getCategoryPath(categoryId: Long): Flow<List<CategoryEntity>> = flow {
+        val path = mutableListOf<CategoryEntity>()
+
+        var current = observeCategoryByIdOnce(categoryId)
+
+        while (current != null) {
+            path.add(current)
+            current = current.parentCategoryId?.let {
+                observeCategoryByIdOnce(it)
+            }
+        }
+
+        emit(path.reversed())
     }
 }
