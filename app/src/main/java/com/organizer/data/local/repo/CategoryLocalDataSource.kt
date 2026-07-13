@@ -8,8 +8,12 @@ import kotlinx.coroutines.flow.Flow
 class CategoryLocalDataSource @Inject constructor(
     private val dao: CategoryDao
 ) {
-    suspend fun insert(categories: List<CategoryEntity>) {
-        dao.insert(categories)
+    suspend fun insertAll(categories: List<CategoryEntity>) {
+        dao.insertAll(categories)
+    }
+
+    suspend fun updateAll(categories: List<CategoryEntity>) {
+        dao.updateAll(categories)
     }
 
     fun getAll(): Flow<List<CategoryEntity>> {

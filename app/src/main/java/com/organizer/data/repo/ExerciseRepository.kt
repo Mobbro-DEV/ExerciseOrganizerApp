@@ -6,7 +6,6 @@ import com.organizer.data.remote.repo.ExerciseRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
-import kotlin.time.Clock
 
 class ExerciseRepository @Inject constructor(
     private val localDataSource: ExerciseLocalDataSource,
@@ -31,16 +30,33 @@ class ExerciseRepository @Inject constructor(
 
     suspend fun refreshExercises() {
         val remoteExercises = remoteDataSource.getAll()
+        val remoteIds = remoteExercises.map { it.exerciseId }
 
-        localDataSource.getAllOnce()
-            .filter { it !in remoteExercises.toSet() && !it.isCustom }
-            .forEach { exercise ->
-                localDataSource.delete(exercise)
-                fileRepository.deleteImage(exercise.imageUrl)
+        val localExercises = localDataSource.getAllOnce()
+        val localIds = localExercises.map { it.exerciseId }
+
+        val toInsert = remoteExercises.filter { it.exerciseId !in localIds }
+
+        val toUpdate = remoteExercises.filter { remote ->
+            localExercises.any { local ->
+                local.exerciseId == remote.exerciseId && local != remote
             }
+        }
 
-        localDataSource.insertAll(remoteExercises)
-        fileRepository.downloadAndSaveImages(remoteExercises.map { it.imageUrl })
+        val toDelete = localExercises.filter { local ->
+            local.exerciseId !in remoteIds && !local.isCustom
+        }
+
+        toDelete.forEach { exercise ->
+            localDataSource.delete(exercise)
+            fileRepository.deleteImage(exercise.imageUrl)
+        }
+
+        localDataSource.insertAll(toInsert)
+        localDataSource.updateAll(toUpdate)
+
+        val changedImages = (toInsert + toUpdate).map { it.imageUrl }
+        fileRepository.downloadAndSaveImages(changedImages)
     }
 
     suspend fun addCustomExercise(name: String, imageName: String) {

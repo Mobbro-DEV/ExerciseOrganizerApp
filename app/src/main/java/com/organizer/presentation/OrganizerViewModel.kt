@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File
@@ -227,6 +228,14 @@ class OrganizerViewModel @Inject constructor(
                     flowOf(emptyList())
                 } else {
                     exerciseRepo.observeExercisesByIds(ids)
+                        .map { exercises ->
+                            val exerciseMap = exercises.associateBy { it.exerciseId }
+
+                            ids.mapNotNull { id ->
+                                exerciseMap[id]
+                            }
+                        }
+
                 }
             }
             .stateIn(
@@ -234,6 +243,11 @@ class OrganizerViewModel @Inject constructor(
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = emptyList()
             )
+
+    fun updateExerciseOrder(workoutId: Long, exercises: List<ExerciseEntity>) =
+        viewModelScope.launch {
+            workoutExerciseRepo.updateExerciseOrder(workoutId, exercises)
+        }
 
     fun deleteWorkout(id: Long) = viewModelScope.launch {
         workoutRepo.deleteWorkout(id)

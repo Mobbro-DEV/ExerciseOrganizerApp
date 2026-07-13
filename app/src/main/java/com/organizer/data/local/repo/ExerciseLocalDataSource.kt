@@ -12,6 +12,10 @@ class ExerciseLocalDataSource @Inject constructor(
         dao.insertAll(exercises)
     }
 
+    suspend fun updateAll(exercises: List<ExerciseEntity>) {
+        dao.updateAll(exercises)
+    }
+
     suspend fun insert(exercise: ExerciseEntity) {
         dao.insert(exercise)
     }

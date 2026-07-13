@@ -71,4 +71,5 @@ dependencies {
     implementation(libs.font.awesome)
     implementation(libs.icons.extended)
     implementation(libs.core.splashscreen)
+    implementation(libs.reorderable)
 }

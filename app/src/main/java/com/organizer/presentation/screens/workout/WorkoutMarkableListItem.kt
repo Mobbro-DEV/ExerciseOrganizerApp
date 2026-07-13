@@ -35,14 +35,15 @@ fun WorkoutMarkableListItem(
                 .fillMaxWidth()
                 .padding(
                     horizontal = 24.dp,
-                    vertical = 28.dp
+                    vertical = 24.dp
                 ),
             verticalAlignment = Alignment.CenterVertically
         ) {
 
             Text(
                 text = title,
-                fontSize = 24.sp
+                fontSize = 24.sp,
+                modifier = Modifier.padding(end = 8.dp)
             )
 
             Spacer(Modifier.weight(1f))
