@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File
+import java.io.IOException
 
 @HiltViewModel
 class OrganizerViewModel @Inject constructor(
@@ -41,6 +42,8 @@ class OrganizerViewModel @Inject constructor(
 ) : ViewModel() {
 
     // General UI state
+    val isSyncing = MutableStateFlow(false)
+
     var errorMessage: String? by mutableStateOf(null)
         private set
 
@@ -56,13 +59,20 @@ class OrganizerViewModel @Inject constructor(
 
     fun syncDb() {
         viewModelScope.launch {
+            isSyncing.value = true
+            errorMessage = null
             try {
                 categoryRepo.refreshSports()
                 categoryRepo.refreshCategories()
                 exerciseRepo.refreshExercises()
+            } catch (e: IOException) {
+                Log.e("SYNC", "No internet connection", e)
+                errorMessage = "No internet connection. Please check your connection and try again."
             } catch (e: Exception) {
                 Log.e("SYNC", "Sync failed", e)
-                errorMessage = "Could not refresh: ${e.message}"
+                errorMessage = "Couldn't load data"
+            } finally {
+                isSyncing.value = false
             }
         }
     }
