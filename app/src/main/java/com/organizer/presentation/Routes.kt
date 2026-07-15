@@ -1,6 +1,7 @@
 package com.organizer.presentation
 
 sealed class Routes(val route: String) {
+    object Onboarding : Routes("onboarding")
     object Sports: Routes("sports")
     object Subcategory: Routes("subcategory/{categoryId}") {
         fun createRoute(categoryId: Long): String {

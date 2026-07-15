@@ -20,6 +20,7 @@ import com.organizer.presentation.screens.categories.CategoryContentScreen
 import com.organizer.presentation.screens.exercises.ExerciseCard
 import com.organizer.presentation.screens.workout.CreateWorkoutScreen
 import com.organizer.presentation.screens.general.BottomNavigationBar
+import com.organizer.presentation.screens.welcome.OnboardScreen
 import com.organizer.presentation.screens.workout.WorkoutContentScreen
 import com.organizer.presentation.screens.workouts_and_exercises.CustomWorkoutsAndExercisesScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,26 +56,40 @@ fun AppNavigation() {
     Scaffold(
         containerColor = Color(0xFFF8F5F5),
         bottomBar = {
-            BottomNavigationBar(
-                currentRoute = currentRoute,
-                onHomeClick = {
-                    navController.navigate(Routes.Sports.route)
-                },
-                onWorkoutsClick = {
-                    navController.navigate(Routes.Workouts.route)
-                },
-                onAddCardClick = {
-                    navController.navigate(Routes.AddCard.route)
-                }
-            )
+            if (currentRoute != Routes.Onboarding.route) {
+                BottomNavigationBar(
+                    currentRoute = currentRoute,
+                    onHomeClick = {
+                        navController.navigate(Routes.Sports.route)
+                    },
+                    onWorkoutsClick = {
+                        navController.navigate(Routes.Workouts.route)
+                    },
+                    onAddCardClick = {
+                        navController.navigate(Routes.AddCard.route)
+                    }
+                )
+            }
         }
     ) { padding ->
 
         NavHost(
             navController = navController,
-            startDestination = Routes.Sports.route,
+            startDestination = Routes.Onboarding.route,
             modifier = Modifier.padding(padding)
         ) {
+            composable(Routes.Onboarding.route) {
+                OnboardScreen(
+                    onFinish = {
+                        navController.navigate(Routes.Sports.route) {
+                            popUpTo(Routes.Onboarding.route) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
+            }
+
             composable(Routes.Sports.route) {
                 SportsScreen(
                     onSportClick = { category ->
