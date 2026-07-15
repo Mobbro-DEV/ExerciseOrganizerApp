@@ -30,7 +30,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.presentation.OrganizerViewModel
 import com.organizer.presentation.screens.workout.WorkoutMarkableListItem
 
@@ -39,7 +38,7 @@ fun SaveExercisePopup(
     exerciseId: Long,
     onDismiss: () -> Unit,
     onCreateWorkoutClick: () -> Unit,
-    viewModel: OrganizerViewModel = hiltViewModel(),
+    viewModel: OrganizerViewModel,
 ) {
     val workouts by viewModel.workoutsUiState.collectAsState()
     var selectedWorkoutIds by remember { mutableStateOf(setOf<Long>()) }

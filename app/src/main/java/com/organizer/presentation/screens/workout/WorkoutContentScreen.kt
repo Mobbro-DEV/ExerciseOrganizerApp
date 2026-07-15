@@ -28,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.presentation.OrganizerViewModel
 import com.organizer.presentation.screens.exercises.ExerciseListItem
@@ -41,7 +40,7 @@ fun WorkoutContentScreen(
     workoutId: Long,
     onOpenExerciseClick: (ExerciseEntity) -> Unit,
     onBackClick: () -> Unit,
-    viewModel: OrganizerViewModel = hiltViewModel(),
+    viewModel: OrganizerViewModel,
 ) {
     LaunchedEffect(workoutId) {
         viewModel.selectWorkout(workoutId)

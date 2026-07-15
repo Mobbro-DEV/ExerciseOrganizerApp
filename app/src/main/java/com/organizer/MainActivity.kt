@@ -10,10 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.organizer.presentation.OrganizerViewModel
 import com.organizer.presentation.Routes
 import com.organizer.presentation.screens.add_card.AddCardScreen
 import com.organizer.presentation.screens.sports.SportsScreen
@@ -42,6 +44,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AppNavigation(showOnboarding: Boolean) {
+    // create viewModel for instant data load
+    val organizerViewModel: OrganizerViewModel = hiltViewModel()
+
     val navController = rememberNavController()
     val currentRoute = navController
         .currentBackStackEntryAsState()
@@ -95,6 +100,7 @@ fun AppNavigation(showOnboarding: Boolean) {
                             popUpTo(Routes.Onboarding.route) {
                                 inclusive = true
                             }
+                            launchSingleTop = true
                         }
                     }
                 )
@@ -107,6 +113,7 @@ fun AppNavigation(showOnboarding: Boolean) {
                             Routes.Subcategory.createRoute(category.categoryId)
                         )
                     },
+                    viewModel = organizerViewModel,
                 )
             }
 
@@ -130,6 +137,7 @@ fun AppNavigation(showOnboarding: Boolean) {
                     onBackClick = {
                         popBackScreen()
                     },
+                    viewModel = organizerViewModel
                 )
             }
 
@@ -144,6 +152,7 @@ fun AppNavigation(showOnboarding: Boolean) {
                     onBackClick = {
                         popBackScreen()
                     },
+                    viewModel = organizerViewModel,
                 )
             }
 
@@ -170,6 +179,7 @@ fun AppNavigation(showOnboarding: Boolean) {
                     onBackClick = {
                         popBackScreen()
                     },
+                    viewModel = organizerViewModel,
                 )
             }
 
@@ -188,6 +198,7 @@ fun AppNavigation(showOnboarding: Boolean) {
                     onBackClick = {
                         popBackScreen()
                     },
+                    viewModel = organizerViewModel,
                 )
             }
 
@@ -199,6 +210,7 @@ fun AppNavigation(showOnboarding: Boolean) {
                     onBackClick = {
                         popBackScreen()
                     },
+                    viewModel = organizerViewModel,
                 )
             }
         }
