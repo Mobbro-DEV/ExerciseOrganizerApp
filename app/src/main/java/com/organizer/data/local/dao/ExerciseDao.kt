@@ -21,19 +21,16 @@ interface ExerciseDao {
     suspend fun updateAll(exercises: List<ExerciseEntity>)
 
     @Query("SELECT * FROM exercise")
-    fun getAll(): Flow<List<ExerciseEntity>>
-
-    @Query("SELECT * FROM exercise")
     suspend fun getAllOnce(): List<ExerciseEntity>
 
     @Query("SELECT * FROM exercise WHERE categoryId = :categoryId")
     fun getExercisesByCategory(categoryId: Long): Flow<List<ExerciseEntity>>
 
-    @Query("SELECT * FROM exercise WHERE exerciseId IN (:ids)")
-    fun getExercisesByIds(ids: List<Long>): Flow<List<ExerciseEntity>>
-
     @Query("SELECT * FROM exercise WHERE isCustom = 1 ORDER BY exerciseId DESC")
     fun getCustomExercises(): Flow<List<ExerciseEntity>>
+
+    @Query("SELECT * FROM exercise WHERE exerciseId IN (:ids)")
+    fun getExercisesByIds(ids: List<Long>): Flow<List<ExerciseEntity>>
 
     @Query("SELECT * FROM exercise WHERE exerciseId = :id")
     fun getById(id: Long): Flow<ExerciseEntity?>

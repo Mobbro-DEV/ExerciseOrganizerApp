@@ -9,9 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.data.local.db.entities.CategoryEntity
 import com.organizer.presentation.OrganizerViewModel
@@ -25,7 +23,8 @@ fun SportsScreen(
 ) {
     val sports by viewModel.sportsUiState.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
-    val errorByLoading = viewModel.errorMessage
+    val errorMessage = viewModel.errorMessage
+    val isLoading by viewModel.isSyncing.collectAsState()
 
     Column(
         modifier = Modifier
@@ -49,10 +48,10 @@ fun SportsScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = errorByLoading ?: "Loading..",
-                    color = Color.Gray,
-                    fontSize = 18.sp
+                LoadingErrorView(
+                    isLoading = isLoading,
+                    errorMessage = errorMessage,
+                    onRetry = { viewModel.syncDb() }
                 )
             }
         } else {

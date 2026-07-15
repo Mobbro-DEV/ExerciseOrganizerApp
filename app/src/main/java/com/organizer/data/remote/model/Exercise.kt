@@ -1,6 +1,5 @@
-package com.organizer.entity
+package com.organizer.data.remote.model
 
-import com.organizer.data.remote.model.Category
 import kotlinx.serialization.Serializable
 
 @Serializable

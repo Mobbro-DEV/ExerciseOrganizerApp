@@ -10,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import com.organizer.data.local.db.entities.CategoryEntity
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.data.local.db.entities.WorkoutEntity
-import com.organizer.data.local.db.entities.WorkoutExerciseEntity
 import com.organizer.data.repo.CategoryRepository
 import com.organizer.data.repo.ExerciseRepository
 import com.organizer.data.repo.FileRepository
@@ -26,12 +25,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File
+import java.io.IOException
 
 @HiltViewModel
 class OrganizerViewModel @Inject constructor(
@@ -39,50 +38,52 @@ class OrganizerViewModel @Inject constructor(
     private val exerciseRepo: ExerciseRepository,
     private val workoutRepo: WorkoutRepository,
     private val workoutExerciseRepo: WorkoutExerciseRepository,
-    private val fileRepository: FileRepository,
+    private val fileRepo: FileRepository,
 ) : ViewModel() {
+
+    // General UI state
+    val isSyncing = MutableStateFlow(false)
 
     var errorMessage: String? by mutableStateOf(null)
         private set
 
-    // SEARCH
+    val selectedTab = MutableStateFlow(CustomsTab.WORKOUTS)
+
+    // Search
     val searchQuery = MutableStateFlow("")
 
+    // Initialization
     init {
         syncDb()
     }
 
     fun syncDb() {
         viewModelScope.launch {
+            isSyncing.value = true
+            errorMessage = null
             try {
                 categoryRepo.refreshSports()
                 categoryRepo.refreshCategories()
                 exerciseRepo.refreshExercises()
+            } catch (e: IOException) {
+                Log.e("SYNC", "No internet connection", e)
+                errorMessage = "No internet connection. Please check your connection and try again."
             } catch (e: Exception) {
                 Log.e("SYNC", "Sync failed", e)
-                errorMessage = "Could not refresh: ${e.message}"
+                errorMessage = "Couldn't load data"
+            } finally {
+                isSyncing.value = false
             }
         }
     }
 
-    // STATIC STREAMS
-    val categoriesUiState: StateFlow<List<CategoryEntity>> =
-        categoryRepo.observeCategories()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    // Categories
+    private val selectedCategoryId = MutableStateFlow<Long?>(null)
 
-    val workoutsUiState: StateFlow<List<WorkoutEntity>> =
-        workoutRepo.observeWorkouts()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    fun selectCategory(id: Long) {
+        selectedCategoryId.value = id
+    }
 
-    val workoutExercisesUiState: StateFlow<List<WorkoutExerciseEntity>> =
-        workoutExerciseRepo.observeWorkoutExercises()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    val customExercisesUiState: StateFlow<List<ExerciseEntity>> =
-        exerciseRepo.observeCustomExercises()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    // SPORTS (SEARCHABLE)
     val sportsUiState: StateFlow<List<CategoryEntity>> =
         combine(
             categoryRepo.observeSports(),
@@ -92,55 +93,34 @@ class OrganizerViewModel @Inject constructor(
             else sports.filter {
                 it.name.contains(query, ignoreCase = true)
             }
-        }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            emptyList()
+        }.stateIn(viewModelScope,Sharing,emptyList()
         )
 
-    fun onSearchQueryChange(query: String) {
-        searchQuery.value = query
-    }
-
-    // CATEGORY NAVIGATION STATE
-    private val selectedCategoryId = MutableStateFlow<Long?>(null)
-
-    fun selectCategory(id: Long) {
-        selectedCategoryId.value = id
-    }
-
-    // SUBCATEGORIES (FIXED)
     val subcategoriesUiState: StateFlow<List<CategoryEntity>> =
         selectedCategoryId
             .filterNotNull()
             .flatMapLatest { id ->
                 categoryRepo.observeSubcategories(id)
             }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                emptyList()
+            .stateIn(viewModelScope,Sharing,emptyList()
             )
 
-    // EXERCISE NAVIGATION STATE
+    fun getCategoryPath(categoryId: Long): Flow<List<CategoryEntity>> = categoryRepo.getCategoryPath(categoryId)
+
+    // Exercises
     private val selectedExerciseId = MutableStateFlow<Long?>(null)
 
     fun selectExercise(id: Long) {
         selectedExerciseId.value = id
     }
 
-    // EXERCISES
     val exerciseUiState: StateFlow<ExerciseEntity?> =
         selectedExerciseId
             .filterNotNull()
             .flatMapLatest { id ->
                 exerciseRepo.observeExercise(id)
             }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                null
-            )
+            .stateIn(viewModelScope,Sharing,null)
 
     val exercisesByCategoryUiState: StateFlow<List<ExerciseEntity>> =
         selectedCategoryId
@@ -148,67 +128,30 @@ class OrganizerViewModel @Inject constructor(
             .flatMapLatest { id ->
                 exerciseRepo.observeExercisesByCategory(id)
             }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                emptyList()
-            )
+            .stateIn(viewModelScope,Sharing,emptyList())
 
-    // CATEGORY PATH
-    fun getCategoryPath(categoryId: Long): Flow<List<CategoryEntity>> = flow {
-        val path = mutableListOf<CategoryEntity>()
+    val customExercisesUiState: StateFlow<List<ExerciseEntity>> =
+        exerciseRepo.observeCustomExercises()
+            .stateIn(viewModelScope,Sharing,emptyList())
 
-        var current = categoryRepo.observeCategoryByIdOnce(categoryId)
-
-        while (current != null) {
-            path.add(current)
-            current = current.parentCategoryId?.let {
-                categoryRepo.observeCategoryByIdOnce(it)
-            }
-        }
-
-        emit(path.reversed())
-    }
-
-    val selectedTab = MutableStateFlow(CustomsTab.WORKOUTS)
-
-    // IMAGE STORAGE
-    fun getIconFile(name: String): File? {
-        return fileRepository.getIcon(name)
-    }
-
-    fun getImageFile(name: String, isCustom: Boolean): File? {
-        return fileRepository.getImage(name, isCustom)
-    }
-
-    fun saveCustomImage(uri: Uri): String? {
-        return fileRepository.saveCustomImage(uri)
-    }
-
-    // WORKOUT OPERATIONS
-    fun createWorkout(name: String) = viewModelScope.launch {
-        workoutRepo.createWorkout(name)
-    }
-
-    // WORKOUT NAVIGATION STATE
+    // Workouts
     private val selectedWorkoutId = MutableStateFlow<Long?>(null)
 
     fun selectWorkout(id: Long) {
         selectedWorkoutId.value = id
     }
 
-    // WORKOUT
+    val workoutsUiState: StateFlow<List<WorkoutEntity>> =
+        workoutRepo.observeWorkouts()
+            .stateIn(viewModelScope,Sharing,emptyList())
+
     val workoutUiState: StateFlow<WorkoutEntity?> =
         selectedWorkoutId
             .filterNotNull()
             .flatMapLatest { id ->
                 workoutRepo.observeWorkoutById(id)
             }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                null
-            )
+            .stateIn(viewModelScope,Sharing,null)
 
     val exerciseIdsByWorkoutUiState: StateFlow<List<Long>> =
         selectedWorkoutId
@@ -216,11 +159,7 @@ class OrganizerViewModel @Inject constructor(
             .flatMapLatest { id ->
                 workoutExerciseRepo.observeExerciseIdsByWorkout(id)
             }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                emptyList()
-            )
+            .stateIn(viewModelScope,Sharing,emptyList())
 
     val workoutExercisesByIdsUiState: StateFlow<List<ExerciseEntity>> =
         exerciseIdsByWorkoutUiState
@@ -236,19 +175,27 @@ class OrganizerViewModel @Inject constructor(
                                 exerciseMap[id]
                             }
                         }
-
                 }
             }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = emptyList()
-            )
+            .stateIn(scope = viewModelScope,Sharing,initialValue = emptyList())
 
-    fun updateExerciseOrder(workoutId: Long, exercises: List<ExerciseEntity>) =
-        viewModelScope.launch {
-            workoutExerciseRepo.updateExerciseOrder(workoutId, exercises)
-        }
+    // File operations
+    fun getIconFile(name: String): File? {
+        return fileRepo.getIcon(name)
+    }
+
+    fun getImageFile(name: String, isCustom: Boolean): File? {
+        return fileRepo.getImage(name, isCustom)
+    }
+
+    fun saveCustomImage(uri: Uri): String? {
+        return fileRepo.saveCustomImage(uri)
+    }
+
+    // Commands
+    fun createWorkout(name: String) = viewModelScope.launch {
+        workoutRepo.createWorkout(name)
+    }
 
     fun deleteWorkout(id: Long) = viewModelScope.launch {
         workoutRepo.deleteWorkout(id)
@@ -262,11 +209,20 @@ class OrganizerViewModel @Inject constructor(
         workoutExerciseRepo.deleteExerciseFromWorkout(workoutId, exerciseId)
     }
 
+    fun updateExerciseOrder(workoutId: Long, exercises: List<ExerciseEntity>) =
+        viewModelScope.launch {
+            workoutExerciseRepo.updateExerciseOrder(workoutId, exercises)
+        }
+
     fun createCustomExercise(name: String, imageName: String) = viewModelScope.launch {
         exerciseRepo.addCustomExercise(name, imageName)
     }
 
     fun deleteCustomExercise(id: Long) = viewModelScope.launch {
         exerciseRepo.deleteCustomExercise(id)
+    }
+
+    companion object {
+        val Sharing = SharingStarted.WhileSubscribed(5000)
     }
 }

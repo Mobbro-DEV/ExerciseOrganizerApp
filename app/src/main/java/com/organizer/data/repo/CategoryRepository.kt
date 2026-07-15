@@ -1,37 +1,34 @@
 package com.organizer.data.repo
 
+import com.organizer.data.local.dao.CategoryDao
 import com.organizer.data.local.db.entities.CategoryEntity
-import com.organizer.data.local.repo.CategoryLocalDataSource
 import com.organizer.data.remote.repo.CategoryRemoteDataSource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class CategoryRepository @Inject constructor(
-    private val localDataSource: CategoryLocalDataSource,
+    private val categoryDao: CategoryDao,
     private val remoteDataSource: CategoryRemoteDataSource,
     private val fileRepository: FileRepository,
 ) {
-    fun observeCategories(): Flow<List<CategoryEntity>> {
-        return localDataSource.getAll()
-    }
-
     fun observeSports(): Flow<List<CategoryEntity>> {
-        return localDataSource.getSports()
+        return categoryDao.getSports()
     }
 
     fun observeSubcategories(categoryId: Long): Flow<List<CategoryEntity>> {
-        return localDataSource.getSubcategories(categoryId)
+        return categoryDao.getSubcategories(categoryId)
     }
 
     suspend fun refreshSports() {
         val remoteSports = remoteDataSource.getSports()
-        val localSports = localDataSource.getSportsOnce()
+        val localSports = categoryDao.getSportsOnce()
         syncCategories(remoteSports, localSports)
     }
 
     suspend fun refreshCategories() {
         val remoteCategories = remoteDataSource.getCategories()
-        val localCategories = localDataSource.getCategoriesOnce()
+        val localCategories = categoryDao.getCategoriesOnce()
         syncCategories(remoteCategories, localCategories)
     }
 
@@ -55,19 +52,30 @@ class CategoryRepository @Inject constructor(
         }
 
         toDelete.forEach { category ->
-            localDataSource.delete(category)
+            categoryDao.delete(category)
             fileRepository.deleteIcon(category.iconUrl)
         }
 
-        localDataSource.insertAll(toInsert)
-        localDataSource.updateAll(toUpdate)
-    }
-
-    fun observeCategoryById(id: Long): Flow<CategoryEntity?> {
-        return localDataSource.getById(id)
+        categoryDao.insertAll(toInsert)
+        categoryDao.updateAll(toUpdate)
     }
 
     suspend fun observeCategoryByIdOnce(id: Long): CategoryEntity? {
-        return localDataSource.getByIdOnce(id)
+        return categoryDao.getByIdOnce(id)
+    }
+
+    fun getCategoryPath(categoryId: Long): Flow<List<CategoryEntity>> = flow {
+        val path = mutableListOf<CategoryEntity>()
+
+        var current = observeCategoryByIdOnce(categoryId)
+
+        while (current != null) {
+            path.add(current)
+            current = current.parentCategoryId?.let {
+                observeCategoryByIdOnce(it)
+            }
+        }
+
+        emit(path.reversed())
     }
 }
