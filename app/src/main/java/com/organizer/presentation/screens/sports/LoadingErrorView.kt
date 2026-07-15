@@ -27,7 +27,7 @@ fun LoadingErrorView(
                 CircularProgressIndicator()
 
                 Text(
-                    text = "Loading sports...",
+                    text = "Loading...",
                     color = Color.Gray,
                     fontSize = 18.sp
                 )
@@ -44,7 +44,7 @@ fun LoadingErrorView(
                 Button(
                     onClick = onRetry
                 ) {
-                    Text("Try again")
+                    Text("Retry")
                 }
             }
 
