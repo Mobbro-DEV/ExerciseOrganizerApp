@@ -8,6 +8,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,6 +22,7 @@ import com.organizer.presentation.screens.exercises.ExerciseCard
 import com.organizer.presentation.screens.workout.CreateWorkoutScreen
 import com.organizer.presentation.screens.general.BottomNavigationBar
 import com.organizer.presentation.screens.welcome.OnboardScreen
+import com.organizer.presentation.screens.welcome.OnboardingManager
 import com.organizer.presentation.screens.workout.WorkoutContentScreen
 import com.organizer.presentation.screens.workouts_and_exercises.CustomWorkoutsAndExercisesScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,13 +34,14 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         setContent {
-            AppNavigation()
+            val showOnboarding = !OnboardingManager.isCompleted(this)
+            AppNavigation(showOnboarding)
         }
     }
 }
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(showOnboarding: Boolean) {
     val navController = rememberNavController()
     val currentRoute = navController
         .currentBackStackEntryAsState()
@@ -75,12 +78,19 @@ fun AppNavigation() {
 
         NavHost(
             navController = navController,
-            startDestination = Routes.Onboarding.route,
+            startDestination = if (showOnboarding)
+                Routes.Onboarding.route
+            else
+                Routes.Sports.route,
             modifier = Modifier.padding(padding)
         ) {
             composable(Routes.Onboarding.route) {
+                val context = LocalContext.current
                 OnboardScreen(
                     onFinish = {
+                        OnboardingManager.complete(
+                            context = context
+                        )
                         navController.navigate(Routes.Sports.route) {
                             popUpTo(Routes.Onboarding.route) {
                                 inclusive = true

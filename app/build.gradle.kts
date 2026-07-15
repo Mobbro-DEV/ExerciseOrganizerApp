@@ -80,4 +80,5 @@ dependencies {
     implementation(libs.icons.extended)
     implementation(libs.core.splashscreen)
     implementation(libs.reorderable)
+    implementation(libs.datastore.preferences)
 }

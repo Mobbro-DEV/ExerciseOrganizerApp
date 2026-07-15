@@ -22,6 +22,7 @@ icons-extended = "1.7.8"
 hilt-navigation-compose = "1.3.0"
 splashscreen = "1.2.0"
 reorderable = "3.1.0"
+datastore = "1.2.1"
 
 [libraries]
 # Core Android
@@ -69,6 +70,8 @@ hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", ve
 core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
 # Reorderable
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
+# DataStore for welcome screen
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 
 [plugins]
 # KSP (Kotlin Symbol Processing)
