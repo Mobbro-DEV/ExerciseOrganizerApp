@@ -8,11 +8,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.organizer.presentation.OrganizerViewModel
 import com.organizer.presentation.Routes
 import com.organizer.presentation.screens.add_card.AddCardScreen
 import com.organizer.presentation.screens.sports.SportsScreen
@@ -20,6 +23,8 @@ import com.organizer.presentation.screens.categories.CategoryContentScreen
 import com.organizer.presentation.screens.exercises.ExerciseCard
 import com.organizer.presentation.screens.workout.CreateWorkoutScreen
 import com.organizer.presentation.screens.general.BottomNavigationBar
+import com.organizer.presentation.screens.welcome.OnboardScreen
+import com.organizer.presentation.screens.welcome.OnboardingManager
 import com.organizer.presentation.screens.workout.WorkoutContentScreen
 import com.organizer.presentation.screens.workouts_and_exercises.CustomWorkoutsAndExercisesScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,13 +36,17 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         setContent {
-            AppNavigation()
+            val showOnboarding = !OnboardingManager.isCompleted(this)
+            AppNavigation(showOnboarding)
         }
     }
 }
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(showOnboarding: Boolean) {
+    // create viewModel for instant data load
+    val organizerViewModel: OrganizerViewModel = hiltViewModel()
+
     val navController = rememberNavController()
     val currentRoute = navController
         .currentBackStackEntryAsState()
@@ -55,26 +64,48 @@ fun AppNavigation() {
     Scaffold(
         containerColor = Color(0xFFF8F5F5),
         bottomBar = {
-            BottomNavigationBar(
-                currentRoute = currentRoute,
-                onHomeClick = {
-                    navController.navigate(Routes.Sports.route)
-                },
-                onWorkoutsClick = {
-                    navController.navigate(Routes.Workouts.route)
-                },
-                onAddCardClick = {
-                    navController.navigate(Routes.AddCard.route)
-                }
-            )
+            if (currentRoute != Routes.Onboarding.route) {
+                BottomNavigationBar(
+                    currentRoute = currentRoute,
+                    onHomeClick = {
+                        navController.navigate(Routes.Sports.route)
+                    },
+                    onWorkoutsClick = {
+                        navController.navigate(Routes.Workouts.route)
+                    },
+                    onAddCardClick = {
+                        navController.navigate(Routes.AddCard.route)
+                    }
+                )
+            }
         }
     ) { padding ->
 
         NavHost(
             navController = navController,
-            startDestination = Routes.Sports.route,
+            startDestination = if (showOnboarding)
+                Routes.Onboarding.route
+            else
+                Routes.Sports.route,
             modifier = Modifier.padding(padding)
         ) {
+            composable(Routes.Onboarding.route) {
+                val context = LocalContext.current
+                OnboardScreen(
+                    onFinish = {
+                        OnboardingManager.complete(
+                            context = context
+                        )
+                        navController.navigate(Routes.Sports.route) {
+                            popUpTo(Routes.Onboarding.route) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
+                )
+            }
+
             composable(Routes.Sports.route) {
                 SportsScreen(
                     onSportClick = { category ->
@@ -82,6 +113,7 @@ fun AppNavigation() {
                             Routes.Subcategory.createRoute(category.categoryId)
                         )
                     },
+                    viewModel = organizerViewModel,
                 )
             }
 
@@ -105,6 +137,7 @@ fun AppNavigation() {
                     onBackClick = {
                         popBackScreen()
                     },
+                    viewModel = organizerViewModel
                 )
             }
 
@@ -119,6 +152,7 @@ fun AppNavigation() {
                     onBackClick = {
                         popBackScreen()
                     },
+                    viewModel = organizerViewModel,
                 )
             }
 
@@ -145,6 +179,7 @@ fun AppNavigation() {
                     onBackClick = {
                         popBackScreen()
                     },
+                    viewModel = organizerViewModel,
                 )
             }
 
@@ -163,6 +198,7 @@ fun AppNavigation() {
                     onBackClick = {
                         popBackScreen()
                     },
+                    viewModel = organizerViewModel,
                 )
             }
 
@@ -174,6 +210,7 @@ fun AppNavigation() {
                     onBackClick = {
                         popBackScreen()
                     },
+                    viewModel = organizerViewModel,
                 )
             }
         }

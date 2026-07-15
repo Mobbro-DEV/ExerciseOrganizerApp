@@ -24,14 +24,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.presentation.OrganizerViewModel
 import com.organizer.presentation.screens.general.SaveButton
 
 @Composable
 fun CreateWorkoutScreen(
     onBackClick: () -> Unit = {},
-    viewModel: OrganizerViewModel = hiltViewModel(),
+    viewModel: OrganizerViewModel,
 ) {
     var workoutName by remember { mutableStateOf("") }
     var showDuplicateNameError by remember { mutableStateOf(false) }

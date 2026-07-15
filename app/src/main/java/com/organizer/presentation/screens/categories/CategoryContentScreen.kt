@@ -10,7 +10,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.data.local.db.entities.CategoryEntity
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.presentation.OrganizerViewModel
@@ -21,7 +20,7 @@ fun CategoryContentScreen(
     onCategoryClick: (CategoryEntity) -> Unit,
     onExerciseClick: (ExerciseEntity) -> Unit,
     onBackClick: () -> Unit,
-    viewModel: OrganizerViewModel = hiltViewModel(),
+    viewModel: OrganizerViewModel,
 ) {
     val categoryPath by viewModel.getCategoryPath(categoryId).collectAsState(initial = emptyList())
 

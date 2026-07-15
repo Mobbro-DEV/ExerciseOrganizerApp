@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -29,7 +28,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.organizer.presentation.OrganizerViewModel
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +39,7 @@ fun ExerciseCard(
     exerciseId: Long,
     onCreateWorkoutClick: () -> Unit,
     onBackClick: () -> Unit,
-    viewModel: OrganizerViewModel = hiltViewModel()
+    viewModel: OrganizerViewModel,
 ) {
     LaunchedEffect(exerciseId) {
         viewModel.selectExercise(exerciseId)
@@ -138,7 +136,8 @@ fun ExerciseCard(
                 onDismiss = {
                     showSavePopup = false
                 },
-                onCreateWorkoutClick = onCreateWorkoutClick
+                onCreateWorkoutClick = onCreateWorkoutClick,
+                viewModel = viewModel
             )
         }
     }

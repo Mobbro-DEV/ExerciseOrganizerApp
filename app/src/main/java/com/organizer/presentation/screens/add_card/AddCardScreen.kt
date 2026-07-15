@@ -27,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.organizer.presentation.OrganizerViewModel
 import com.organizer.presentation.screens.general.SaveButton
 
@@ -35,7 +34,7 @@ import com.organizer.presentation.screens.general.SaveButton
 fun AddCardScreen(
     onBackClick: () -> Unit,
     onSaveClick: () -> Unit,
-    viewModel: OrganizerViewModel = hiltViewModel(),
+    viewModel: OrganizerViewModel,
 ) {
     var exerciseName by remember { mutableStateOf("") }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
