@@ -113,6 +113,16 @@ fun ExerciseCard(
             fontWeight = FontWeight.Bold
         )
 
+        val steps = data.instruction.split(Regex("(?=\\d+\\.)"))
+        steps.filter(String::isNotBlank).forEach { step ->
+            Text(
+                text = step.trim(),
+                modifier = Modifier.fillMaxWidth(),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
+
         Spacer(modifier = Modifier.weight(1f))
 
         // Save button
