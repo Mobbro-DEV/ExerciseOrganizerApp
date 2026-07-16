@@ -118,11 +118,14 @@ fun ExerciseCard(
 
         Spacer(modifier = Modifier.height(28.dp))
 
-        InstructionPager(
-            instruction = data.instruction
-        )
+        if (data.instruction != null) {
+            InstructionPager(
+                instruction = data.instruction
+            )
+        }
 
         Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.weight(1f))
 
         // Save button
         Button(

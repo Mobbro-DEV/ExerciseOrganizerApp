@@ -38,40 +38,32 @@ fun InstructionPager(
             .map { it.trim() }
     }
 
-    val pagerState = rememberPagerState(
-        pageCount = { steps.size }
-    )
+    val pagerState = rememberPagerState(pageCount = { steps.size })
 
     Column(
         modifier = modifier
     ) {
-
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxWidth()
         ) { page ->
-
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(16.dp)
             ) {
-
                 Column(
                     modifier = Modifier
                         .padding(20.dp)
                 ) {
-
                     Text(
                         text = "Step ${page + 1} of ${steps.size}",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
 
-                    Spacer(
-                        modifier = Modifier.height(12.dp)
-                    )
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
                         text = steps[page],
@@ -83,20 +75,16 @@ fun InstructionPager(
             }
         }
 
-
         Spacer(
             modifier = Modifier.height(12.dp)
         )
-
 
         // Progress dots
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-
             repeat(steps.size) { index ->
-
                 Box(
                     modifier = Modifier
                         .padding(4.dp)
