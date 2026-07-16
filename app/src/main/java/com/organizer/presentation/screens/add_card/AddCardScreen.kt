@@ -146,6 +146,7 @@ fun AddCardScreen(
                 }
                 viewModel.createCustomExercise(
                     name = trimmedName,
+                    instructions = instructions,
                     imageName = imageName
                 )
                 onSaveClick()

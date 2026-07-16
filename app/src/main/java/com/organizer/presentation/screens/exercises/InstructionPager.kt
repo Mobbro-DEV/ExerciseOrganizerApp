@@ -33,7 +33,8 @@ fun InstructionPager(
 ) {
     val steps = remember(instruction) {
         instruction
-            .split(Regex("(?=\\d+\\.)"))
+            // use dots as separator but don't take them into the instructions
+            .split(Regex("\\d+\\.\\s*"))
             .filter { it.isNotBlank() }
             .map { it.trim() }
     }
