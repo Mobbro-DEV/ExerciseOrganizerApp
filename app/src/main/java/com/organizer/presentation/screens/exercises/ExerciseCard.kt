@@ -14,7 +14,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -47,10 +49,12 @@ fun ExerciseCard(
 
     val exercise by viewModel.exerciseUiState.collectAsState()
     var showSavePopup by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(scrollState)
             .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -86,7 +90,7 @@ fun ExerciseCard(
             }
         }
 
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         // MAIN IMAGE CARD
         Card(
@@ -107,23 +111,18 @@ fun ExerciseCard(
 
         Text(
             text = data.name,
-            modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold
         )
 
-        val steps = data.instruction.split(Regex("(?=\\d+\\.)"))
-        steps.filter(String::isNotBlank).forEach { step ->
-            Text(
-                text = step.trim(),
-                modifier = Modifier.fillMaxWidth(),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium
-            )
-        }
+        Spacer(modifier = Modifier.height(28.dp))
 
-        Spacer(modifier = Modifier.weight(1f))
+        InstructionPager(
+            instruction = data.instruction
+        )
+
+        Spacer(modifier = Modifier.height(28.dp))
 
         // Save button
         Button(
