@@ -214,8 +214,8 @@ class OrganizerViewModel @Inject constructor(
             workoutExerciseRepo.updateExerciseOrder(workoutId, exercises)
         }
 
-    fun createCustomExercise(name: String, imageName: String) = viewModelScope.launch {
-        exerciseRepo.addCustomExercise(name, imageName)
+    fun createCustomExercise(name: String, instructions: List<String>, imageName: String) = viewModelScope.launch {
+        exerciseRepo.addCustomExercise(name, instructions, imageName)
     }
 
     fun deleteCustomExercise(id: Long) = viewModelScope.launch {

@@ -12,10 +12,16 @@ class ExerciseRepository @Inject constructor(
     private val remoteDataSource: ExerciseRemoteDataSource,
     private val fileRepository: FileRepository,
 ) {
-    suspend fun addCustomExercise(name: String, imageName: String) {
+    suspend fun addCustomExercise(name: String, instructions: List<String>, imageName: String) {
+        val instructionText = instructions.mapIndexed { index, step ->
+                "${index + 1}. $step"
+            }
+            .joinToString(" ")
+
         exerciseDao.insert(
             ExerciseEntity(
                 name = name,
+                instruction = instructionText,
                 imageUrl = imageName,
                 categoryId = null,
                 isCustom = true
