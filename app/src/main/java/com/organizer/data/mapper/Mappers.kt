@@ -9,7 +9,7 @@ fun Category.asEntity() = CategoryEntity(
     categoryId = categoryId,
     name = name,
     iconUrl = iconUrl,
-    parentCategoryId = parentCategory?.categoryId
+    parentCategoryId = parentCategoryId
 )
 
 fun Exercise.asEntity() = ExerciseEntity(
@@ -17,6 +17,6 @@ fun Exercise.asEntity() = ExerciseEntity(
     name = name,
     instruction = instruction,
     imageUrl = imageUrl,
-    categoryId = category?.categoryId,
+    categoryId = categoryId,
     isCustom = false,
 )

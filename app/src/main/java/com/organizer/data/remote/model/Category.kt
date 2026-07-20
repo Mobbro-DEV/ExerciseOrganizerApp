@@ -7,5 +7,5 @@ data class Category (
     val categoryId: Long,
     val name: String,
     val iconUrl: String?,
-    val parentCategory: Category?,
+    val parentCategoryId: Long?,
 )
