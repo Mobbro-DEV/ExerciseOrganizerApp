@@ -168,7 +168,15 @@ The backend provides:
 * sport icons
 * exercise images
 
-The API project is available in this repository as a separate module.
-https://github.com/radomirklimov/ExerciseApi
+The API project is available at the following link - https://github.com/radomirklimov/ExerciseApi
 
 ---
+
+## License
+
+Copyright © 2026 Radomir Klimov.
+
+All rights reserved.
+
+This project is available for viewing and portfolio evaluation purposes only.
+Reuse, redistribution, or commercial use requires explicit permission.
