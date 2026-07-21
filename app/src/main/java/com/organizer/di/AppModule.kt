@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.organizer.constants.AppConfig
 import com.organizer.data.local.dao.CategoryDao
+import com.organizer.data.local.dao.ExerciseCategoryDao
 import com.organizer.data.local.dao.ExerciseDao
 import com.organizer.data.local.dao.WorkoutDao
 import com.organizer.data.local.dao.WorkoutExerciseDao
@@ -70,6 +71,13 @@ object AppModule {
         database: AppDatabase
     ): ExerciseDao {
         return database.exerciseDao
+    }
+
+    @Provides
+    fun provideExerciseCategoryDao(
+        database: AppDatabase
+    ): ExerciseCategoryDao {
+        return database.exerciseCategoryDao
     }
 
     @Provides
