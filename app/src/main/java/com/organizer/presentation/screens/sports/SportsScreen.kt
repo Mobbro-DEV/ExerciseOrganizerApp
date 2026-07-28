@@ -10,16 +10,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.organizer.data.local.db.entities.CategoryEntity
+import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.presentation.OrganizerViewModel
+import com.organizer.presentation.model.SearchResult
 import com.organizer.presentation.screens.categories.CategoryListItem
+import com.organizer.presentation.screens.exercises.ExerciseListItem
 import com.organizer.presentation.screens.general.SearchBar
 
 @Composable
 fun SportsScreen(
     onSportClick: (CategoryEntity) -> Unit,
+    onCategoryClick: (CategoryEntity) -> Unit,
+    onExerciseClick: (ExerciseEntity) -> Unit,
     viewModel: OrganizerViewModel,
 ) {
-    val sports by viewModel.sportsUiState.collectAsState()
+    val searchResults by viewModel.searchResultsUiState.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     val errorMessage = viewModel.errorMessage
     val isLoading by viewModel.isSyncing.collectAsState()
@@ -41,7 +46,7 @@ fun SportsScreen(
         )
 
         // List of sport types
-        if (sports.isEmpty()) {
+        if (searchResults.isEmpty() && errorMessage != null) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -59,16 +64,35 @@ fun SportsScreen(
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 items(
-                    items = sports,
-                    key = { it.categoryId }
-                ) { sport ->
-                    CategoryListItem(
-                        category = sport,
-                        onClick = {
-                            onSportClick(sport)
-                        },
-                        viewModel = viewModel
-                    )
+                    items = searchResults,
+                ) { result ->
+                    when (result) {
+                        is SearchResult.Sport -> {
+                            CategoryListItem(
+                                category = result.sport,
+                                onClick = { onSportClick(result.sport) },
+                                viewModel = viewModel
+                            )
+                        }
+                        is SearchResult.Category -> {
+                            CategoryListItem(
+                                category = result.category,
+                                onClick = { onCategoryClick(result.category) },
+                                viewModel = viewModel
+                            )
+                        }
+                        is SearchResult.Exercise -> {
+                            ExerciseListItem(
+                                exercise = result.exercise,
+                                deletionInfo = null,
+                                expanded = false,
+                                onClick = { onExerciseClick(result.exercise) },
+                                onOpenClick = {},
+                                onDeleteClick = {},
+                                viewModel = viewModel
+                            )
+                        }
+                    }
                 }
             }
         }

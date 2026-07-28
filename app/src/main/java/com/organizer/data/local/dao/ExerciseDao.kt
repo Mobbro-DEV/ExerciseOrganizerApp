@@ -23,6 +23,9 @@ interface ExerciseDao {
     @Query("SELECT * FROM exercise")
     suspend fun getAllOnce(): List<ExerciseEntity>
 
+    @Query("SELECT * FROM exercise")
+    fun getAll(): Flow<List<ExerciseEntity>>
+
     @Query("SELECT * FROM exercise WHERE isCustom = 1 ORDER BY exerciseId DESC")
     fun getCustomExercises(): Flow<List<ExerciseEntity>>
 

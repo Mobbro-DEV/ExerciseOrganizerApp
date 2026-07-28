@@ -16,6 +16,10 @@ class CategoryRepository @Inject constructor(
         return categoryDao.getSports()
     }
 
+    fun observeCategories(): Flow<List<CategoryEntity>> {
+        return categoryDao.getCategories()
+    }
+
     fun observeSubcategories(categoryId: Long): Flow<List<CategoryEntity>> {
         return categoryDao.getSubcategories(categoryId)
     }

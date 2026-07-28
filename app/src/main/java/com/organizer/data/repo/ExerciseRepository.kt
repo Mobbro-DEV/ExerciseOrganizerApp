@@ -29,6 +29,10 @@ class ExerciseRepository @Inject constructor(
         )
     }
 
+    fun observeAllExercises(): Flow<List<ExerciseEntity>> {
+        return exerciseDao.getAll()
+    }
+
     fun observeExercisesByIds(exerciseIds: List<Long>): Flow<List<ExerciseEntity>> {
         return exerciseDao.getExercisesByIds(exerciseIds)
     }
