@@ -10,6 +10,7 @@ import javax.inject.Inject
 class ExerciseRepository @Inject constructor(
     private val exerciseDao: ExerciseDao,
     private val remoteDataSource: ExerciseRemoteDataSource,
+    private val exerciseWorkoutRepo: ExerciseCategoryRepository,
     private val fileRepository: FileRepository,
 ) {
     suspend fun addCustomExercise(name: String, instructions: List<String>, imageName: String) {
@@ -23,7 +24,6 @@ class ExerciseRepository @Inject constructor(
                 name = name,
                 instruction = instructionText,
                 imageUrl = imageName,
-                categoryId = null,
                 isCustom = true
             )
         )
@@ -37,8 +37,9 @@ class ExerciseRepository @Inject constructor(
         return exerciseDao.getCustomExercises()
     }
 
-    fun observeExercisesByCategory(categoryId: Long): Flow<List<ExerciseEntity>> {
-        return exerciseDao.getExercisesByCategory(categoryId)
+    suspend fun observeExercisesByCategory(categoryId: Long): Flow<List<ExerciseEntity>> {
+        val exercisesIds = exerciseWorkoutRepo.getExercisesByCategory(categoryId)
+        return exerciseDao.getExercisesByIds(exercisesIds)
     }
 
     fun observeExercise(id: Long): Flow<ExerciseEntity?> {

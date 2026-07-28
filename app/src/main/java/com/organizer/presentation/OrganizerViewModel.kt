@@ -11,6 +11,7 @@ import com.organizer.data.local.db.entities.CategoryEntity
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.data.local.db.entities.WorkoutEntity
 import com.organizer.data.repo.CategoryRepository
+import com.organizer.data.repo.ExerciseCategoryRepository
 import com.organizer.data.repo.ExerciseRepository
 import com.organizer.data.repo.FileRepository
 import com.organizer.data.repo.WorkoutExerciseRepository
@@ -36,6 +37,7 @@ import java.io.IOException
 class OrganizerViewModel @Inject constructor(
     private val categoryRepo: CategoryRepository,
     private val exerciseRepo: ExerciseRepository,
+    private val exerciseCategoryRepo: ExerciseCategoryRepository,
     private val workoutRepo: WorkoutRepository,
     private val workoutExerciseRepo: WorkoutExerciseRepository,
     private val fileRepo: FileRepository,
@@ -65,6 +67,7 @@ class OrganizerViewModel @Inject constructor(
                 categoryRepo.refreshSports()
                 categoryRepo.refreshCategories()
                 exerciseRepo.refreshExercises()
+                exerciseCategoryRepo.refreshExerciseCategory()
             } catch (e: IOException) {
                 Log.e("SYNC", "No internet connection", e)
                 errorMessage = "No internet connection. Please check your connection and try again."

@@ -1,9 +1,11 @@
 package com.organizer.data.mapper
 
 import com.organizer.data.local.db.entities.CategoryEntity
+import com.organizer.data.local.db.entities.ExerciseCategoryEntity
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.data.remote.model.Category
 import com.organizer.data.remote.model.Exercise
+import com.organizer.data.remote.model.ExerciseCategory
 
 fun Category.asEntity() = CategoryEntity(
     categoryId = categoryId,
@@ -17,6 +19,11 @@ fun Exercise.asEntity() = ExerciseEntity(
     name = name,
     instruction = instruction,
     imageUrl = imageUrl,
-    categoryId = categoryId,
     isCustom = false,
+)
+
+fun ExerciseCategory.asEntity() = ExerciseCategoryEntity(
+    exerciseCategoryId = exerciseCategoryId,
+    exerciseId = exerciseId,
+    categoryId = categoryId,
 )
