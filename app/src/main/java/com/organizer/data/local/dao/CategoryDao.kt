@@ -26,6 +26,9 @@ interface CategoryDao {
     @Query("SELECT * FROM category WHERE parentCategoryId IS NOT NULL")
     suspend fun getCategoriesOnce(): List<CategoryEntity>
 
+    @Query("SELECT * FROM category WHERE parentCategoryId IS NOT NULL")
+    fun getCategories(): Flow<List<CategoryEntity>>
+
     @Query("SELECT * FROM category WHERE parentCategoryId = :categoryId")
     fun getSubcategories(categoryId: Long): Flow<List<CategoryEntity>>
 

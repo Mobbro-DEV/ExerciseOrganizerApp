@@ -16,6 +16,7 @@ import com.organizer.data.repo.ExerciseRepository
 import com.organizer.data.repo.FileRepository
 import com.organizer.data.repo.WorkoutExerciseRepository
 import com.organizer.data.repo.WorkoutRepository
+import com.organizer.presentation.model.SearchResult
 import com.organizer.presentation.screens.workouts_and_exercises.CustomsTab
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -87,16 +88,60 @@ class OrganizerViewModel @Inject constructor(
         selectedCategoryId.value = id
     }
 
-    val sportsUiState: StateFlow<List<CategoryEntity>> =
+    private fun matches(text: String, query: String): Boolean {
+        val words = query
+            .trim()
+            .lowercase()
+            .split(Regex("\\s+"))
+
+        return words.all { word ->
+            text.lowercase().contains(word)
+        }
+    }
+
+    private fun score(text: String, query: String): Int {
+        val t = text.lowercase()
+        val q = query.lowercase()
+
+        return when {
+            t == q -> 0
+            t.startsWith(q) -> 1
+            t.split(" ").contains(q) -> 2
+            t.contains(q) -> 3
+            else -> 4
+        }
+    }
+
+    val searchResultsUiState: StateFlow<List<SearchResult>> =
         combine(
             categoryRepo.observeSports(),
+            categoryRepo.observeCategories(),
+            exerciseRepo.observeAllExercises(),
             searchQuery
-        ) { sports, query ->
-            if (query.isBlank()) sports
-            else sports.filter {
-                it.name.contains(query, ignoreCase = true)
+        ) { sports, categories, exercises, query ->
+            if (query.isBlank()) {
+                sports.map { SearchResult.Sport(it) }
+            } else {
+                val results = mutableListOf<SearchResult>()
+                results += sports
+                    .filter { matches(it.name, query) }
+                    .sortedBy { score(it.name, query) }
+                    .map { SearchResult.Sport(it) }
+
+                results += categories
+                    .filter { matches(it.name, query) }
+                    .sortedBy { score(it.name, query) }
+                    .map { SearchResult.Category(it) }
+
+                results += exercises
+                    .filter { matches(it.name, query) }
+                    .sortedBy { score(it.name, query) }
+                    .map { SearchResult.Exercise(it) }
+
+                results
             }
-        }.stateIn(viewModelScope,Sharing,emptyList()
+        }.stateIn(
+            viewModelScope,Sharing,emptyList()
         )
 
     val subcategoriesUiState: StateFlow<List<CategoryEntity>> =
@@ -105,10 +150,12 @@ class OrganizerViewModel @Inject constructor(
             .flatMapLatest { id ->
                 categoryRepo.observeSubcategories(id)
             }
-            .stateIn(viewModelScope,Sharing,emptyList()
+            .stateIn(
+                viewModelScope, Sharing, emptyList()
             )
 
-    fun getCategoryPath(categoryId: Long): Flow<List<CategoryEntity>> = categoryRepo.getCategoryPath(categoryId)
+    fun getCategoryPath(categoryId: Long): Flow<List<CategoryEntity>> =
+        categoryRepo.getCategoryPath(categoryId)
 
     // Exercises
     private val selectedExerciseId = MutableStateFlow<Long?>(null)
@@ -123,7 +170,7 @@ class OrganizerViewModel @Inject constructor(
             .flatMapLatest { id ->
                 exerciseRepo.observeExercise(id)
             }
-            .stateIn(viewModelScope,Sharing,null)
+            .stateIn(viewModelScope, Sharing, null)
 
     val exercisesByCategoryUiState: StateFlow<List<ExerciseEntity>> =
         selectedCategoryId
@@ -131,11 +178,11 @@ class OrganizerViewModel @Inject constructor(
             .flatMapLatest { id ->
                 exerciseRepo.observeExercisesByCategory(id)
             }
-            .stateIn(viewModelScope,Sharing,emptyList())
+            .stateIn(viewModelScope, Sharing, emptyList())
 
     val customExercisesUiState: StateFlow<List<ExerciseEntity>> =
         exerciseRepo.observeCustomExercises()
-            .stateIn(viewModelScope,Sharing,emptyList())
+            .stateIn(viewModelScope, Sharing, emptyList())
 
     // Workouts
     private val selectedWorkoutId = MutableStateFlow<Long?>(null)
@@ -146,7 +193,7 @@ class OrganizerViewModel @Inject constructor(
 
     val workoutsUiState: StateFlow<List<WorkoutEntity>> =
         workoutRepo.observeWorkouts()
-            .stateIn(viewModelScope,Sharing,emptyList())
+            .stateIn(viewModelScope, Sharing, emptyList())
 
     val workoutUiState: StateFlow<WorkoutEntity?> =
         selectedWorkoutId
@@ -154,7 +201,7 @@ class OrganizerViewModel @Inject constructor(
             .flatMapLatest { id ->
                 workoutRepo.observeWorkoutById(id)
             }
-            .stateIn(viewModelScope,Sharing,null)
+            .stateIn(viewModelScope, Sharing, null)
 
     val exerciseIdsByWorkoutUiState: StateFlow<List<Long>> =
         selectedWorkoutId
@@ -162,7 +209,7 @@ class OrganizerViewModel @Inject constructor(
             .flatMapLatest { id ->
                 workoutExerciseRepo.observeExerciseIdsByWorkout(id)
             }
-            .stateIn(viewModelScope,Sharing,emptyList())
+            .stateIn(viewModelScope, Sharing, emptyList())
 
     val workoutExercisesByIdsUiState: StateFlow<List<ExerciseEntity>> =
         exerciseIdsByWorkoutUiState
@@ -180,7 +227,7 @@ class OrganizerViewModel @Inject constructor(
                         }
                 }
             }
-            .stateIn(scope = viewModelScope,Sharing,initialValue = emptyList())
+            .stateIn(scope = viewModelScope, Sharing, initialValue = emptyList())
 
     // File operations
     fun getIconFile(name: String): File? {
@@ -217,9 +264,10 @@ class OrganizerViewModel @Inject constructor(
             workoutExerciseRepo.updateExerciseOrder(workoutId, exercises)
         }
 
-    fun createCustomExercise(name: String, instructions: List<String>, imageName: String) = viewModelScope.launch {
-        exerciseRepo.addCustomExercise(name, instructions, imageName)
-    }
+    fun createCustomExercise(name: String, instructions: List<String>, imageName: String) =
+        viewModelScope.launch {
+            exerciseRepo.addCustomExercise(name, instructions, imageName)
+        }
 
     fun deleteCustomExercise(id: Long) = viewModelScope.launch {
         exerciseRepo.deleteCustomExercise(id)
