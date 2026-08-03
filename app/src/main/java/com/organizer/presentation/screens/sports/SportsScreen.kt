@@ -45,8 +45,7 @@ fun SportsScreen(
             }
         )
 
-        // List of sport types
-        if (searchResults.isEmpty() && errorMessage != null) {
+        if (searchResults.isEmpty() && searchQuery.isBlank()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
