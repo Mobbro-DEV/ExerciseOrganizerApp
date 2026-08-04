@@ -27,8 +27,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File
@@ -82,11 +80,8 @@ class OrganizerViewModel @Inject constructor(
     }
 
     // Categories
-    private val selectedCategoryId = MutableStateFlow<Long?>(null)
-
-    fun selectCategory(id: Long) {
-        selectedCategoryId.value = id
-    }
+    fun observeSubcategories(categoryId: Long): Flow<List<CategoryEntity>> =
+        categoryRepo.observeSubcategories(categoryId)
 
     private fun matches(text: String, query: String): Boolean {
         val words = query
@@ -144,41 +139,15 @@ class OrganizerViewModel @Inject constructor(
             viewModelScope,Sharing,emptyList()
         )
 
-    val subcategoriesUiState: StateFlow<List<CategoryEntity>> =
-        selectedCategoryId
-            .filterNotNull()
-            .flatMapLatest { id ->
-                categoryRepo.observeSubcategories(id)
-            }
-            .stateIn(
-                viewModelScope, Sharing, emptyList()
-            )
-
     fun getCategoryPath(categoryId: Long): Flow<List<CategoryEntity>> =
         categoryRepo.getCategoryPath(categoryId)
 
     // Exercises
-    private val selectedExerciseId = MutableStateFlow<Long?>(null)
+    fun observeExercisesByCategory(categoryId: Long): Flow<List<ExerciseEntity>> =
+        exerciseRepo.observeExercisesByCategory(categoryId)
 
-    fun selectExercise(id: Long) {
-        selectedExerciseId.value = id
-    }
-
-    val exerciseUiState: StateFlow<ExerciseEntity?> =
-        selectedExerciseId
-            .filterNotNull()
-            .flatMapLatest { id ->
-                exerciseRepo.observeExercise(id)
-            }
-            .stateIn(viewModelScope, Sharing, null)
-
-    val exercisesByCategoryUiState: StateFlow<List<ExerciseEntity>> =
-        selectedCategoryId
-            .filterNotNull()
-            .flatMapLatest { id ->
-                exerciseRepo.observeExercisesByCategory(id)
-            }
-            .stateIn(viewModelScope, Sharing, emptyList())
+    fun observeExercise(id: Long): Flow<ExerciseEntity?> =
+        exerciseRepo.observeExercise(id)
 
     val customExercisesUiState: StateFlow<List<ExerciseEntity>> =
         exerciseRepo.observeCustomExercises()
@@ -203,31 +172,8 @@ class OrganizerViewModel @Inject constructor(
             }
             .stateIn(viewModelScope, Sharing, null)
 
-    val exerciseIdsByWorkoutUiState: StateFlow<List<Long>> =
-        selectedWorkoutId
-            .filterNotNull()
-            .flatMapLatest { id ->
-                workoutExerciseRepo.observeExerciseIdsByWorkout(id)
-            }
-            .stateIn(viewModelScope, Sharing, emptyList())
-
-    val workoutExercisesByIdsUiState: StateFlow<List<ExerciseEntity>> =
-        exerciseIdsByWorkoutUiState
-            .flatMapLatest { ids ->
-                if (ids.isEmpty()) {
-                    flowOf(emptyList())
-                } else {
-                    exerciseRepo.observeExercisesByIds(ids)
-                        .map { exercises ->
-                            val exerciseMap = exercises.associateBy { it.exerciseId }
-
-                            ids.mapNotNull { id ->
-                                exerciseMap[id]
-                            }
-                        }
-                }
-            }
-            .stateIn(scope = viewModelScope, Sharing, initialValue = emptyList())
+    fun observeWorkoutExercises(workoutId: Long) =
+        exerciseRepo.observeExercisesByWorkout(workoutId)
 
     // File operations
     fun getIconFile(name: String): File? {

@@ -29,11 +29,23 @@ interface ExerciseDao {
     @Query("SELECT * FROM exercise WHERE isCustom = 1 ORDER BY exerciseId DESC")
     fun getCustomExercises(): Flow<List<ExerciseEntity>>
 
-    @Query("SELECT * FROM exercise WHERE exerciseId IN (:ids)")
-    fun getExercisesByIds(ids: List<Long>): Flow<List<ExerciseEntity>>
+    @Query("""SELECT e.* FROM exercise e 
+        JOIN exercise_category ec ON e.exerciseId = ec.exerciseId
+        WHERE ec.categoryId = :categoryId
+        ORDER BY ec.exerciseCategoryId""")
+    fun observeExercisesByCategory(categoryId: Long): Flow<List<ExerciseEntity>>
+
+    @Query("""SELECT e.* FROM exercise e
+        JOIN workout_exercise we ON e.exerciseId = we.exerciseId
+        WHERE we.workoutId = :workoutId
+        ORDER BY we.orderIndex ASC""")
+    fun observeExercisesByWorkout(workoutId: Long): Flow<List<ExerciseEntity>>
 
     @Query("SELECT * FROM exercise WHERE exerciseId = :id")
     fun getById(id: Long): Flow<ExerciseEntity?>
+
+    @Query("SELECT * FROM exercise WHERE exerciseId = :id")
+    suspend fun getByIdOnce(id: Long): ExerciseEntity?
 
     @Delete
     suspend fun delete(exercise: ExerciseEntity)
