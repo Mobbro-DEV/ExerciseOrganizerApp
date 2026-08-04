@@ -4,13 +4,11 @@ import com.organizer.data.local.dao.ExerciseDao
 import com.organizer.data.local.db.entities.ExerciseEntity
 import com.organizer.data.remote.repo.ExerciseRemoteDataSource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 class ExerciseRepository @Inject constructor(
     private val exerciseDao: ExerciseDao,
     private val remoteDataSource: ExerciseRemoteDataSource,
-    private val exerciseWorkoutRepo: ExerciseCategoryRepository,
     private val fileRepository: FileRepository,
 ) {
     suspend fun addCustomExercise(name: String, instructions: List<String>, imageName: String) {
@@ -33,18 +31,16 @@ class ExerciseRepository @Inject constructor(
         return exerciseDao.getAll()
     }
 
-    fun observeExercisesByIds(exerciseIds: List<Long>): Flow<List<ExerciseEntity>> {
-        return exerciseDao.getExercisesByIds(exerciseIds)
-    }
-
     fun observeCustomExercises(): Flow<List<ExerciseEntity>> {
         return exerciseDao.getCustomExercises()
     }
 
-    suspend fun observeExercisesByCategory(categoryId: Long): Flow<List<ExerciseEntity>> {
-        val exercisesIds = exerciseWorkoutRepo.getExercisesByCategory(categoryId)
-        return exerciseDao.getExercisesByIds(exercisesIds)
+    fun observeExercisesByCategory(categoryId: Long): Flow<List<ExerciseEntity>> {
+        return exerciseDao.observeExercisesByCategory(categoryId)
     }
+
+    fun observeExercisesByWorkout(workoutId: Long) =
+        exerciseDao.observeExercisesByWorkout(workoutId)
 
     fun observeExercise(id: Long): Flow<ExerciseEntity?> {
         return exerciseDao.getById(id)
@@ -82,7 +78,7 @@ class ExerciseRepository @Inject constructor(
     }
 
     suspend fun deleteCustomExercise(id: Long) {
-        val exercise = observeExercise(id).firstOrNull()
+        val exercise = exerciseDao.getByIdOnce(id)
         if (exercise?.isCustom == true) {
             exerciseDao.delete(exercise)
         }

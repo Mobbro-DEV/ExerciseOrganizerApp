@@ -23,7 +23,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
@@ -43,11 +42,7 @@ fun ExerciseCard(
     onBackClick: () -> Unit,
     viewModel: OrganizerViewModel,
 ) {
-    LaunchedEffect(exerciseId) {
-        viewModel.selectExercise(exerciseId)
-    }
-
-    val exercise by viewModel.exerciseUiState.collectAsState()
+    val exercise by viewModel.observeExercise(exerciseId).collectAsState(initial = null)
     var showSavePopup by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
 
