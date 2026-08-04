@@ -1,5 +1,8 @@
 package com.organizer.presentation.screens.categories
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -40,12 +43,24 @@ fun CategoryListItem(
     val textScrollState = rememberScrollState()
 
     LaunchedEffect(category.name) {
-        delay(1000.milliseconds)
-        textScrollState.animateScrollTo(
-            textScrollState.maxValue
-        )
-        delay(1000.milliseconds)
-        textScrollState.animateScrollTo(0)
+        if (textScrollState.maxValue > 0) {
+            delay(1500.milliseconds)
+            textScrollState.animateScrollBy(
+                value = textScrollState.maxValue.toFloat(),
+                animationSpec = tween(
+                    durationMillis = 3000,
+                    easing = LinearEasing
+                )
+            )
+            delay(1500.milliseconds)
+            textScrollState.animateScrollBy(
+                value = -textScrollState.maxValue.toFloat(),
+                animationSpec = tween(
+                    durationMillis = 3000,
+                    easing = LinearEasing
+                )
+            )
+        }
     }
 
     Card(
