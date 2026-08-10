@@ -68,7 +68,7 @@ fun ExerciseCard(
             return@Column
         }
 
-        val data = exercise!!
+        val exercise = exercise!!
 
         // Top bar
         Row(
@@ -94,18 +94,20 @@ fun ExerciseCard(
                 .height(320.dp),
             shape = RoundedCornerShape(24.dp)
         ) {
-            AsyncImage(
-                model = viewModel.getImageFile(data.imageUrl, data.isCustom),
-                contentDescription = data.name,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
+            for (img in exercise.imageUrls) {
+                AsyncImage(
+                    model = viewModel.getImageFile(img, exercise.isCustom),
+                    contentDescription = exercise.name,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(28.dp))
 
         Text(
-            text = data.name,
+            text = exercise.name,
             textAlign = TextAlign.Center,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold
@@ -113,9 +115,9 @@ fun ExerciseCard(
 
         Spacer(modifier = Modifier.height(28.dp))
 
-        if (data.instruction != null) {
+        if (exercise.instructions.isNotEmpty()) {
             InstructionPager(
-                instruction = data.instruction
+                instructions = exercise.instructions
             )
         }
 

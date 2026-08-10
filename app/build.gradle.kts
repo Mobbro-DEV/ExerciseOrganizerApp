@@ -81,4 +81,5 @@ dependencies {
     implementation(libs.core.splashscreen)
     implementation(libs.reorderable)
     implementation(libs.datastore.preferences)
+    implementation(libs.gson)
 }

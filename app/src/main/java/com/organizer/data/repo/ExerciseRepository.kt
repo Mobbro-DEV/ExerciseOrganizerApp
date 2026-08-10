@@ -12,16 +12,11 @@ class ExerciseRepository @Inject constructor(
     private val fileRepository: FileRepository,
 ) {
     suspend fun addCustomExercise(name: String, instructions: List<String>, imageName: String) {
-        val instructionText = instructions.mapIndexed { index, step ->
-                "${index + 1}. $step"
-            }
-            .joinToString(" ")
-
         exerciseDao.insert(
             ExerciseEntity(
                 name = name,
-                instruction = instructionText,
-                imageUrl = imageName,
+                instructions = instructions,
+                imageUrls = listOf(imageName),
                 isCustom = true
             )
         )
@@ -61,8 +56,7 @@ class ExerciseRepository @Inject constructor(
             }
         }
 
-        val changedImages = (toInsert + toUpdate).map { it.imageUrl }
-        fileRepository.downloadAndSaveImages(changedImages)
+        (toInsert + toUpdate).forEach { fileRepository.downloadAndSaveImages(it.imageUrls) }
 
         val toDelete = localExercises.filter { local ->
             local.exerciseId !in remoteIds && !local.isCustom
@@ -70,7 +64,7 @@ class ExerciseRepository @Inject constructor(
 
         toDelete.forEach { exercise ->
             exerciseDao.delete(exercise)
-            fileRepository.deleteImage(exercise.imageUrl)
+            fileRepository.deleteImage(exercise.imageUrls)
         }
 
         exerciseDao.insertAll(toInsert)

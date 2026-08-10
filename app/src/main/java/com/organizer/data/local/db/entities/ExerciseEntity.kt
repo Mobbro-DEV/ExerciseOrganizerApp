@@ -15,7 +15,7 @@ data class ExerciseEntity(
     @PrimaryKey(autoGenerate = true)
     val exerciseId: Long = 0L,
     val name: String,
-    val instruction: String?,
-    val imageUrl: String,
+    val instructions: List<String>,
+    val imageUrls: List<String>,
     val isCustom: Boolean,
 )

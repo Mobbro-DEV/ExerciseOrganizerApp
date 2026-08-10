@@ -18,7 +18,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -28,18 +27,10 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun InstructionPager(
-    instruction: String,
+    instructions: List<String>,
     modifier: Modifier = Modifier
 ) {
-    val steps = remember(instruction) {
-        instruction
-            // use dots as separator but don't take them into the instructions
-            .split(Regex("\\d+\\.\\s*"))
-            .filter { it.isNotBlank() }
-            .map { it.trim() }
-    }
-
-    val pagerState = rememberPagerState(pageCount = { steps.size })
+    val pagerState = rememberPagerState(pageCount = { instructions.size })
 
     Column(
         modifier = modifier
@@ -59,7 +50,7 @@ fun InstructionPager(
                         .padding(20.dp)
                 ) {
                     Text(
-                        text = "Step ${page + 1} of ${steps.size}",
+                        text = "Step ${page + 1} of ${instructions.size}",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -67,7 +58,7 @@ fun InstructionPager(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = steps[page],
+                        text = instructions[page],
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.fillMaxWidth()
@@ -85,7 +76,7 @@ fun InstructionPager(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            repeat(steps.size) { index ->
+            repeat(instructions.size) { index ->
                 Box(
                     modifier = Modifier
                         .padding(4.dp)
