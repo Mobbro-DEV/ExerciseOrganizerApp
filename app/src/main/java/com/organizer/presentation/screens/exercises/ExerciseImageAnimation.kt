@@ -56,6 +56,10 @@ fun ExerciseImageAnimation(
 
     var isPlaying by remember(imageUrls) { mutableStateOf(false) }
 
+    var animationDirection by remember(imageUrls) {
+        mutableIntStateOf(1)
+    }
+
     // Automatic animation.
     LaunchedEffect(imageUrls, isPlaying) {
         if (!isPlaying || imageUrls.size <= 1) {
@@ -64,7 +68,19 @@ fun ExerciseImageAnimation(
 
         while (isPlaying) {
             delay(frameDurationMillis.milliseconds)
-            currentIndex = (currentIndex + 1) % imageUrls.size
+            when (currentIndex) {
+                imageUrls.lastIndex -> {
+                    animationDirection = -1
+                    currentIndex--
+                }
+                0 -> {
+                    animationDirection = 1
+                    currentIndex++
+                }
+                else -> {
+                    currentIndex += animationDirection
+                }
+            }
         }
     }
 
