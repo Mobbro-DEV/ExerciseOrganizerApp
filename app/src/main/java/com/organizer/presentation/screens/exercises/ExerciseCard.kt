@@ -88,21 +88,16 @@ fun ExerciseCard(
         Spacer(modifier = Modifier.height(16.dp))
 
         // MAIN IMAGE CARD
-        Card(
+        ExerciseImageAnimation(
+            imageUrls = exercise.imageUrls,
+            exerciseName = exercise.name,
+            isCustom = exercise.isCustom,
+            viewModel = viewModel,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(320.dp),
-            shape = RoundedCornerShape(24.dp)
-        ) {
-            for (img in exercise.imageUrls) {
-                AsyncImage(
-                    model = viewModel.getImageFile(img, exercise.isCustom),
-                    contentDescription = exercise.name,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-            }
-        }
+            frameDurationMillis = 900L
+        )
 
         Spacer(modifier = Modifier.height(28.dp))
 
