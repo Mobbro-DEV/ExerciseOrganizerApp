@@ -2,7 +2,6 @@ package com.organizer.presentation.screens.exercises
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -15,8 +14,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -55,22 +52,11 @@ fun ExerciseImageAnimation(
 ) {
     if (imageUrls.isEmpty()) return
 
-    var currentIndex by remember(imageUrls) {
-        mutableIntStateOf(0)
-    }
+    var currentIndex by remember(imageUrls) { mutableIntStateOf(0) }
 
-    var isPlaying by remember(imageUrls) {
-        mutableStateOf(false)
-    }
+    var isPlaying by remember(imageUrls) { mutableStateOf(false) }
 
-    // True only when the automatic animation changes the image.
-    var animateTransition by remember(imageUrls) {
-        mutableStateOf(false)
-    }
-
-    /*
-     * Automatic animation.
-     */
+    // Automatic animation.
     LaunchedEffect(imageUrls, isPlaying) {
         if (!isPlaying || imageUrls.size <= 1) {
             return@LaunchedEffect
@@ -78,22 +64,7 @@ fun ExerciseImageAnimation(
 
         while (isPlaying) {
             delay(frameDurationMillis.milliseconds)
-
-            animateTransition = true
-
-            currentIndex =
-                (currentIndex + 1) % imageUrls.size
-        }
-    }
-
-    /*
-     * Reset the animation flag after the transition has
-     * had time to finish.
-     */
-    LaunchedEffect(animateTransition) {
-        if (animateTransition) {
-            delay(450)
-            animateTransition = false
+            currentIndex = (currentIndex + 1) % imageUrls.size
         }
     }
 
@@ -105,43 +76,24 @@ fun ExerciseImageAnimation(
             modifier = Modifier
                 .fillMaxSize()
                 .pointerInput(imageUrls) {
-
                     var totalDrag = 0f
-
                     detectHorizontalDragGestures(
                         onDragEnd = {
-                            /*
-                             * Only change the image once when
-                             * the user releases the finger.
-                             */
+                             // Only change the image once when the user releases the finger
                             if (totalDrag < -80f) {
-
-                                // Swipe left → next
-                                animateTransition = false
-
-                                currentIndex =
-                                    (currentIndex + 1) % imageUrls.size
+                                currentIndex = (currentIndex + 1) % imageUrls.size
 
                             } else if (totalDrag > 80f) {
-
-                                // Swipe right → previous
-                                animateTransition = false
-
-                                currentIndex =
-                                    if (currentIndex == 0) {
+                                currentIndex = if (currentIndex == 0) {
                                         imageUrls.lastIndex
                                     } else {
                                         currentIndex - 1
                                     }
                             }
-
                             totalDrag = 0f
                         },
-
                         onHorizontalDrag = { change, dragAmount ->
-
                             change.consume()
-
                             totalDrag += dragAmount
                         }
                     )
@@ -149,18 +101,11 @@ fun ExerciseImageAnimation(
         ) {
 
             /*
-             * -------------------------------------------------
              * IMAGE
-             * -------------------------------------------------
-             *
-             * Automatic playback:
-             *     AnimatedContent fade
-             *
-             * Manual swipe:
-             *     Instant image change
+             * Automatic playback - AnimatedContent fade
+             * Manual swipe - Instant image change
              */
             if (isPlaying) {
-
                 AnimatedContent(
                     targetState = currentIndex,
                     transitionSpec = {
@@ -186,11 +131,7 @@ fun ExerciseImageAnimation(
                     )
                 }
             } else {
-
-                /*
-                 * Manual navigation uses a normal image.
-                 * Therefore there is NO fade.
-                 */
+                // Manual navigation uses a normal image(no fade)
                 AsyncImage(
                     model = viewModel.getImageFile(
                         imageUrls[currentIndex],
@@ -202,17 +143,10 @@ fun ExerciseImageAnimation(
                 )
             }
 
-            /*
-             * -------------------------------------------------
-             * PLAY / PAUSE
-             * -------------------------------------------------
-             */
+            // play/pause button
             if (imageUrls.size > 1) {
-
                 IconButton(
-                    onClick = {
-                        isPlaying = !isPlaying
-                    },
+                    onClick = { isPlaying = !isPlaying },
                     modifier = Modifier
                         .align(Alignment.BottomStart)
                         .padding(12.dp)
@@ -222,45 +156,32 @@ fun ExerciseImageAnimation(
                             Color.Black.copy(alpha = 0.55f)
                         )
                 ) {
-
                     Icon(
                         imageVector = if (isPlaying) {
                             Icons.Default.Pause
                         } else {
                             Icons.Default.PlayArrow
                         },
-
                         contentDescription = if (isPlaying) {
                             "Pause animation"
                         } else {
                             "Play animation"
                         },
-
                         tint = Color.White,
-
                         modifier = Modifier.size(26.dp)
                     )
                 }
             }
 
-            /*
-             * -------------------------------------------------
-             * PROGRESS DOTS
-             * -------------------------------------------------
-             */
+            // Progress dots
             if (imageUrls.size > 1) {
-
                 Row(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(bottom = 16.dp),
-
-                    horizontalArrangement =
-                        Arrangement.spacedBy(5.dp)
+                    horizontalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
-
                     repeat(imageUrls.size) { index ->
-
                         Box(
                             modifier = Modifier
                                 .size(
@@ -287,161 +208,3 @@ fun ExerciseImageAnimation(
         }
     }
 }
-//
-//@Composable
-//fun ExerciseImageAnimation(
-//    imageUrls: List<String>,
-//    exerciseName: String,
-//    isCustom: Boolean,
-//    viewModel: OrganizerViewModel,
-//    modifier: Modifier = Modifier,
-//    frameDurationMillis: Long = 900L
-//) {
-//    if (imageUrls.isEmpty()) return
-//
-//    var currentIndex by remember(imageUrls) { mutableIntStateOf(0) }
-//
-//    var isPlaying by remember(imageUrls) {
-//        mutableStateOf(false)
-//    }
-//
-//    /*
-//     * Automatic animation.
-//     *
-//     * We use the same PagerState as the manual swipe.
-//     * This means there is only one source of truth for
-//     * which image is currently displayed.
-//     */
-//    LaunchedEffect(imageUrls, isPlaying) {
-//        if (!isPlaying || imageUrls.size <= 1) {
-//            return@LaunchedEffect
-//        }
-//        while (isPlaying) {
-//            delay(frameDurationMillis.milliseconds)
-//            currentIndex = (currentIndex + 1) % imageUrls.size
-//        }
-//    }
-//
-//    /*
-//     * If the user manually swipes while automatic playback
-//     * is enabled, we don't disable playback permanently.
-//     *
-//     * The animation simply waits until the swipe is finished.
-//     */
-//
-//    Card(modifier = modifier, shape = RoundedCornerShape(24.dp)) {
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .pointerInput(imageUrls) {
-//                    detectHorizontalDragGestures(
-//                        onDragEnd = {},
-//                        onHorizontalDrag = { change, dragAmount ->
-//                            change.consume()
-//                            // Swipe left → next image
-//                            if (dragAmount < -20f) {
-//                                currentIndex = (currentIndex + 1) % imageUrls.size
-//                            }
-//                            // Swipe right → previous image
-//                            if (dragAmount > 20f) {
-//                                currentIndex = if (currentIndex == 0) {
-//                                    imageUrls.lastIndex
-//                                } else {
-//                                    currentIndex - 1
-//                                }
-//                            }
-//                        })
-//                }) {
-//
-///* * THIS is the effect you liked. * * Instead of instantly replacing the image, * the old image fades out while the new image * fades in. */
-//            AnimatedContent(
-//                targetState = currentIndex,
-//                transitionSpec = {
-//                    fadeIn(
-//                        animationSpec = tween(
-//                            durationMillis = 450,
-//                            easing = FastOutSlowInEasing
-//                        )
-//                    ) togetherWith fadeOut(
-//                        animationSpec = tween(
-//                            durationMillis = 450,
-//                            easing = FastOutSlowInEasing
-//                        )
-//                    )
-//                },
-//                label = "exercise_image_animation"
-//            ) { index ->
-//                AsyncImage(
-//                    model = viewModel.getImageFile(imageUrls[index], isCustom),
-//                    contentDescription = exerciseName,
-//                    modifier = Modifier.fillMaxSize(),
-//                    contentScale = ContentScale.Crop
-//                )
-//            }
-//
-//            // Play / pause button
-//            if (imageUrls.size > 1) {
-//                IconButton(
-//                    onClick = {
-//                        isPlaying = !isPlaying
-//                    },
-//                    modifier = Modifier
-//                        .align(Alignment.BottomStart)
-//                        .padding(12.dp)
-//                        .size(44.dp)
-//                        .clip(CircleShape)
-//                        .background(
-//                            Color.Black.copy(alpha = 0.55f)
-//                        )
-//                ) {
-//                    Icon(
-//                        imageVector = if (isPlaying) {
-//                            Icons.Default.Pause
-//                        } else {
-//                            Icons.Default.PlayArrow
-//                        },
-//                        contentDescription = if (isPlaying) {
-//                            "Pause animation"
-//                        } else {
-//                            "Play animation"
-//                        },
-//                        tint = Color.White,
-//                        modifier = Modifier.size(26.dp)
-//                    )
-//                }
-//            }
-//
-//            // Progress dots
-//            if (imageUrls.size > 1) {
-//                Row(
-//                    modifier = Modifier
-//                        .align(Alignment.BottomCenter)
-//                        .padding(bottom = 16.dp),
-//                    horizontalArrangement = Arrangement.spacedBy(5.dp)
-//                ) {
-//                    repeat(imageUrls.size) { index ->
-//
-//                        Box(
-//                            modifier = Modifier
-//                                .size(
-//                                    if (index == currentIndex) {
-//                                        8.dp
-//                                    } else {
-//                                        6.dp
-//                                    }
-//                                )
-//                                .clip(CircleShape)
-//                                .background(
-//                                    if (index == currentIndex) {
-//                                        Color.White
-//                                    } else {
-//                                        Color.White.copy(alpha = 0.45f)
-//                                    }
-//                                )
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
