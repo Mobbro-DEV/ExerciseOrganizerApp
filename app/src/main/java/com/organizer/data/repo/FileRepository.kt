@@ -47,9 +47,11 @@ class FileRepository @Inject constructor(
         }
     }
 
-    fun deleteImage(imageName: String) {
-        if (imageName.isNotBlank()) {
-            fileStorage.deleteLocalFile(StorageFolders.IMAGES, imageName)
+    fun deleteImage(imageNames: List<String>) {
+        for (name in imageNames) {
+            if (name.isNotBlank()) {
+                fileStorage.deleteLocalFile(StorageFolders.IMAGES, name)
+            }
         }
     }
 }

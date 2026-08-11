@@ -68,7 +68,7 @@ fun ExerciseCard(
             return@Column
         }
 
-        val data = exercise!!
+        val exercise = exercise!!
 
         // Top bar
         Row(
@@ -88,24 +88,21 @@ fun ExerciseCard(
         Spacer(modifier = Modifier.height(16.dp))
 
         // MAIN IMAGE CARD
-        Card(
+        ExerciseImageAnimation(
+            imageUrls = exercise.imageUrls,
+            exerciseName = exercise.name,
+            isCustom = exercise.isCustom,
+            viewModel = viewModel,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(320.dp),
-            shape = RoundedCornerShape(24.dp)
-        ) {
-            AsyncImage(
-                model = viewModel.getImageFile(data.imageUrl, data.isCustom),
-                contentDescription = data.name,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-        }
+            frameDurationMillis = 900L
+        )
 
         Spacer(modifier = Modifier.height(28.dp))
 
         Text(
-            text = data.name,
+            text = exercise.name,
             textAlign = TextAlign.Center,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold
@@ -113,9 +110,9 @@ fun ExerciseCard(
 
         Spacer(modifier = Modifier.height(28.dp))
 
-        if (data.instruction != null) {
+        if (exercise.instructions.isNotEmpty()) {
             InstructionPager(
-                instruction = data.instruction
+                instructions = exercise.instructions
             )
         }
 

@@ -103,7 +103,7 @@ fun ExerciseListItem(
             ) {
                 dragHandle?.invoke()
 
-                if (exercise.imageUrl.isNotBlank()) {
+                if (exercise.imageUrls.isNotEmpty()) {
                     Box(
                         modifier = Modifier
                             .size(80.dp)
@@ -111,7 +111,7 @@ fun ExerciseListItem(
                         contentAlignment = Alignment.Center
                     ) {
                         AsyncImage(
-                            model = viewModel.getImageFile(exercise.imageUrl, exercise.isCustom),
+                            model = viewModel.getImageFile(exercise.imageUrls.first(), exercise.isCustom),
                             contentDescription = exercise.name,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop

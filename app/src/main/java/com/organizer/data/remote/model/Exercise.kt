@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 data class Exercise (
     val exerciseId: Long,
     val name: String,
-    val instruction: String?,
-    val imageUrl: String,
+    val instructions: List<String>,
+    val images: List<String>,
 )

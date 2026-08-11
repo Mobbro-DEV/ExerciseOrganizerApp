@@ -23,6 +23,7 @@ hilt-navigation-compose = "1.3.0"
 splashscreen = "1.2.0"
 reorderable = "3.1.0"
 datastore = "1.2.1"
+gson = "2.14.0"
 
 [libraries]
 # Core Android
@@ -72,6 +73,8 @@ core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = 
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 # DataStore for welcome screen
 datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+# Convert Java Objects into their JSON representation
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
 [plugins]
 # KSP (Kotlin Symbol Processing)
